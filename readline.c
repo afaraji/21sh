@@ -89,36 +89,38 @@ void	go_right(int curs)
 
 void	read_line(int fd)
 {
-	char			buff[1];
+	int			buff;
 	t_line			line;
 	char			*cm_cap;
 
-	if (fd < 0 || read(fd, buff, 0) < 0)
+	if (fd < 0 || read(fd, &buff, 0) < 0)
 		return;
+	FILE *ttyfd = fopen("/dev/ttys003", "w");
 	while (1)
 	{
-		read(fd, buff, 1);
+		buff = 0;
+		read(fd, &buff, 4);
+		// buff = buff & 0x00000FF;
 		line.curs = 0;
 		line.str = NULL;
-		if (ft_isprint(buff[0]))
+		if (ft_isprint(buff))
 		{
-			line.str = ft_join_pos(line.str, buff[0], line.curs);
+			line.str = ft_join_pos(line.str, (char)buff, line.curs);
 			ft_putstr(line.str);
 			line.curs++;
 			go_right(line.curs);
 		}
 		else
 		{
-			if (ft_strcmp(buff, "[D"))
+			//***************************//
+			// fixe this part//
+			//********************//
+			fprintf(ttyfd, "------>%x\n", buff);
+			if (buff == LFTARROW)
 			{
 				cm_cap = tgetstr("cm", NULL);
-				tputs(tgoto(cm_cap, line.curs - 1, 0), 1, putchar);
+				tputs(tgoto(cm_cap, (line.curs - 1), 1), 1, putchar);
 			}
-			//printf("---------------\n");
-			// printf("---------------\n");
-			// cm_cap = tgetstr("cm", NULL);
-			// tputs(tgoto(cm_cap, 5, 5), 1, putchar);
-			// printf("+++++++++++++\n");
 		}
 	}
 }
@@ -138,6 +140,7 @@ int	main(int ac, char **av, char **env)
 	t_line line;
 	line.curs = 0;
 	line.str = NULL;
+	
 	while (1)
 	{
 		ft_prompt();
