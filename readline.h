@@ -12,22 +12,14 @@
 
 #ifndef _READLINE_H
 # define _READLINE_H
-# include "libft/libft.h"
-# include <sys/stat.h>
-# include <sys/types.h>
-# include <pwd.h>
-# include <grp.h>
-# include <time.h>
-# include <fcntl.h>
-# include <dirent.h>
-# include <sys/wait.h>
-# include <signal.h>
-# include <sys/ioctl.h>
-# include <termios.h>
-# include <curses.h>
-# include <term.h>
-
-
+# include "21sh.h"
+# define LFTARROW 0x445B1B
+# define RTARROW 0x435B1B
+# define UPARROW 0x415B1B
+# define DWNARROW 0x425B1B
+# define HOME 0x485B1B
+# define END 0x465B1B
+# define TAB 0x465B09
 
 typedef struct s_line
 {
