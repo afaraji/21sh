@@ -93,15 +93,30 @@ int		ft_intputchar(int c)
 	return (write(1, &ch ,1));
 }
 /********************************************************/
+void	put_line_curs(t_line *line)
+{
+	int	i;
+
+	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
+	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
+	i = line->curs;
+	while(i < (int)ft_strlen(line->str ))
+	{
+		ft_putchar(line->str[i]);
+		i++;
+	}
+	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
+	go_right(line);
+}
+/********************************************************/
 void	read_line(int fd)
 {
 	int			buff;
 	t_line		line;
-	int 		i;
 
 	if (fd < 0 || read(fd, &buff, 0) < 0)
 		return;
-	FILE *ttyfd = fopen("/dev/ttys004", "w");
+	FILE *ttyfd = fopen("/dev/ttys001", "w");
 	line.curs = 0;
 	line.str = ft_strdup("");
 	while (1)
@@ -111,28 +126,26 @@ void	read_line(int fd)
 		if (ft_isprint(buff))
 		{
 			line.str = ft_join_pos(line.str, buff, line.curs);
-			tputs(tgetstr("cd", NULL), 1, ft_intputchar);
-		 	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-		 	i = line.curs;
-			while(i < (int)ft_strlen(line.str ))
-			{
-				ft_putchar(line.str[i]);
-				i++;
-			}
-		 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
-		 	go_right(&line);
-		// 	fprintf(ttyfd, "------>%d\n", line.curs);
+			put_line_curs(&line);
 		}
 		else
 		{
-			//fprintf(ttyfd, "------>%s\n", line.str);
 			fprintf(ttyfd, "------>%x\n", buff);
 			if (buff == LFTARROW)
 				go_left(&line);
 			else if (buff == RTARROW)
 				go_right(&line);
-			// else if (buff == DEL)
-			//  	del_char(&line);
+			else if (buff == DEL)
+				del_char(&line);
+			else if (buff == HOME)
+				go_home(&line);
+			else if (buff == END)
+				go_end(&line);
+			/**********************************/
+    		/****** make next one happen when ther is ' or " ******/
+    		/**********************************/
+			else if (buff == ENTER)
+				go_down(&line);
 		}
 	}
 }

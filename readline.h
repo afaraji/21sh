@@ -21,6 +21,7 @@
 # define END 0x465B1B
 # define TAB 0x465B09
 # define DEL 0x7f
+# define ENTER 0xa
 
 typedef struct s_line
 {
@@ -33,6 +34,9 @@ int		ft_intputchar(int c);
 void    go_left(t_line *line);
 void    go_right(t_line *line);
 void    del_char(t_line *line);
+void    go_home(t_line *line);
+void    go_end(t_line *line);
+void    go_down(t_line *line);
 
 #endif
 
