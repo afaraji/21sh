@@ -16,13 +16,13 @@ int	termtype(void)
 {
 	int		ret;
 	char	*term_type;
-	int 	column;
-	int		line;
+	// int 	column;
+	// int		line;
 
 	term_type = getenv("TERM");
 	ret = tgetent(NULL, term_type);
-	column = tgetnum("co");
-	line = tgetnum("li");
+	// column = tgetnum("co");
+	// line = tgetnum("li");
 	if (ret == -1)
 	{
 		ft_putstr("Could not access the termcap data base.\n");
@@ -38,14 +38,14 @@ int	termtype(void)
 	printf("terminal ok [%s]:\n", term_type);
 	return (1);
 }
-
+/********************************************************/
 void	ft_prompt(void)
 {
 	ft_putstr("\x1B[35m");
 	ft_putstr("$> ");
 	ft_putstr("\x1b[39m");
 }
-
+/********************************************************/
 char	*ft_cpy(char *str, char c)
 {
 	int i;
@@ -57,74 +57,86 @@ char	*ft_cpy(char *str, char c)
 	str[i + 1] = '\0';
 	return (str);
 }
-
+/********************************************************/
 char	*ft_join_pos(char *str, char c, int curs)
 {
 	int i;
+	int j;
 
-	if (str == NULL)
+	i = 0;
+	j = 0;
+	char *s1 = malloc(sizeof(char)* (ft_strlen(str) + 2));
+	while(i < curs)
 	{
-		str = (char *)malloc(sizeof(char) + 1);
-		str[0] = c;
-		str[1] = '\0';
+		s1[i] = str[i];
+		i++;
 	}
-	else
+	s1[i] = c;
+	j = curs;
+	while(j < (int)ft_strlen(str))
 	{
-		i = 0;
-		while (i <= 2)
-			i++;
-		str[i] = c;
-		str = ft_strjoin(str, &str[curs + 1]);
+		i++;
+		s1[i] = str[j];
+		j++;
 	}
-	return(str);
+	if(j == (int)ft_strlen(str))
+		i++;
+	s1[i]= '\0';
+	return(s1);
 }
-
-void	go_right(int curs)
+/********************************************************/
+int		ft_intputchar(int c)
 {
-	char	*cm_cap;
+	char ch;
 
-	cm_cap = tgetstr("cm", NULL);
-	tputs(tgoto(cm_cap, curs, 0), 1, putchar);
+	ch = c;
+	return (write(1, &ch ,1));
 }
-
+/********************************************************/
 void	read_line(int fd)
 {
 	int			buff;
-	t_line			line;
-	char			*cm_cap;
+	t_line		line;
+	int 		i;
 
 	if (fd < 0 || read(fd, &buff, 0) < 0)
 		return;
-	FILE *ttyfd = fopen("/dev/ttys003", "w");
+	FILE *ttyfd = fopen("/dev/ttys004", "w");
+	line.curs = 0;
+	line.str = ft_strdup("");
 	while (1)
 	{
 		buff = 0;
 		read(fd, &buff, 4);
-		// buff = buff & 0x00000FF;
-		line.curs = 0;
-		line.str = NULL;
 		if (ft_isprint(buff))
 		{
-			line.str = ft_join_pos(line.str, (char)buff, line.curs);
-			ft_putstr(line.str);
-			line.curs++;
-			go_right(line.curs);
+			line.str = ft_join_pos(line.str, buff, line.curs);
+			tputs(tgetstr("cd", NULL), 1, ft_intputchar);
+		 	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
+		 	i = line.curs;
+			while(i < (int)ft_strlen(line.str ))
+			{
+				ft_putchar(line.str[i]);
+				i++;
+			}
+		 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
+		 	go_right(&line);
+		// 	fprintf(ttyfd, "------>%d\n", line.curs);
 		}
 		else
 		{
-			//***************************//
-			// fixe this part//
-			//********************//
+			//fprintf(ttyfd, "------>%s\n", line.str);
 			fprintf(ttyfd, "------>%x\n", buff);
 			if (buff == LFTARROW)
-			{
-				cm_cap = tgetstr("cm", NULL);
-				tputs(tgoto(cm_cap, (line.curs - 1), 1), 1, putchar);
-			}
+				go_left(&line);
+			else if (buff == RTARROW)
+				go_right(&line);
+			// else if (buff == DEL)
+			//  	del_char(&line);
 		}
 	}
 }
-
+/********************************************************/
 int	main(int ac, char **av, char **env)
 { 
 	struct termios 	s_termios;
@@ -136,11 +148,7 @@ int	main(int ac, char **av, char **env)
 		s_termios.c_lflag &= ~(ECHO | ICANON);
 		if (tcsetattr(0, 0, &s_termios) == -1)
           return (-1);
-	}
-	t_line line;
-	line.curs = 0;
-	line.str = NULL;
-	
+	}	
 	while (1)
 	{
 		ft_prompt();

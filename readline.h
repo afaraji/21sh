@@ -20,6 +20,7 @@
 # define HOME 0x485B1B
 # define END 0x465B1B
 # define TAB 0x465B09
+# define DEL 0x7f
 
 typedef struct s_line
 {
@@ -27,4 +28,11 @@ typedef struct s_line
     int curs;
 } t_line;
 
+
+int		ft_intputchar(int c);
+void    go_left(t_line *line);
+void    go_right(t_line *line);
+void    del_char(t_line *line);
+
 #endif
+
