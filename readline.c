@@ -113,12 +113,19 @@ void	read_line(int fd)
 {
 	int			buff;
 	t_line		line;
+	int			col;
+	int			coef;
+	int			i;
+	int			j;
 
 	if (fd < 0 || read(fd, &buff, 0) < 0)
 		return;
-	FILE *ttyfd = fopen("/dev/ttys001", "w");
+	FILE *ttyfd = fopen("/dev/ttys000", "w");
 	line.curs = 0;
 	line.str = ft_strdup("");
+	col = 3;
+	coef = 1;
+	j = 0;
 	while (1)
 	{
 		buff = 0;
@@ -126,11 +133,28 @@ void	read_line(int fd)
 		if (ft_isprint(buff))
 		{
 			line.str = ft_join_pos(line.str, buff, line.curs);
-			put_line_curs(&line);
+			col++;
+			//fprintf(ttyfd, "------> term_column%d-------> my_col%d\n************\n", tgetnum("co"), col);
+			//fprintf(ttyfd, "------>%d\n", i);
+			if (col != tgetnum("co") && col != i)
+			{
+				put_line_curs(&line);
+			}
+			else if (col == tgetnum("co")|| col == i)
+			{
+				/************************************************/
+        		/***** need to check this part with hajar *******/
+        		/************************************************/
+				put_line_curs(&line);
+				tputs(tgetstr("do", NULL), 1, ft_intputchar);
+				coef++;
+				i = coef * tgetnum("co");
+			}
 		}
 		else
 		{
-			fprintf(ttyfd, "------>%x\n", buff);
+			fprintf(ttyfd, "------>%d\n", line.curs);
+			//fprintf(ttyfd, "------>%x\n", buff);
 			if (buff == LFTARROW)
 				go_left(&line);
 			else if (buff == RTARROW)
@@ -144,7 +168,12 @@ void	read_line(int fd)
 			/**********************************/
     		/****** make next one happen when ther is ' or " ******/
     		/**********************************/
-			else if (buff == ENTER)
+			else if (buff == ENTER && (line.str[line.curs - 1] == 39 || line.str[line.curs - 1] == 34))
+			{
+				go_down(&line);
+				j = 1;
+			}
+			else if (buff == ENTER && j == 1)
 				go_down(&line);
 		}
 	}

@@ -30,6 +30,7 @@ void    del_char(t_line *line)
         /***************************/
         tputs(tgetstr("le", NULL), 1, ft_intputchar);
         tputs(tgetstr("dc", NULL), 1, ft_intputchar);
+        line->str = ft_strsub(line->str, 0, ft_strlen(line->str) - 1);
         line->curs--;
     }
 }
