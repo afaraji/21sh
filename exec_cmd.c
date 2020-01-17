@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+ /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
@@ -11,3 +11,22 @@
 /* ************************************************************************** */
 
 #include "21sh.h"
+#include <stdarg.h>
+
+void fatal(const char *str, ...)
+{
+    va_list args;
+    
+}
+
+inline bool toto(void)
+{
+    return (true);
+}
+int main(void)
+{
+    char *line = "mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
+    printf("|%s|\n", line);
+    fatal("expesad looool\n");
+    return (0);
+}
