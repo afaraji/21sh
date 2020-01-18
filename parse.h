@@ -28,9 +28,16 @@
 # define SML	-22			/* <	*/
 # define SMLSML	-23 		/* <<	*/
 
+typedef union	u_token
+{
+	/* data */
+} 				t_token;
+
+ 
 typedef struct			s_command
 {
-	char                    *name;
+	char                    *start;
+	char					*end;
 	struct s_command        *next;
 }                               t_command;
 

@@ -13,6 +13,36 @@
 
 #include "parse.h"
 
+int		is_word(char *start, char *end)
+{
+	if (!start)
+		return (0);
+	if (!end)
+	{
+		if (!ft_isalpha(*start) && *start != '_')
+			return (0);
+		while (*start != '\0')
+		{
+			if (!ft_isalnum(*start) && *start != '_')
+				return (0);
+			start++;
+		}
+	}
+	else
+	{
+		if (!ft_isalpha(*start) && *start != '_')
+			return (0);
+		while (start <= end)
+		{
+			if (!ft_isalnum(*start) && *start != '_')
+				return (0);
+			start++;
+		}
+	}
+	
+	return (1);
+}
+
 int		is_op(char *str, int i)
 {
 	if (str[i] == ' ')
@@ -80,6 +110,7 @@ int main()
 {
 	char *line = "mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
 	char *parsed;
+	printf("%s --> %d\n", ft_strsub(line, 6, 9 - 6 + 1),is_word(&line[6], &line[9]));
 
 	parsed = parser(line);
 	return (0);
