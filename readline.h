@@ -27,16 +27,41 @@ typedef struct s_line
 {
     char *str;
     int curs;
+    int col;
+    int row;
+    int prompt_size;
 } t_line;
 
+FILE *ttyfd;
 
+int     termtype(void);
+int     ft_set_attr(void);
+void	init_line(t_line *line, char *prompt);
+char	*read_line(char *prompt);
 int		ft_intputchar(int c);
 void    go_left(t_line *line);
 void    go_right(t_line *line);
-void    del_char(t_line *line);
 void    go_home(t_line *line);
 void    go_end(t_line *line);
-void    go_down(t_line *line);
+void    del_char(t_line *line);
+char	*join_line(char *str, char c, int curs);
+char	*trim_pos(char *str, int curs);
+void	put_line_curs(t_line *line);
+void	display_line(t_line *line);
+
 
 #endif
 
+// col++;
+// if (col != tgetnum("co") && col != i)
+// 	put_line_curs(&line);
+// else if (col == tgetnum("co")|| col == i)
+// {
+// 	/************************************************/
+// 	/***** need to check this part with hajar *******/
+// 	/************************************************/
+// 	put_line_curs(&line);
+// 	tputs(tgetstr("do", NULL), 1, ft_intputchar);
+// 	coef++;
+// 	i = coef * tgetnum("co");
+// }
