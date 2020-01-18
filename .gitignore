@@ -1,6 +1,7 @@
 
 *.o
 *.a
+libft/*.a
 *.dylib
 *.out
 42sh
