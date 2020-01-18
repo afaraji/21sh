@@ -1,0 +1,10 @@
+
+*.o
+*.a
+*.dylib
+*.out
+42sh
+21sh
+*.dSYM/
+*.log
+.vscode
