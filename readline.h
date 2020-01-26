@@ -49,7 +49,6 @@ char	*trim_pos(char *str, int curs);
 void	put_line_curs(t_line *line);
 void	display_line(t_line *line);
 
-
 #endif
 
 // col++;

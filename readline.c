@@ -12,6 +12,12 @@
 
 #include "readline.h"
 
+
+/*********************************************************/
+/***** 1- find a solution for copy past with mouse *******/
+/***** 2- make a function to manage multiple lines *******/
+/***** 3- make a func for line reaching termin end *******/
+/*********************************************************/
 void	init_line(t_line *line, char *prompt)
 {
 	line->curs = 0;
@@ -33,7 +39,7 @@ void	display_line(t_line *line)
 	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
 	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
 	i = line->curs;
-	while(i < (int)ft_strlen(line->str ))
+	while(i < (int)ft_strlen(line->str))
 	{
 		ft_putchar(line->str[i]);
 		i++;
@@ -43,11 +49,12 @@ void	display_line(t_line *line)
 
 char	*read_line(char *prompt)
 {
-	int			buff;
+	int		buff;
 	t_line		line;
 	int			coef;
 	int			j;
 
+	buff = 0;
 	init_line(&line, prompt);
 	if (read(0, &buff, 0) < 0)
 		return(NULL);
@@ -80,7 +87,5 @@ char	*read_line(char *prompt)
 				go_end(&line);
 		}
 	}
-	fprintf(ttyfd, "my line is %s\n", line.str);
-	fprintf(ttyfd, "my cursor is %d\n", line.curs);
 	return (line.str);
 }
