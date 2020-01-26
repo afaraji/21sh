@@ -14,7 +14,7 @@
 # define PARSE_H
 # include "21sh.h"
 
-# define SPACE	-1			/* space */
+# define SPACE	-1			/* white space */
 # define QUOTE	-2			/* '	*/
 # define DQUOTE	-3			/* "	*/
 # define SMCLN	-4			/* ;	*/
@@ -69,6 +69,7 @@ struct SimpleCommand
 	https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
 	https://www.gnu.org/software/bash/manual/bash.html#Shell-Operation
 	https://www.cs.purdue.edu/homes/grr/SystemsProgrammingBook/Book/Chapter5-WritingYourOwnShell.pdf
+	https://git.kernel.org/pub/scm/utils/dash/dash.git/tree/src
 
 	https://catonmat.net/ftp/bash-redirections-cheat-sheet.pdf
 */

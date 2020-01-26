@@ -45,7 +45,7 @@ int		is_word(char *start, char *end)
 
 int		is_op(char *str, int i)
 {
-	if (str[i] == ' ')
+	if (ft_isspace(str[i]))
 		return (SPACE);
 	if (str[i] == 39)
 		return (QUOTE);
