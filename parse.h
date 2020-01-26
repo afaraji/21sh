@@ -38,8 +38,11 @@ typedef struct			s_command
 {
 	char                    *start;
 	char					*end;
+	char					**cmd;
+	
 	struct s_command        *next;
 }                               t_command;
+
 
 struct SimpleCommand
 {
