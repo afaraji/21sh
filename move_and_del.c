@@ -27,7 +27,7 @@ void    go_right(t_line *line)
 {
     if (line->curs < (int)ft_strlen(line->str))
     {
-        if (line->str[line->curs] == '\n')
+        if (line->str[line->curs] == '\n' || ((line->curs + line->pmt_s) % line->col) == 0)
             tputs(tgetstr("do", NULL), 1, ft_intputchar);
         else
             tputs(tgetstr("nd", NULL), 1, ft_intputchar);

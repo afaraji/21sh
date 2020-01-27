@@ -29,7 +29,7 @@ typedef struct s_line
     int curs;
     int col;
     int row;
-    int prompt_size;
+    int pmt_s;
 } t_line;
 
 FILE *ttyfd;

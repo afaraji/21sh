@@ -16,13 +16,13 @@
 /*********************************************************/
 /***** 1- find a solution for copy past with mouse *******/
 /***** 2- make a function to manage multiple lines *******/
-/***** 3- make a func for line reaching termin end *******/
 /*********************************************************/
 void	init_line(t_line *line, char *prompt)
 {
 	line->curs = 0;
 	line->str = ft_strdup("");
-	line->prompt_size = ft_strlen(prompt);
+	line->pmt_s = ft_strlen(prompt);
+	line->col = tgetnum("co");
 }
 
 void	ft_prompt(char *prompt)
@@ -51,15 +51,11 @@ char	*read_line(char *prompt)
 {
 	int		buff;
 	t_line		line;
-	int			coef;
-	int			j;
 
 	buff = 0;
 	init_line(&line, prompt);
 	if (read(0, &buff, 0) < 0)
 		return(NULL);
-	coef = 1;
-	j = 0;
 	ft_prompt(prompt);
 	while (1)
 	{
