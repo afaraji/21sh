@@ -114,12 +114,13 @@ char *parser(char *str)
 //**********************************************************
 char	*output;
 
-void	pipe_exp(str)
+void	pipe_exp(char *str)
 {
-
+	ft_putstr(str);
+	ft_putchar('\n');
 }
 
-void	exp(str)
+void	expression(str)
 {
 
 }
@@ -134,18 +135,101 @@ void	operator_exp(str)
 
 }
 
+// ************
+
+void	add_quote(t_list_token	*head, int *index, char *str)
+{
+	t_list_token	*node;
+	int i = *index;
+
+	while(node->next)
+		node = node->next;
+	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	i++;
+	while (str[i] != QUOTE)
+		i++;
+	node->next->type = QUOTE;
+	node->next->data = ft_strsub(str, *index + 1, i - 1);
+	node->next->next = NULL;
+	*index += i;
+}
+
+void	add_dquote(t_list_token	*head, int *index, char *str)		// backslash and dollar exeption
+{
+	t_list_token	*node;
+	int i = *index;
+
+	while(node->next)
+		node = node->next;
+	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	i++;
+	while (str[i] != DQUOTE)
+		i++;
+	node->next->type = DQUOTE;
+	node->next->data = ft_strsub(str, *index + 1, i - 1);
+	node->next->next = NULL;
+	*index += i;
+}
+
+t_list_token	*tokenize(char *str)
+{
+	t_list_token	*line;
+	int op;
+	int i;
+
+	line = (t_list_token *)malloc(sizeof(t_list_token));
+	line->type = -1337;
+	i = 0;
+	while(str[i])
+	{
+		if ((op = is_op(str, i)) < 0)
+		{
+			if (op == QUOTE)
+			{
+				add_quote(line, &i, str);
+			}
+			else if (op == DQUOTE)
+			{
+				add_dquote(line, &i, str);
+			}
+			else if (op == SPACE)
+			{
+				add_space(line, &i, str);
+			}
+			else if (op == ESCAPE)
+			{
+				add_escape(line, &i, str);
+			}
+			else
+			{
+				add_op(line, &i, str);
+			}
+		}
+		else
+		{
+			add_word(line, &i, str);
+		}
+		i++;
+	}
+	return (line);
+}
+
+// *************
 
 char	*parser_2(char *str)
 {
+	t_list_token	*line;
 	output = (char *)malloc(sizeof(char) * 500);
+	line = tokenize(str);
 	pipe_exp(str);
+	return (NULL);
 }
 
 //**********************************************************
 
 int main()
 {
-	char *line = "mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
+	char *line = "echo 'hello world' ; mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
 	char *parsed;
 	char **cmd_tab;
 	char *cmd;

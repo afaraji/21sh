@@ -27,6 +27,7 @@
 # define GRTGRT	-21			/* >>	*/
 # define SML	-22			/* <	*/
 # define SMLSML	-23 		/* <<	*/
+# define WORD	-42			/* word */
 
 typedef union	u_token
 {
@@ -34,14 +35,13 @@ typedef union	u_token
 } 				t_token;
 
  
-typedef struct			s_command
+typedef struct			s_list_token
 {
-	char                    *start;
-	char					*end;
-	char					**cmd;
+	int						type;
+	char					*data;
 	
-	struct s_command        *next;
-}                               t_command;
+	struct s_list_token        *next;
+}                               t_list_token;
 
 
 struct SimpleCommand
