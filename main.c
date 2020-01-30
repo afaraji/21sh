@@ -16,7 +16,7 @@ int	main(int ac, char **av, char **env)
 {
 	char	*line;
 
-	ttyfd = fopen("/dev/ttys000", "w");
+	ttyfd = fopen("/dev/ttys002", "w");
 	if (ft_set_attr())
 		return (0);
 	while (1)

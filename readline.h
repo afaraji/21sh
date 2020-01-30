@@ -26,6 +26,7 @@
 typedef struct s_line
 {
     char *str;
+    char *cmd;
     int curs;
     int col;
     int row;
