@@ -79,7 +79,6 @@ int	get_cmd(t_line *line, char buff, int *j)
 		line->cmd = ft_strjoin(line->cmd, line->str);
 		return(1);
 	}
-	fprintf(ttyfd, "+++++buff:%d+++j=%d\n", buff, *j);
 	if (buff == 34 && *j == 0)
 		*j = 1;
 	else if (buff == 39 && *j == 0)
@@ -134,6 +133,6 @@ char	*read_line(char *prompt)
 		else
 			move_curs(line, buff);
 	}
-	fprintf(ttyfd, "------------------------> line.cmd : %s------------------------> line.str : %s", line->cmd, line->str);
+	//fprintf(ttyfd, "------------------------> file_str : %s\n", file_str);
 	return (line->cmd);
 }

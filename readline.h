@@ -22,6 +22,7 @@
 # define TAB 0x465B09
 # define DEL 0x7f
 # define ENTER 0xa
+# define BUFF_SIZE 4
 
 typedef struct s_line
 {
@@ -32,6 +33,13 @@ typedef struct s_line
     int row;
     int pmt_s;
 } t_line;
+
+typedef struct s_hist
+{
+    char *hist_str;
+    struct s_hist *next;
+    struct s_hist *prec;
+}   t_hist;
 
 FILE *ttyfd;
 
@@ -49,6 +57,7 @@ char	*join_line(char *str, char c, int curs);
 char	*trim_pos(char *str, int curs);
 void	put_line_curs(t_line *line);
 void	display_line(t_line *line);
+int		get_next_line(const int fd, char **line);
 
 #endif
 
