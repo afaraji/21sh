@@ -69,7 +69,30 @@ void	is_quote(t_line *line)
 	line->str = ft_strdup("");
 }
 /*********************************************************/
-int	get_cmd(t_line *line, char buff, int *j)
+void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
+{
+	t_hist	*node;
+
+	node = *his_head;
+	while (node->next)
+	{
+		node = node->next;
+	}
+	node->next = get_his_node(cmd, node);
+}
+/*********************************************************/
+void	get_cmd_2(t_line *line, t_hist **his_head)
+{
+	int i;
+
+	i = 0;
+	while(line->cmd[i])
+		i++;
+	line->cmd[i - 1] = '\0';
+	add_cmd_to_his_list(line->cmd, his_head);
+}
+/*********************************************************/
+int	get_cmd(t_line *line, char buff, int *j, t_hist **his_head)
 {
 	line->str = join_line(line->str, buff, line->curs);
 	display_line(line);
@@ -77,6 +100,7 @@ int	get_cmd(t_line *line, char buff, int *j)
 	if (buff == ENTER && *j == 0)
 	{
 		line->cmd = ft_strjoin(line->cmd, line->str);
+		get_cmd_2(line, his_head);
 		return(1);
 	}
 	if (buff == 34 && *j == 0)
@@ -109,7 +133,7 @@ void move_curs( t_line *line, int buff)
 
 }
 /*********************************************************/
-char	*read_line(char *prompt)
+char	*read_line(char *prompt, t_hist **his_head)
 {
 	int		buff;
 	t_line		*line;
@@ -127,12 +151,11 @@ char	*read_line(char *prompt)
 		read(0, &buff, 4);
 		if ((ft_isprint(buff) || buff == ENTER))
 		{
-			if (get_cmd(line, buff, &j) == 1)
+			if (get_cmd(line, buff, &j, his_head) == 1)
 				break;
 		}
 		else
 			move_curs(line, buff);
 	}
-	//fprintf(ttyfd, "------------------------> file_str : %s\n", file_str);
 	return (line->cmd);
 }

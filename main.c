@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "readline.h"
+
 t_hist	*get_his_node(char *file_str, t_hist *prec)
 {
 	t_hist	*node;
@@ -48,7 +49,7 @@ void	print_his_list(t_hist *his_head)
 	node = his_head;
 	while (node)
 	{
-		fprintf(ttyfd, "------------> history : %s\n", node->hist_str);
+		fprintf(ttyfd, "------------> history : |%s|\n", node->hist_str);
 		node = node->next;
 	}
 }
@@ -59,24 +60,28 @@ int	main(int ac, char **av, char **env)
 	char	*file_str;
 	t_hist	*his_list = NULL;
 	int fd;
-	
 
 	ttyfd = fopen("/dev/ttys001", "w");
-	fd = open("/Users/sazouaka/.myshell_history", S_IRUSR);
+	fd = open("/Users/samira/Desktop/21sh/.myshell_history", O_RDONLY);
 	if (fd < 0)
 		return (-1);
 	else
 	{
 		while (get_next_line(fd, &file_str))
 			get_his_list(file_str, &his_list);
-		print_his_list(his_list);
+		close(fd);
+		//print_his_list(his_list);
 	}
-	if (!(open("/Users/sazouaka/.myshell_history", S_IRUSR)))
-		return (-1);
 	if (ft_set_attr())
 		return (0);
+	fd = open("/Users/samira/Desktop/21sh/.myshell_history", O_WRONLY);
 	while (1)
-		line = read_line("$> ");
+	{
+		line = read_line("$> ", &his_list);
+		//write(fd, line, 500);
+		print_his_list(his_list);
+	}
+	close(fd);
 	(void)ac;
 	(void)av;
 	(void)env;
