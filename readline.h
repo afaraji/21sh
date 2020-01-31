@@ -37,7 +37,7 @@ FILE *ttyfd;
 
 int     termtype(void);
 int     ft_set_attr(void);
-void	init_line(t_line *line, char *prompt);
+t_line	*init_line(char *prompt);
 char	*read_line(char *prompt);
 int		ft_intputchar(int c);
 void    go_left(t_line *line);

@@ -26,13 +26,8 @@ char	*trim_pos(char *str, int curs)
 		i++;
 	}
 	j = curs + 1;
-	// fprintf(ttyfd, "------>here is str len : %d\n", (int)ft_strlen(str));
-	// fprintf(ttyfd, "------>here is curs pos : %d\n", j);
-	// fprintf(ttyfd, "------>here is i : %d\n", i);
 	while (j < (int)ft_strlen(str))
 	{
-	//	fprintf(ttyfd, "------>here is str : %s\n", str);
-	//	fprintf(ttyfd, "------>here is s1 : %s\n", s1);
 		s1[i] = str[j];
 		i++;
 		j++;
@@ -40,6 +35,5 @@ char	*trim_pos(char *str, int curs)
 	if(j == (int)ft_strlen(str))
 		i++;
 	s1[i]= '\0';
-	fprintf(ttyfd, "----------->here is final s1 : %s\n", s1);
 	return(s1);
 }
