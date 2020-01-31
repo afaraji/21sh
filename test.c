@@ -111,7 +111,7 @@ void	read_line(int fd)
 		}
 		else
 		{
-			printf("*********************\n");
+			printf("******************\n");
 			if (buff == LFTARROW)
 			{printf("left arrow\n");
 				cm_cap = tgetstr("cm", NULL);
