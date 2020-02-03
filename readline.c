@@ -13,10 +13,12 @@
 #include "readline.h"
 
 
-/**********************************************************/
-/****** 1- curs need to go up when delet on multiline *****/
-/****** 2- find a solution for copy past with mouse *******/
-/**********************************************************/
+/*****************************************************************/
+/****** 1- complete history : fix exit problem with terminal*****/
+/****** 2- complete history : make up and down moves *****/
+/****** 3- curs need to go up when delet on multiline *****/
+/****** 4- find a solution for copy past with mouse *******/
+/****************************************************************/
 t_line	*init_line(char *prompt)
 {
 	t_line	*line;
@@ -36,7 +38,6 @@ void	ft_prompt(char *prompt)
 	ft_putstr(prompt);
 	ft_putstr("\x1b[39m");
 }
-
 /*********************************************************/
 void	display_line(t_line *line)
 {
@@ -118,7 +119,7 @@ int	get_cmd(t_line *line, char buff, int *j, t_hist **his_head)
 	return (0);
 }
 /*********************************************************/
-void move_curs( t_line *line, int buff)
+void move_curs(t_line *line, int buff)
 {
 	if (buff == LFTARROW)
 		go_left(line);
@@ -130,7 +131,6 @@ void move_curs( t_line *line, int buff)
 		go_home(line);
 	else if (buff == END)
 		go_end(line);
-
 }
 /*********************************************************/
 char	*read_line(char *prompt, t_hist **his_head)
@@ -138,6 +138,7 @@ char	*read_line(char *prompt, t_hist **his_head)
 	int		buff;
 	t_line		*line;
 	int j;
+	int c;
 
 	j = 0;
 	buff = 0;
@@ -148,6 +149,7 @@ char	*read_line(char *prompt, t_hist **his_head)
 	while (1)
 	{
 		buff = 0;
+		c = 1;
 		read(0, &buff, 4);
 		if ((ft_isprint(buff) || buff == ENTER))
 		{

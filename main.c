@@ -42,14 +42,27 @@ void	get_his_list(char *file_str, t_hist **head)
 	
 }
 
-void	print_his_list(t_hist *his_head)
+void	print_list(t_hist *his_head)
 {
 	t_hist	*node;
 	
 	node = his_head;
 	while (node)
 	{
-		fprintf(ttyfd, "------------> history : |%s|\n", node->hist_str);
+		fprintf(ttyfd, "\n\n------------> history : |%s|\n", node->hist_str);
+		node = node->next;
+	}
+}
+
+void	save_list(t_hist *his_head, int fd)
+{
+	t_hist	*node;
+	
+	node = his_head;
+	while (node)
+	{
+		ft_putstr_fd(node->hist_str, fd);
+		ft_putchar_fd('\n', fd);
 		node = node->next;
 	}
 }
@@ -61,7 +74,7 @@ int	main(int ac, char **av, char **env)
 	t_hist	*his_list = NULL;
 	int fd;
 
-	ttyfd = fopen("/dev/ttys001", "w");
+	ttyfd = fopen("/dev/ttys002", "w");
 	fd = open("/Users/samira/Desktop/21sh/.myshell_history", O_RDONLY);
 	if (fd < 0)
 		return (-1);
@@ -70,7 +83,6 @@ int	main(int ac, char **av, char **env)
 		while (get_next_line(fd, &file_str))
 			get_his_list(file_str, &his_list);
 		close(fd);
-		//print_his_list(his_list);
 	}
 	if (ft_set_attr())
 		return (0);
@@ -78,8 +90,12 @@ int	main(int ac, char **av, char **env)
 	while (1)
 	{
 		line = read_line("$> ", &his_list);
-		//write(fd, line, 500);
-		print_his_list(his_list);
+		//print_list(his_list);
+		if (ft_strcmp(line, "exit") == 0)
+		{
+			save_list(his_list, fd);
+			return 0;
+		}
 	}
 	close(fd);
 	(void)ac;

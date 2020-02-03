@@ -61,17 +61,3 @@ int		get_next_line(const int fd, char **line);
 t_hist	*get_his_node(char *file_str, t_hist *prec);
 
 #endif
-
-// col++;
-// if (col != tgetnum("co") && col != i)
-// 	put_line_curs(&line);
-// else if (col == tgetnum("co")|| col == i)
-// {
-// 	/************************************************/
-// 	/***** need to check this part with hajar *******/
-// 	/************************************************/
-// 	put_line_curs(&line);
-// 	tputs(tgetstr("do", NULL), 1, ft_intputchar);
-// 	coef++;
-// 	i = coef * tgetnum("co");
-// }
