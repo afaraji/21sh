@@ -73,9 +73,11 @@ int	main(int ac, char **av, char **env)
 	char	*file_str;
 	t_hist	*his_list = NULL;
 	int fd;
+	char	*buff;
 
-	ttyfd = fopen("/dev/ttys002", "w");
-	fd = open("/Users/samira/Desktop/21sh/.myshell_history", O_RDONLY);
+	buff = NULL;
+	ttyfd = fopen("/dev/ttys001", "w");
+	fd = open(ft_strjoin(getcwd(buff, 500) , "/.myshell_history"), O_RDONLY);
 	if (fd < 0)
 		return (-1);
 	else
@@ -86,13 +88,14 @@ int	main(int ac, char **av, char **env)
 	}
 	if (ft_set_attr())
 		return (0);
-	fd = open("/Users/samira/Desktop/21sh/.myshell_history", O_WRONLY);
+	fd = open(ft_strjoin(getcwd(buff, 500) , "/.myshell_history"), O_WRONLY);
 	while (1)
 	{
-		line = read_line("$> ", &his_list);
+		line = read_line("\n$> ", &his_list);
 		//print_list(his_list);
 		if (ft_strcmp(line, "exit") == 0)
 		{
+
 			save_list(his_list, fd);
 			return 0;
 		}

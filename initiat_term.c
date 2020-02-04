@@ -37,9 +37,13 @@ int termtype(void)
 int ft_set_attr(void)
 {
     struct termios 	s_termios;
+	struct termios old_termios;
+	
+	
 
 	if (termtype())
 	{
+		tcgetattr(0, &old_termios);
 		if (tcgetattr(0, &s_termios) == -1)
           return (1);
 		s_termios.c_lflag &= ~(ECHO | ICANON);

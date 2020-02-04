@@ -19,12 +19,15 @@ char	*join_line(char *str, char c, int curs)
 
 	i = 0;
 	j = 0;
+	if (c == '\n')
+		return(str);
 	char *s1 = malloc(sizeof(char)* (ft_strlen(str) + 2));
 	while(i < curs)
 	{
 		s1[i] = str[i];
 		i++;
 	}
+	
 	s1[i] = c;
 	j = curs;
 	while(j < (int)ft_strlen(str))
