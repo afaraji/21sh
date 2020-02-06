@@ -49,6 +49,18 @@ struct SimpleCommand
         char ** _arguments;
 };
 
+// ***************************************
+
+typedef struct			s_pipe_seq
+{
+	int						type;
+	char					*data;
+	
+	struct s_list_token        *next;
+}	t_;
+
+// ***************************************
+
 // struct Command { 
 //         int _numberOfAvailableSimpleCommands; 
 //         int _numberOfSimpleCommands; 
