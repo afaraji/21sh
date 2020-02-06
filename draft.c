@@ -154,3 +154,9 @@
 // src: https://my.safaribooksonline.com/book/operating-systems-and-server-administration/unix/1565923472/syntax/lbs.appd.div.3
 
 */
+
+// https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/
+// https://www.geeksforgeeks.org/recursive-descent-parser/
+// https://theswissbay.ch/pdf/Gentoomen%20Library/Programming/Bash/O%27Reilly%20bash%20CookBook.pdf
+// http://man7.org/linux/man-pages/man1/bash.1.html
+// 
