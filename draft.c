@@ -87,29 +87,24 @@
 	   | elif <compound_list> then <compound_list> else <compound_list>
 	   | elif <compound_list> then <compound_list> <elif_clause>
 
-<case_clause> ::=  <pattern_list>
-		|  <case_clause_sequence> <pattern_list>
+<case_clause> ::=  <pattern_list> | <case_clause_sequence> <pattern_list>
 
 <pattern_list> ::=  <newline_list> <pattern> ')' <compound_list>
-		 |  <newline_list> <pattern> ')' <newline_list>
-		 |  <newline_list> '(' <pattern> ')' <compound_list>
-		 |  <newline_list> '(' <pattern> ')' <newline_list>
+                    | <newline_list> <pattern> ')' <newline_list>
+                    | <newline_list> '(' <pattern> ')' <compound_list>
+                    | <newline_list> '(' <pattern> ')' <newline_list>
 
-<case_clause_sequence> ::=  <pattern_list> ';;'
-			 |  <case_clause_sequence> <pattern_list> ';;'
+<case_clause_sequence> ::=  <pattern_list> ';;' |  <case_clause_sequence> <pattern_list> ';;'
 
-<pattern> ::=  <word>
-	    |  <pattern> '|' <word>
+<pattern> ::=  <word> |  <pattern> '|' <word>
 
 
 <list> ::=   <newline_list> <list0>
 
-<compound_list> ::=  <list>
-		  |  <newline_list> <list1>
+<compound_list> ::=  <list> | <newline_list> <list1>
 
-<list0> ::=   <list1> '\n' <newline_list>
-	   |  <list1> '&' <newline_list>
-	   |  <list1> ';' <newline_list>
+<list0> ::=   <list1> '\n' <newline_list> | <list1> '&' <newline_list>
+            | <list1> ';' <newline_list>
 
 <list1> ::=   <list1> '&&' <newline_list> <list1>
 	   |  <list1> '||' <newline_list> <list1>
@@ -118,36 +113,26 @@
 	   |  <list1> '\n' <newline_list> <list1>
 	   |  <pipeline_command>
 
-<list_terminator> ::= '\n'
-		   |  ';'
+<list_terminator> ::= '\n' | ';'
 
-<newline_list> ::=
-		  |  <newline_list> '\n'
+<newline_list> ::= | <newline_list> '\n'
 
-<simple_list> ::=  <simple_list1>
-		|  <simple_list1> '&'
-		|  <simple_list1> ';'
+<simple_list> ::=  <simple_list1> | <simple_list1> '&' | <simple_list1> ';'
 
 <simple_list1> ::=  <simple_list1> '&&' <newline_list> <simple_list1>
-		 |  <simple_list1> '||' <newline_list> <simple_list1>
-		 |  <simple_list1> '&' <simple_list1>
-		 |  <simple_list1> ';' <simple_list1>
-		 |  <pipeline_command>
+                    |  <simple_list1> '||' <newline_list> <simple_list1>
+                    |  <simple_list1> '&' <simple_list1>
+                    |  <simple_list1> ';' <simple_list1>
+                    |  <pipeline_command>
 
-<pipeline_command> ::= <pipeline>
-		    |  '!' <pipeline>
-		    |  <timespec> <pipeline>
-		    |  <timespec> '!' <pipeline>
-		    |  '!' <timespec> <pipeline>
+<pipeline_command> ::= <pipeline> | '!' <pipeline> | <timespec> <pipeline>
+                    | <timespec> '!' <pipeline> | '!' <timespec> <pipeline>
 
-<pipeline> ::=
-	  <pipeline> '|' <newline_list> <pipeline>
-       |  <command>
+<pipeline> ::= <pipeline> '|' <newline_list> <pipeline> | <command>
 
 <time_opt> ::= '-p'
 
-<timespec> ::=  time
-	     |  time <time_opt>
+<timespec> ::=  time | time <time_opt>
 
 .XE "BNF (Backus-Naur Form)"
 .XE "bash" "syntax, BNF form of"
