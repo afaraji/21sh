@@ -14,11 +14,6 @@
 
 
 /*****************************************************************/
-/****** - fixe history : fix exit problem with terminal*****/
-/****** - fixe history : fix exit problem with line->curs = 0 in the start*****/
-/****** - fixe quotes qnd double quotes : even if I delet the quote it assumes that there is already a quote*****/
-/****** - complete history : how about !-1 should I not put it on the history file ?*****/
-/****** - complete history : make up and down moves *****/
 /****** - reinicialiser termcap avant exit *****/
 /****** - curs need to go up when delet on multiline *****/
 /****** - find a solution for copy past with mouse *******/
@@ -58,66 +53,6 @@ void	display_line(t_line *line)
 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }
 /*********************************************************/
-void	is_dquote(t_line *line)
-{
-	ft_prompt("dquote> ");
-	line->pmt_s = ft_strlen("dquote> ");
-	line->curs = 0;
-	line->str = ft_strdup("");
-}
-/*********************************************************/
-void	is_quote(t_line *line)
-{
-	ft_prompt("quote> ");
-	line->pmt_s = ft_strlen("quote> ");
-	line->curs = 0;
-	line->str = ft_strdup("");
-}
-/*********************************************************/
-void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
-{
-	t_hist	*node;
-	int		i;
-
-	node = *his_head;
-	while (node->next)
-	{
-		node = node->next;
-	}
-	i = 0;
-	while (cmd[i])
-		i++;
-	node->next = get_his_node(cmd, node);
-}
-/*********************************************************/
-// int	verify_quote(t_line *line)
-// {
-// 	int i;
-
-// 	i = 0;
-// 	while (line->cmd[i])
-// 	{
-// 		if (line->cmd[i] == 34)
-// 		{
-// 			i++;
-// 			while (line->cmd[i] && line->cmd[i] != 34)
-// 				i++;
-// 			if (i ==  (int)ft_strlen(line->cmd))
-// 				return (1);
-// 		}
-// 		else if (line->cmd[i] == 39)
-// 		{
-// 			i++;
-// 			while (line->cmd[i] && line->cmd[i] != 39)
-// 				i++;
-// 			if (i ==  (int)ft_strlen(line->cmd))
-// 				return (2);
-// 		}
-// 		i++;
-// 	}
-// 	return (0);
-//}
-/*********************************************************/
 void	get_cmd(t_line *line, char buff, t_hist **his_head)
 {
 	line->str = join_line(line->str, buff, line->curs);
@@ -127,18 +62,14 @@ void	get_cmd(t_line *line, char buff, t_hist **his_head)
 	{
 		line->cmd = ft_strjoin(line->cmd, line->str);
 		add_cmd_to_his_list(line->cmd, his_head);
-		// if (verify_quote(line) == 1)
-		// 	is_dquote(line);
-		// else if (verify_quote(line) == 2)
-		// 	is_quote(line);
 	}
 }
 /*********************************************************/
-void move_curs(t_line *line, int buff, t_hist **current)
+void move_curs(t_line *line, int buff, t_hist **current, int *count)
 {
 	int i;
 
-	i = line->curs;
+	i = 0;
 	if (buff == LFTARROW)
 		go_left(line);
 	else if (buff == RTARROW)
@@ -151,10 +82,12 @@ void move_curs(t_line *line, int buff, t_hist **current)
 		go_end(line);
 	else if (buff == UPARROW)
 	{
-    	//fprintf(ttyfd, "------------> line->curs : |%d|\n", line->curs);
+		if ((*current)->prec && *count == 2)
+			*current = (*current)->prec;
+		if ((*current)->next)
+			i = ft_strlen((*current)->next->hist_str);
 		while (i > 0)
 		{
-			go_left(line);
 			del_char(line);
 			i--;
 		}
@@ -163,7 +96,35 @@ void move_curs(t_line *line, int buff, t_hist **current)
 		ft_putstr_fd(line->str, 1);
 		line->curs = ft_strlen((*current)->hist_str);
 		if ((*current)->prec)
+		{
 			*current = (*current)->prec;
+			*count = 1;
+		}
+	}
+	else if (buff == DWNARROW && (*current)->next)
+	{
+		if ((*current)->prec && (*current)->next->next && *count == 1)
+		{
+			*current = (*current)->next->next;
+			*count = 2;
+		}
+		else if ((*current)->prec == NULL && *count == 1)
+		{
+			*current = (*current)->next;
+			*count = 2;
+		}
+		else if (*count == 2)
+			*current = (*current)->next;
+		i = ft_strlen(line->str);
+		while (i > 0)
+		{
+		 	del_char(line);
+		 	i--;
+		}
+		ft_strdel(&line->str);
+		line->str = ft_strdup((*current)->hist_str);
+		ft_putstr_fd(line->str, 1);
+		line->curs = ft_strlen((*current)->hist_str);
 	}
 }
 /*********************************************************/
@@ -173,6 +134,7 @@ char	*read_line(char *prompt, t_hist **his_head)
 	t_line		*line;
 	t_hist *current;
 	int i;
+	int count;
 
 	buff = 0;
 	line = init_line(prompt);
@@ -180,6 +142,7 @@ char	*read_line(char *prompt, t_hist **his_head)
 		return(NULL);
 	ft_prompt(prompt);
 	current = *his_head;
+	count = 0;
 	while (current->next)
 		current = current->next;
 	while (1)
@@ -189,7 +152,7 @@ char	*read_line(char *prompt, t_hist **his_head)
 		if ((ft_isprint(buff) || buff == ENTER))
 		{
 			get_cmd(line, buff, his_head);
-			if (buff == ENTER /*&& verify_quote(line) == 0*/)
+			if (buff == ENTER)
 			{
 				i = line->curs;
 				while (i <= (int)ft_strlen(line->str))
@@ -202,7 +165,7 @@ char	*read_line(char *prompt, t_hist **his_head)
 				
 		}
 		else
-			move_curs(line, buff, &current);
+			move_curs(line, buff, &current, &count);
 	}
 	fprintf(ttyfd, "------------> line->cmd : |%s|\n", line->cmd);
 	return (line->cmd);

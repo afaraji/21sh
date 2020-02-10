@@ -59,5 +59,9 @@ void	put_line_curs(t_line *line);
 void	display_line(t_line *line);
 int		get_next_line(const int fd, char **line);
 t_hist	*get_his_node(char *file_str, t_hist *prec);
+void	get_his_list(char *file_str, t_hist **head);
+void	add_cmd_to_his_list(char *cmd, t_hist **his_head);
+void	save_list(t_hist *his_head, int fd);
+
 
 #endif
