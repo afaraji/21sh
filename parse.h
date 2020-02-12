@@ -29,20 +29,28 @@
 # define SMLSML	-23 		/* <<	*/
 # define WORD	-42			/* word */
 
+# define _OR(m, a, b, c, d) (m == a || m == b || m == c || m == d) ? 1 : 0
+
 typedef union	u_token
 {
 	/* data */
 } 				t_token;
 
  
-typedef struct			s_list_token
+typedef struct					s_list_token
 {
-	int						type;
-	char					*data;
-	
-	struct s_list_token        *next;
+	int							type;
+	char						*data;
+	struct s_list_token			*next;
+	struct s_list_token			*prec;
 }                               t_list_token;
 
+typedef struct					s_alias
+{
+	char						*key;
+	char						*sub;
+	struct s_alias				*next;
+}                               t_alias;
 
 struct SimpleCommand
 {
@@ -57,7 +65,15 @@ typedef struct			s_pipe_seq
 	char					*data;
 	
 	struct s_list_token        *next;
-}	t_;
+}							t_pipe_seq;
+
+typedef struct			s_redirect
+{
+	int						in;
+	int						out;
+	char					*output;
+	char					*input;
+}							t_redirect;
 
 // ***************************************
 

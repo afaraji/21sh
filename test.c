@@ -1,76 +1,59 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   readline.c                                         :+:      :+:    :+:   */
+/*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: afaraji <afaraji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/13 22:00:18 by sazouaka          #+#    #+#             */
-/*   Updated: 2020/01/13 22:00:20 by sazouaka         ###   ########.fr       */
+/*   Created: 2020/02/10 16:13:41 by afaraji           #+#    #+#             */
+/*   Updated: 2020/02/10 16:14:17 by afaraji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "parse.h"
 
-#define PLUS 1
-#define MINUS 2
-#define MULT 3
-#define DIV 4
-#define O_PAR 5
-#define C_PAR 6
-#define	NUM 0
-
-typedef struct 			s_operator
-{ 
-	int					type;
-	int					value;
-	struct s_operator	*left;
-	struct s_operator	*right;
-	struct s_operator	*parent;
-}						t_operator;
-
-t_operator	*add_node(int type, t_operator **parent)
+char		*read_number(char *str)
 {
-	t_operator *node;
-
-	node = (t_operator *)malloc(sizeof(t_operator));
-	node->type = type;
-	node->left = NULL;
-	node->right = NULL;
-	if(*parent)
-		node->parent = *parent;
-	else
-		node->parent = NULL;
-	return (node);
-}
-
-void	parse(char *str)
-{
-	int i = 0;
-	t_operator *head = add_node(-42, NULL);
-	t_operator *node = head;
-
-	while (str[i])
+	int i;
+	
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (str[i] && ft_isdigit(str[i]))
 	{
-		char c = str[i];
-		if (c == '(')
-		{
-			node->left =
-		}
 		i++;
 	}
-	
-
-	return;
+	if(i == 0)
+		return (NULL);
+	return (ft_strsub(str, 0, i));
 }
 
-int	main(int ac, char **av)
-{ 
-	int i = 0;
-	parse(av[1]);
-	
+char		*read_word(char *str)
+{
+	int i;
 
-	return (0);
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+	{
+		i++;
+	}
+	if (i == 0)
+		return (NULL);
+	return (ft_strsub(str, 0, i));	
+}
+
+t_redirect		*rediriction(t_list_token *tokens)
+{
+	if (!_OR(tokens->type, GRT, GRTGRT, SMLSML, SML))
+		return (NULL);
+	
+}
+
+int main(int ac, char **av)
+{
+	//printf("++-->[%s]\n", read_number(av[1]));
+	printf("++%s-->[%s]\n", av[1],read_word(av[1]));
+	return 0;
 }

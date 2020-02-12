@@ -12,6 +12,7 @@
 
 
 #include "parse.h"
+#include "lexer.c"
 
 int		is_word(char *start, char *end)
 {
@@ -152,8 +153,9 @@ void	add_quote(t_list_token	*head, int *index, char *str)
 	node->next->type = QUOTE;
 	node->next->data = ft_strsub(str, *index + 1, i - *index - 1); // i = 0; or i = *index ?
 	node->next->next = NULL;
+	node->next->prec = node;
 	*index = i + 1;
-	printf("index = %d *-[%c]\n", *index, str[i + 1]);
+//	printf("index = %d *-[%c]\n", *index, str[i + 1]);
 }
 
 void	add_dquote(t_list_token	*head, int *index, char *str)		// backslash and dollar exeption
@@ -171,6 +173,7 @@ void	add_dquote(t_list_token	*head, int *index, char *str)		// backslash and dol
 	node->next->type = DQUOTE;
 	node->next->data = ft_strsub(str, *index + 1, i - *index - 1);		// i = 0; or i = *index ?
 	node->next->next = NULL;
+	node->next->prec = node;
 	*index = i + 1;
 }
 
@@ -186,6 +189,7 @@ void	add_space(t_list_token	*head, int *index, char *str)
 	node->next->type = SPACE;
 	node->next->data = NULL;
 	node->next->next = NULL;
+	node->next->prec = node;
 	while (ft_isspace(str[i]))
 		i++;
 	*index = i;
@@ -202,6 +206,7 @@ void	add_escape(t_list_token	*head, int *index, char *str)
 	node->next->type = ESCAPE;
 	node->next->data = ft_strsub(str, *index + 1, 1);printf("---|%s|---\n", node->next->data);
 	node->next->next = NULL;
+	node->next->prec = node;
 	*index += 2;
 }
 
@@ -219,6 +224,7 @@ void	add_op(t_list_token	*head, int *index, char *str, int op)
 	node->next->type = op;
 	node->next->data = NULL;
 	node->next->next = NULL;
+	node->next->prec = node;
 }
 
 void	add_word_int(t_list_token *head, int *index, char *str)
@@ -239,6 +245,7 @@ void	add_word_int(t_list_token *head, int *index, char *str)
 	node->next->type = WORD;
 	node->next->data = ft_strsub(str, *index, i - *index); // i = 0; or i = *index ?
 	node->next->next = NULL;
+	node->next->prec = node;
 	*index = i;
 }
 
@@ -252,6 +259,7 @@ t_list_token	*tokenize(char *str)
 	line->type = -1337;
 	line->next = NULL;
 	line->data = NULL;
+	line->prec = NULL;
 	i = 0;
 	
 	while(str[i])
@@ -294,15 +302,16 @@ void	token_print(t_list_token *node)
 	while (node)
 	{
 		if(node->type == WORD)
-			printf("%s", node->data);
+			printf("(%d)%s", node->type, node->data);
 		else if(node->type == QUOTE || node->type == DQUOTE)
 			printf("[%s]", node->data);
 		else
 		{
+			//printf("(%d)", node->type);
 			switch (node->type)
 			{
 			case -1:
-				printf(" ");
+				printf("_");
 				break;
 			case -4:
 				printf(";");
@@ -320,7 +329,7 @@ void	token_print(t_list_token *node)
 				printf("&");
 				break;
 			case -12:
-				printf("%s", node->data);
+				printf("[%s]", node->data);
 				break;
 			case -20:
 				printf(">");
@@ -347,14 +356,86 @@ void	token_print(t_list_token *node)
 	printf("\n");
 }
 
+void	list_token_print(t_list_token **list)
+{
+	int i = 0;
+	while (list[i])
+	{
+		printf("cmd[%d]:", i);
+		token_print(list[i]);
+		i++;
+	}
+}
+
+t_list_token	*ft_token_split2(t_list_token **node, int spliter)
+{
+	t_list_token	*head;
+	t_list_token	*tmp;
+
+	if ((*node)->type == -1337)
+		*node = (*node)->next;
+	head = *node;
+	while (head && head->type == SPACE)
+		head = head->next;
+	while (*node && (*node)->type != spliter)
+		(*node) = (*node)->next;
+	if (*node && (*node)->next)
+	{
+		(*node) = (*node)->next;
+		tmp = (*node)->prec;
+		tmp->next = NULL;
+		(*node)->prec = NULL;
+	}
+	return (head);
+}
+
+t_list_token	**ft_token_split(t_list_token *line)
+{
+	t_list_token	**cmd_list;
+	t_list_token	*node;
+	int count;
+	int i;
+
+	count = 1;
+	node = line;
+	while (node)
+	{
+		if (node->type == SMCLN)
+			count++;
+		node = node->next;
+	}
+	cmd_list = (t_list_token **)malloc(sizeof(t_list_token *) * (count + 1));
+	i = 0;
+	node = line;
+	while (i < count)
+	{
+		cmd_list[i] = ft_token_split2(&line, SMCLN);
+		i++;
+	}
+	cmd_list[i] = NULL;
+	return (cmd_list);
+}
+
 char	*parser_2(char *str)
 {
 	t_list_token	*line;
-//	output = (char *)malloc(sizeof(char) * 500);
+	t_list_token	**cmd_list;
+	int i;
+
 	line = tokenize(str);
 	printf("%s\n\t\t-----------------------------------\n", str);
 	token_print(line);
-//	pipe_exp(str);
+	printf("\n\t\t-----------------------------------\n");
+	// split into commands
+	cmd_list = ft_token_split(line);
+	list_token_print(cmd_list);
+	// traitement de chaque command
+	i = 0;
+	while (cmd_list[i])
+	{
+		lexer(cmd_list[i]);
+		i++;
+	}
 	return (NULL);
 }
 
@@ -362,7 +443,7 @@ char	*parser_2(char *str)
 
 int main()
 {
-	char *line = "echo \"hello world\" ; mkdir test ; cd test ; ls -a ; ls | cat | wc -c \\> fifi ; cat fifi";
+	char *line = "{ echo \"hello world\" ; mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
 	char *parsed;
 	char **cmd_tab;
 	char *cmd;
