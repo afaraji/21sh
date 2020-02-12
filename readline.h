@@ -23,6 +23,8 @@
 # define DEL 0x7f
 # define ENTER 0xa
 # define BUFF_SIZE 4
+# define RTWORD 0x661B
+# define LFTWORD 0x621B
 
 typedef struct s_line
 {
@@ -36,9 +38,10 @@ typedef struct s_line
 
 typedef struct s_hist
 {
-    char *hist_str;
-    struct s_hist *next;
-    struct s_hist *prec;
+    char            *hist_str;
+    int             index;
+    struct s_hist   *next;
+    struct s_hist   *prec;
 }   t_hist;
 
 FILE *ttyfd;
@@ -53,13 +56,14 @@ void    go_right(t_line *line);
 void    go_home(t_line *line);
 void    go_end(t_line *line);
 void    del_char(t_line *line);
+void    del_line(t_line *line);
 char	*join_line(char *str, char c, int curs);
 char	*trim_pos(char *str, int curs);
 void	put_line_curs(t_line *line);
 void	display_line(t_line *line);
 int		get_next_line(const int fd, char **line);
-t_hist	*get_his_node(char *file_str, t_hist *prec);
-void	get_his_list(char *file_str, t_hist **head);
+t_hist	*get_his_node(char *file_str, t_hist *prec, int index);
+void	get_his_list(char *file_str, t_hist **head, int index);
 void	add_cmd_to_his_list(char *cmd, t_hist **his_head);
 void	save_list(t_hist *his_head, int fd);
 

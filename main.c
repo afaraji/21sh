@@ -36,14 +36,15 @@ int	main(int ac, char **av, char **env)
 	char	*buff;
 
 	buff = NULL;
-	ttyfd = fopen("/dev/ttys001", "w");
+	ttyfd = fopen("/dev/ttys002", "w");
 	fd = open(ft_strjoin(getcwd(buff, 500) , "/.myshell_history"), O_RDONLY);
 	if (fd < 0)
 		return (-1);
 	else
 	{
+		int i = 1;
 		while (get_next_line(fd, &file_str))
-			get_his_list(file_str, &his_list);
+			get_his_list(file_str, &his_list, i++);
 		close(fd);
 	}
 	if (ft_set_attr())

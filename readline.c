@@ -14,8 +14,8 @@
 
 
 /*****************************************************************/
+/****** - manage multiple spaces on moving left and right by word *******/
 /****** - reinicialiser termcap avant exit *****/
-/****** - curs need to go up when delet on multiline *****/
 /****** - find a solution for copy past with mouse *******/
 /****************************************************************/
 t_line	*init_line(char *prompt)
@@ -53,6 +53,27 @@ void	display_line(t_line *line)
 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }
 /*********************************************************/
+char	*ft_trim(char *s)
+{
+	int		i;
+	int		len;
+
+	if (s == NULL)
+		return (NULL);
+	len = ft_strlen(s);
+	while (ft_isspace(s[len - 1]))
+		len--;
+	i = 0;
+	while (ft_isspace(s[i]))
+	{
+		i++;
+		len--;
+	}
+	if (len <= 0)
+		len = 0;
+	return (ft_strsub(s, i, len));
+}
+/*********************************************************/
 void	get_cmd(t_line *line, char buff, t_hist **his_head)
 {
 	line->str = join_line(line->str, buff, line->curs);
@@ -60,15 +81,43 @@ void	get_cmd(t_line *line, char buff, t_hist **his_head)
 	go_right(line);
 	if (buff == ENTER)
 	{
-		line->cmd = ft_strjoin(line->cmd, line->str);
-		add_cmd_to_his_list(line->cmd, his_head);
+		line->cmd = ft_trim(ft_strjoin(line->cmd, line->str));
+		if (ft_strcmp(line->cmd, "") != 0)
+			add_cmd_to_his_list(line->cmd, his_head);
 	}
 }
 /*********************************************************/
-void move_curs(t_line *line, int buff, t_hist **current, int *count)
+t_hist	*get_node_index(t_hist **current, int index)
 {
-	int i;
+	t_hist *node;
 
+	node = *current;
+	if(index == 0)
+	{
+		while (node->next)
+			node = node->next;
+		return (node);
+	}
+	while (node)
+	{
+		if (node->index == index)
+		{
+			return (node);
+		}
+		node = node->next;
+	}
+	return (NULL);
+}
+/*********************************************************/
+void move_curs(t_line *line, int buff, t_hist **current, int *index)
+{
+	t_hist *to_print;
+	int last;
+	int i;
+	static char *old_line = NULL;
+
+	if (*index == 0 || *index == (get_node_index(current, 0))->index + 1)
+		old_line = ft_strdup(line->str);
 	i = 0;
 	if (buff == LFTARROW)
 		go_left(line);
@@ -80,51 +129,91 @@ void move_curs(t_line *line, int buff, t_hist **current, int *count)
 		go_home(line);
 	else if (buff == END)
 		go_end(line);
+	else if (buff == RTWORD && !(ft_isspace(line->str[line->curs])))
+	{
+		while (line->curs < (int)ft_strlen(line->str) && !(ft_isspace(line->str[line->curs])))
+			go_right(line);
+		while (line->curs > 0  && ft_isspace(line->str[line->curs]))
+		 	go_right(line);
+	}
+	else if (buff == RTWORD && ft_isspace(line->str[line->curs]))
+	{
+		while (line->curs < (int)ft_strlen(line->str)  && ft_isspace(line->str[line->curs]))
+		 	go_right(line);
+	}
+	else if (buff == LFTWORD && !(ft_isspace(line->str[line->curs])))
+	{
+		if (line->curs == (int)ft_strlen(line->str)/* || ft_isspace(line->str[line->curs - 1])*/)
+		{
+			// if (ft_isspace(line->str[line->curs - 1]))
+			// 	go_left(line);
+			go_left(line);
+			while (line->curs > 0  && !(ft_isspace(line->str[line->curs - 1])))
+				go_left(line);
+		}
+		else if (ft_isspace(line->str[line->curs - 1]))
+		{
+			go_left(line);
+			while (line->curs > 0  && ft_isspace(line->str[line->curs]))
+				go_left(line);
+			while (line->curs > 0  && !(ft_isspace(line->str[line->curs])) && !(ft_isspace(line->str[line->curs - 1])))
+				go_left(line);
+		}
+		while (line->curs > 0  && !(ft_isspace(line->str[line->curs])) && !(ft_isspace(line->str[line->curs - 1])))
+			go_left(line);
+	}
+	else if (buff == LFTWORD && ft_isspace(line->str[line->curs]))
+	{
+		while (line->curs > 0  && ft_isspace(line->str[line->curs]))
+		 	go_left(line);
+		while (line->curs > 0  && !(ft_isspace(line->str[line->curs])) && !(ft_isspace(line->str[line->curs - 1])))
+			go_left(line);
+	}
 	else if (buff == UPARROW)
 	{
-		if ((*current)->prec && *count == 2)
-			*current = (*current)->prec;
-		if ((*current)->next)
-			i = ft_strlen((*current)->next->hist_str);
-		while (i > 0)
+		if (*index == 0)
 		{
-			del_char(line);
-			i--;
+			to_print = get_node_index(current, *index);
+			del_line(line);
+			*index = to_print->index;
+			ft_strdel(&line->str);
+			line->str = ft_strdup(to_print->hist_str);
+			ft_putstr_fd(line->str, 1);
+			line->curs = ft_strlen(to_print->hist_str);
 		}
-		ft_strdel(&line->str);
-		line->str = ft_strdup((*current)->hist_str);
-		ft_putstr_fd(line->str, 1);
-		line->curs = ft_strlen((*current)->hist_str);
-		if ((*current)->prec)
+		else if (*index - 1 > 0)
 		{
-			*current = (*current)->prec;
-			*count = 1;
+			(*index)--;
+			to_print = get_node_index(current, *index);
+			del_line(line);
+			ft_strdel(&line->str);
+			line->str = ft_strdup(to_print->hist_str);
+			ft_putstr(line->str);
+			line->curs = ft_strlen(to_print->hist_str);
 		}
 	}
-	else if (buff == DWNARROW && (*current)->next)
+	else if (buff == DWNARROW)
 	{
-		if ((*current)->prec && (*current)->next->next && *count == 1)
+		last = (get_node_index(current, 0))->index;
+		if (*index + 1 <= last && *index)
 		{
-			*current = (*current)->next->next;
-			*count = 2;
+			(*index)++;
+			to_print = get_node_index(current, *index);
+			del_line(line);
+			ft_strdel(&line->str);
+			line->str = ft_strdup(to_print->hist_str);
+			ft_putstr(line->str);
+			line->curs = ft_strlen(to_print->hist_str);
 		}
-		else if ((*current)->prec == NULL && *count == 1)
+		else if (*index == last)
 		{
-			*current = (*current)->next;
-			*count = 2;
+			del_line(line);
+			ft_strdel(&line->str);
+			line->str = ft_strdup(old_line);
+			ft_putstr(line->str);
+			line->curs = ft_strlen(old_line);
+			(*index)++;
 		}
-		else if (*count == 2)
-			*current = (*current)->next;
-		i = ft_strlen(line->str);
-		while (i > 0)
-		{
-		 	del_char(line);
-		 	i--;
-		}
-		ft_strdel(&line->str);
-		line->str = ft_strdup((*current)->hist_str);
-		ft_putstr_fd(line->str, 1);
-		line->curs = ft_strlen((*current)->hist_str);
 	}
 }
 /*********************************************************/
@@ -132,19 +221,15 @@ char	*read_line(char *prompt, t_hist **his_head)
 {
 	int		buff;
 	t_line		*line;
-	t_hist *current;
 	int i;
-	int count;
+	int index;
 
 	buff = 0;
 	line = init_line(prompt);
 	if (read(0, &buff, 0) < 0)
 		return(NULL);
 	ft_prompt(prompt);
-	current = *his_head;
-	count = 0;
-	while (current->next)
-		current = current->next;
+	index = 0;
 	while (1)
 	{
 		buff = 0;
@@ -161,11 +246,10 @@ char	*read_line(char *prompt, t_hist **his_head)
 					i++;
 				}
 				break;
-			}
-				
+			}	
 		}
 		else
-			move_curs(line, buff, &current, &count);
+			move_curs(line, buff, his_head, &index);
 	}
 	fprintf(ttyfd, "------------> line->cmd : |%s|\n", line->cmd);
 	return (line->cmd);
