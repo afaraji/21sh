@@ -195,7 +195,7 @@ void	add_space(t_list_token	*head, int *index, char *str)
 	*index = i;
 }
 
-void	add_escape(t_list_token	*head, int *index, char *str)
+void	add_escape(t_list_token	*head, int *index, char *str) // need thinking and recoding
 {
 	t_list_token	*node;
 
@@ -204,6 +204,7 @@ void	add_escape(t_list_token	*head, int *index, char *str)
 		node = node->next;
 	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	node->next->type = ESCAPE;
+	// need to verifie if it s a reserved word
 	node->next->data = ft_strsub(str, *index + 1, 1);printf("---|%s|---\n", node->next->data);
 	node->next->next = NULL;
 	node->next->prec = node;
@@ -416,7 +417,7 @@ t_list_token	**ft_token_split(t_list_token *line)
 	return (cmd_list);
 }
 
-char	*parser_2(char *str)
+void	*parser_2(char *str)
 {
 	t_list_token	*line;
 	t_list_token	**cmd_list;
@@ -426,16 +427,17 @@ char	*parser_2(char *str)
 	printf("%s\n\t\t-----------------------------------\n", str);
 	token_print(line);
 	printf("\n\t\t-----------------------------------\n");
+	lexer(&line);
 	// split into commands
-	cmd_list = ft_token_split(line);
-	list_token_print(cmd_list);
+	// cmd_list = ft_token_split(line);
+	// list_token_print(cmd_list);
 	// traitement de chaque command
-	i = 0;
-	while (cmd_list[i])
-	{
-		lexer(cmd_list[i]);
-		i++;
-	}
+	// i = 0;
+	// while (cmd_list[i])
+	// {
+	// 	lexer(cmd_list[i]);
+	// 	i++;
+	// }
 	return (NULL);
 }
 
@@ -443,7 +445,7 @@ char	*parser_2(char *str)
 
 int main()
 {
-	char *line = "{ echo \"hello world\" ; mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
+	char *line = "echo \"hello world\" ; mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
 	char *parsed;
 	char **cmd_tab;
 	char *cmd;

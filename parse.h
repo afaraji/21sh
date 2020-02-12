@@ -29,7 +29,7 @@
 # define SMLSML	-23 		/* <<	*/
 # define WORD	-42			/* word */
 
-# define _OR(m, a, b, c, d) (m == a || m == b || m == c || m == d) ? 1 : 0
+# define _OR(m,a,b,c,d,e) (m == a || m == b || m == c ||m==d||m==e) ? 1 : 0
 
 typedef union	u_token
 {

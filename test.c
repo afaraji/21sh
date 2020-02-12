@@ -46,10 +46,12 @@ char		*read_word(char *str)
 
 t_redirect		*rediriction(t_list_token *tokens)
 {
-	if (!_OR(tokens->type, GRT, GRTGRT, SMLSML, SML))
+	if (!_OR(tokens->type, GRT, GRTGRT, SMLSML, SML, 0))
 		return (NULL);
-	
+	return (NULL);
 }
+
+
 
 int main(int ac, char **av)
 {
