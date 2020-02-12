@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-int termtype(void)
+int	termtype(void)
 {
 	int		ret;
 	char	*term_type;
@@ -34,21 +34,19 @@ int termtype(void)
 	return (1);
 }
 
-int ft_set_attr(void)
+int	ft_set_attr(void)
 {
-    struct termios 	s_termios;
-	struct termios old_termios;
-	
-	
+	struct termios	s_termios;
+	struct termios	old_termios;
 
 	if (termtype())
 	{
 		tcgetattr(0, &old_termios);
 		if (tcgetattr(0, &s_termios) == -1)
-          return (1);
+			return (1);
 		s_termios.c_lflag &= ~(ECHO | ICANON);
 		if (tcsetattr(0, 0, &s_termios) == -1)
-          return (1);
+			return (1);
 	}
-    return (0);
+	return (0);
 }

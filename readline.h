@@ -26,37 +26,37 @@
 # define RTWORD 0x661B
 # define LFTWORD 0x621B
 
-typedef struct s_line
+typedef	struct		s_line
 {
-    char *str;
-    char *cmd;
-    int curs;
-    int col;
-    int row;
-    int pmt_s;
-} t_line;
+	char			*str;
+	char			*cmd;
+	int				curs;
+	int				col;
+	int				row;
+	int				pmt_s;
+}					t_line;
 
-typedef struct s_hist
+typedef struct		s_hist
 {
-    char            *hist_str;
-    int             index;
-    struct s_hist   *next;
-    struct s_hist   *prec;
-}   t_hist;
+	char			*hist_str;
+	int				index;
+	struct s_hist	*next;
+	struct s_hist	*prec;
+}					t_hist;
 
-FILE *ttyfd;
+FILE	*ttyfd;
 
-int     termtype(void);
-int     ft_set_attr(void);
+int		termtype(void);
+int		ft_set_attr(void);
 t_line	*init_line(char *prompt);
 char	*read_line(char *prompt, t_hist **his_head);
 int		ft_intputchar(int c);
-void    go_left(t_line *line);
-void    go_right(t_line *line);
-void    go_home(t_line *line);
-void    go_end(t_line *line);
-void    del_char(t_line *line);
-void    del_line(t_line *line);
+void	go_left(t_line *line);
+void	go_right(t_line *line);
+void	go_home(t_line *line);
+void	go_end(t_line *line);
+void	del_char(t_line *line);
+void	del_line(t_line *line);
 char	*join_line(char *str, char c, int curs);
 char	*trim_pos(char *str, int curs);
 void	put_line_curs(t_line *line);
@@ -66,6 +66,9 @@ t_hist	*get_his_node(char *file_str, t_hist *prec, int index);
 void	get_his_list(char *file_str, t_hist **head, int index);
 void	add_cmd_to_his_list(char *cmd, t_hist **his_head);
 void	save_list(t_hist *his_head, int fd);
-
+void	navigate_history(t_line *line, int buff, t_hist **current, int *index);
+void	move_by_word(t_line *line, int buff);
+char	*trim_cmd(char *s);
+void	move_curs(t_line *line, int buff);
 
 #endif

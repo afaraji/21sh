@@ -21,7 +21,7 @@ t_hist	*get_his_node(char *file_str, t_hist *prec, int i)
 	node->index = i;
 	node->next = NULL;
 	node->prec = prec;
-	return(node);	
+	return (node);
 }
 
 void	get_his_list(char *file_str, t_hist **head, int index)
@@ -40,22 +40,17 @@ void	get_his_list(char *file_str, t_hist **head, int index)
 			node = node->next;
 		node->next = get_his_node(file_str, node, index);
 	}
-	
 }
 
 void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
 {
 	t_hist	*node;
-	// int		i;
 
 	node = *his_head;
 	while (node->next)
 	{
 		node = node->next;
 	}
-	// i = 0;
-	// while (cmd[i])
-	// 	i++;
 	node->next = get_his_node(cmd, node, node->index + 1);
 }
 

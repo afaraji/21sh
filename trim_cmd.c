@@ -1,21 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_intputchar.c                                    :+:      :+:    :+:   */
+/*   trim_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/18 20:21:58 by sazouaka          #+#    #+#             */
-/*   Updated: 2020/01/18 20:22:00 by sazouaka         ###   ########.fr       */
+/*   Created: 2020/02/12 22:28:55 by sazouaka          #+#    #+#             */
+/*   Updated: 2020/02/12 22:28:56 by sazouaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "readline.h"
 
-int		ft_intputchar(int c)
+char	*trim_cmd(char *s)
 {
-	char ch;
+	int		i;
+	int		len;
 
-	ch = c;
-	return (write(1, &ch, 1));
+	if (s == NULL)
+		return (NULL);
+	len = ft_strlen(s);
+	while (ft_isspace(s[len - 1]))
+		len--;
+	i = 0;
+	while (ft_isspace(s[i]))
+	{
+		i++;
+		len--;
+	}
+	if (len <= 0)
+		len = 0;
+	return (ft_strsub(s, i, len));
 }

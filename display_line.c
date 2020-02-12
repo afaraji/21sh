@@ -1,21 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_intputchar.c                                    :+:      :+:    :+:   */
+/*   display_line.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/18 20:21:58 by sazouaka          #+#    #+#             */
-/*   Updated: 2020/01/18 20:22:00 by sazouaka         ###   ########.fr       */
+/*   Created: 2020/02/12 22:32:28 by sazouaka          #+#    #+#             */
+/*   Updated: 2020/02/12 22:32:31 by sazouaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "readline.h"
 
-int		ft_intputchar(int c)
+void	display_line(t_line *line)
 {
-	char ch;
+	int	i;
 
-	ch = c;
-	return (write(1, &ch, 1));
+	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
+	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
+	i = line->curs;
+	while (i < (int)ft_strlen(line->str))
+	{
+		ft_putchar(line->str[i]);
+		i++;
+	}
+	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }

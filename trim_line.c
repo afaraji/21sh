@@ -14,16 +14,16 @@
 
 char	*trim_pos(char *str, int curs)
 {
-	int i;
-	int j;
-	char *s1;
+	int		i;
+	int		j;
+	char	*s1;
 
 	i = 0;
 	j = 0;
 	s1 = NULL;
-	if (!(s1 = (char *)malloc(sizeof(char)* (ft_strlen(str)))))
-		return(NULL);
-	while(i < curs)
+	if (!(s1 = (char *)malloc(sizeof(char) * (ft_strlen(str)))))
+		return (NULL);
+	while (i < curs)
 	{
 		s1[i] = str[i];
 		i++;
@@ -35,6 +35,6 @@ char	*trim_pos(char *str, int curs)
 		i++;
 		j++;
 	}
-	s1[i]= '\0';
-	return(s1);
+	s1[i] = '\0';
+	return (s1);
 }

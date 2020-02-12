@@ -12,32 +12,39 @@
 
 #include "readline.h"
 
-char	*join_line(char *str, char c, int curs)
+char	*join_line_2(char *str, char *s1, int i, int j)
 {
-	int i;
-	int j;
-
-	i = 0;
-	j = 0;
-	if (c == '\n')
-		return(str);
-	char *s1 = malloc(sizeof(char)* (ft_strlen(str) + 2));
-	while(i < curs)
-	{
-		s1[i] = str[i];
-		i++;
-	}
-	
-	s1[i] = c;
-	j = curs;
-	while(j < (int)ft_strlen(str))
+	fprintf(ttyfd, "i : %d   , j : %d\n", i, j);
+	while (j < (int)ft_strlen(str))
 	{
 		i++;
 		s1[i] = str[j];
 		j++;
 	}
-	if(j == (int)ft_strlen(str))
+	if (j == (int)ft_strlen(str))
 		i++;
-	s1[i]= '\0';
-	return(s1);
+	s1[i] = '\0';
+	return (s1);
+}
+
+char	*join_line(char *str, char c, int curs)
+{
+	int		i;
+	int		j;
+	char	*s1;
+
+	i = 0;
+	j = 0;
+	if (c == '\n')
+		return (str);
+	if (!(s1 = (char *)malloc(sizeof(char) * (ft_strlen(str) + 2))))
+		return (NULL);
+	while (i < curs)
+	{
+		s1[i] = str[i];
+		i++;
+	}
+	s1[i] = c;
+	j = curs;
+	return (join_line_2(str, s1, i, j));
 }
