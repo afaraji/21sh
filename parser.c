@@ -138,97 +138,86 @@ char *parser(char *str)
 
 // ************
 
-void	add_quote(t_list_token	*head, int *index, char *str)
+t_list_token	*add_quote(int *index, char *str)
 {
 	t_list_token	*node;
 	int i = *index;
 
-	node = head;
-	while(node->next)
-		node = node->next;
-	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	i++;
 	while (str[i] != 39)
 		i++;
-	node->next->type = QUOTE;
-	node->next->data = ft_strsub(str, *index + 1, i - *index - 1); // i = 0; or i = *index ?
-	node->next->next = NULL;
-	node->next->prec = node;
+	node->type = QUOTE;
+	node->data = ft_strsub(str, *index + 1, i - *index - 1); // i = 0; or i = *index ?
+	node->next = NULL;
+	node->prec = NULL;
 	*index = i + 1;
-//	printf("index = %d *-[%c]\n", *index, str[i + 1]);
+	return (node);
 }
 
-void	add_dquote(t_list_token	*head, int *index, char *str)		// backslash and dollar exeption
+t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeption
 {
 	t_list_token	*node;
 	int i = *index;
 
-	node = head;
-	while(node->next)
-		node = node->next;
 	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	i++;
 	while (str[i] != 34 && str[i - 1] != 92)		// need testing
 		i++;
-	node->next->type = DQUOTE;
-	node->next->data = ft_strsub(str, *index + 1, i - *index - 1);		// i = 0; or i = *index ?
-	node->next->next = NULL;
-	node->next->prec = node;
+	node->type = DQUOTE;
+	node->data = ft_strsub(str, *index + 1, i - *index - 1);		// i = 0; or i = *index ?
+	node->next = NULL;
+	node->prec = node;
 	*index = i + 1;
+	return (node);
 }
 
-void	add_space(t_list_token	*head, int *index, char *str)
+t_list_token	*add_space(int *index, char *str)
 {
 	t_list_token	*node;
 	int i = *index;
 
-	node = head;
-	while(node->next)
-		node = node->next;
 	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
-	node->next->type = SPACE;
-	node->next->data = NULL;
-	node->next->next = NULL;
-	node->next->prec = node;
+	node->type = SPACE;
+	node->data = NULL;
+	node->next = NULL;
+	node->prec = node;
 	while (ft_isspace(str[i]))
 		i++;
 	*index = i;
+	return (node);
 }
 
-void	add_escape(t_list_token	*head, int *index, char *str) // need thinking and recoding
+t_list_token	*add_escape(int *index, char *str) // need thinking and recoding
 {
 	t_list_token	*node;
 
-	node = head;
-	while(node->next)
-		node = node->next;
 	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
-	node->next->type = ESCAPE;
+	node->type = ESCAPE;
 	// need to verifie if it s a reserved word
-	node->next->data = ft_strsub(str, *index + 1, 1);printf("---|%s|---\n", node->next->data);
-	node->next->next = NULL;
-	node->next->prec = node;
+	node->data = ft_strsub(str, *index + 1, 1);printf("---|%s|---\n", node->data);
+	node->next = NULL;
+	node->prec = node;
 	*index += 2;
+	return (node);
 }
 
-void	add_op(t_list_token	*head, int *index, char *str, int op)
+t_list_token	*add_op(int *index, char *str, int op)
 {
 	t_list_token	*node;
 
-	node = head;
-	while(node->next)
-		node = node->next;
 	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	if (op == ANDLG || op == ORLG || op == GRTGRT || op == SMLSML)
 		*index += 1;
 	*index += 1;
-	node->next->type = op;
-	node->next->data = NULL;
-	node->next->next = NULL;
-	node->next->prec = node;
+	node->type = op;
+	node->data = NULL;
+	node->next = NULL;
+	node->prec = node;
+	return (node);
 }
 
-void	add_word_int(t_list_token *head, int *index, char *str)
+t_list_token	*add_word_int(int *index, char *str)
 {
 	int i;
 	t_list_token	*node;
@@ -239,18 +228,17 @@ void	add_word_int(t_list_token *head, int *index, char *str)
 	{
 		i++;
 	}
-	node = head;
-	while(node->next)
-		node = node->next;
 	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
-	node->next->type = WORD;
-	node->next->data = ft_strsub(str, *index, i - *index); // i = 0; or i = *index ?
-	node->next->next = NULL;
-	node->next->prec = node;
+	node->type = WORD;
+	node->data = ft_strsub(str, *index, i - *index); // i = 0; or i = *index ?
+	node->next = NULL;
+	node->prec = node;
 	*index = i;
+	return (node);
 }
 
-t_list_token	*tokenize(char *str)
+/*
+t_list_token	*tokenize(char *str, int *i)
 {
 	t_list_token	*line;
 	int op;
@@ -294,6 +282,66 @@ t_list_token	*tokenize(char *str)
 		}
 	}
 	return (line);
+}
+*/
+
+t_list_token	*tokenize(char *str, int *i)
+{
+	int op;
+
+	if ((op = is_op(str, *i)) < 0)
+	{
+		if (op == QUOTE)
+		{
+			return(add_quote(i, str));
+		}
+		else if (op == DQUOTE)
+		{
+			return(add_dquote(i, str));
+		}
+		else if (op == SPACE)
+		{
+			return(add_space(i, str));
+		}
+		else if (op == ESCAPE)
+		{
+			return(add_escape(i, str));
+		}
+		else
+		{
+			return(add_op(i, str, op));
+		}
+	}
+	else
+	{
+		return(add_word_int(i, str));
+	}
+}
+
+t_list_token	*__tokenize(char *str)
+{
+	t_list_token	*head;
+	t_list_token	*node;
+	int i;
+
+	head = NULL;
+	i = 0;
+	while(str[i])
+	{
+		if (!head)
+		{
+			head = tokenize(str, &i);
+			head->prec = NULL;
+			node = head;
+		}
+		else
+		{
+			node->next = tokenize(str, &i);
+			node->next->prec = node;
+			node = node->next;
+		}
+	}
+	return (head);
 }
 
 // *************
@@ -423,11 +471,14 @@ void	*parser_2(char *str)
 	t_list_token	**cmd_list;
 	int i;
 
-	line = tokenize(str);
-	printf("%s\n\t\t-----------------------------------\n", str);
+	line = __tokenize(str);
+	printf("%s\n\t---------------- 1st tokenization -------------------\n", str);
 	token_print(line);
-	printf("\n\t\t-----------------------------------\n");
+	printf("\t-------------------------------------------------------------\n");
 	lexer(&line);
+	printf("\t------------------- after alias and reserved words ----------------\n");
+	token_print(line);
+	printf("\t-------------------------------------------------------------\n");
 	// split into commands
 	// cmd_list = ft_token_split(line);
 	// list_token_print(cmd_list);
@@ -445,7 +496,7 @@ void	*parser_2(char *str)
 
 int main()
 {
-	char *line = "echo \"hello world\" ; mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
+	char *line = "echo \"hello world\" ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
 	char *parsed;
 	char **cmd_tab;
 	char *cmd;
