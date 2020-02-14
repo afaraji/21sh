@@ -272,7 +272,7 @@ t_list_token	*__tokenize(char *str)
 
 int main()
 {
-	char    *line = "echo ''hello world ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
+	char    *line = "echo \"hello world ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
 	t_list_token    *tokens;
 	char    **cmd_tab;
 	char    *cmd;
