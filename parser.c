@@ -75,43 +75,6 @@ int		is_op(char *str, int i)
 	return (0);
 }
 
-char *parser(char *str)
-{
-	int i;
-	int op;
-	char *new_str = (char *)malloc(sizeof(char) * 1024);
-	ft_bzero(new_str, 1024);	
-	i = 0;
-	int j = 0;
-	while(str[i])
-	{
-		if ((op = is_op(str, i)) < 0)
-		{
-			ft_putchar('|');
-			ft_putnbr(op);
-			ft_putchar('|');
-			new_str[j++] = op;
-			if (op == QUOTE || op == DQUOTE)
-			{
-				while (str[i] != op)
-				{
-					ft_putchar(str[i]);
-					new_str[j++] = str[i];
-					i++;
-				}
-			}
-		}
-		else
-		{
-			ft_putchar(str[i]);
-			new_str[j++] = str[i];
-		}
-		i++;
-	}
-	ft_putchar('\n');
-	return (new_str);
-}
-
 //**********************************************************
 // char	*output;
 
@@ -160,14 +123,14 @@ t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeptio
 	t_list_token	*node;
 	int i = *index;
 
-	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	i++;
 	while (str[i] != 34 && str[i - 1] != 92)		// need testing
 		i++;
 	node->type = DQUOTE;
 	node->data = ft_strsub(str, *index + 1, i - *index - 1);		// i = 0; or i = *index ?
 	node->next = NULL;
-	node->prec = node;
+	node->prec = NULL;
 	*index = i + 1;
 	return (node);
 }
@@ -177,11 +140,11 @@ t_list_token	*add_space(int *index, char *str)
 	t_list_token	*node;
 	int i = *index;
 
-	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	node->type = SPACE;
 	node->data = NULL;
 	node->next = NULL;
-	node->prec = node;
+	node->prec = NULL;
 	while (ft_isspace(str[i]))
 		i++;
 	*index = i;
@@ -192,12 +155,12 @@ t_list_token	*add_escape(int *index, char *str) // need thinking and recoding
 {
 	t_list_token	*node;
 
-	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	node->type = ESCAPE;
 	// need to verifie if it s a reserved word
 	node->data = ft_strsub(str, *index + 1, 1);printf("---|%s|---\n", node->data);
 	node->next = NULL;
-	node->prec = node;
+	node->prec = NULL;
 	*index += 2;
 	return (node);
 }
@@ -206,14 +169,14 @@ t_list_token	*add_op(int *index, char *str, int op)
 {
 	t_list_token	*node;
 
-	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	if (op == ANDLG || op == ORLG || op == GRTGRT || op == SMLSML)
 		*index += 1;
 	*index += 1;
 	node->type = op;
 	node->data = NULL;
 	node->next = NULL;
-	node->prec = node;
+	node->prec = NULL;
 	return (node);
 }
 
@@ -228,11 +191,11 @@ t_list_token	*add_word_int(int *index, char *str)
 	{
 		i++;
 	}
-	node->next = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
 	node->type = WORD;
 	node->data = ft_strsub(str, *index, i - *index); // i = 0; or i = *index ?
 	node->next = NULL;
-	node->prec = node;
+	node->prec = NULL;
 	*index = i;
 	return (node);
 }
@@ -288,33 +251,40 @@ t_list_token	*tokenize(char *str, int *i)
 t_list_token	*tokenize(char *str, int *i)
 {
 	int op;
+	t_list_token	*tmp;
 
 	if ((op = is_op(str, *i)) < 0)
 	{
 		if (op == QUOTE)
 		{
-			return(add_quote(i, str));
+			tmp = add_quote(i, str);
+			return (tmp);
 		}
 		else if (op == DQUOTE)
 		{
-			return(add_dquote(i, str));
+			tmp = add_dquote(i, str);
+			return (tmp);
 		}
 		else if (op == SPACE)
 		{
-			return(add_space(i, str));
+			tmp = add_space(i, str);
+			return (tmp);
 		}
 		else if (op == ESCAPE)
 		{
-			return(add_escape(i, str));
+			tmp = add_escape(i, str);
+			return (tmp);
 		}
 		else
 		{
-			return(add_op(i, str, op));
+			tmp = add_op(i, str, op);
+			return (tmp);
 		}
 	}
 	else
 	{
-		return(add_word_int(i, str));
+		tmp = add_word_int(i, str);
+		return (tmp);
 	}
 }
 
