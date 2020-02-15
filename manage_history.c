@@ -12,12 +12,27 @@
 
 #include "readline.h"
 
+char	*tmp_strdup(char *str)
+{
+	char *s;
+
+	s = ft_strdup(str);
+	int i = 0;
+	while (s[i])
+	{
+		if (s[i] == '#')
+			s[i] = '\n';
+		i++;
+	}
+	return (s);
+}
+
 t_hist	*get_his_node(char *file_str, t_hist *prec, int i)
 {
 	t_hist	*node;
 
 	node = (t_hist *)malloc(sizeof(t_hist));
-	node->hist_str = file_str;
+	node->hist_str = tmp_strdup(file_str);
 	node->index = i;
 	node->next = NULL;
 	node->prec = prec;

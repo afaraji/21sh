@@ -23,8 +23,10 @@
 # define DEL 0x7f
 # define ENTER 0xa
 # define BUFF_SIZE 4
-# define RTWORD 0x661B
-# define LFTWORD 0x621B
+# define RTWORD 0x8288E2
+# define LFTWORD 0xA5C3
+# define UPLINE 0x9188E2
+# define DWNLINE 0x9FC3
 
 typedef	struct		s_line
 {
@@ -33,6 +35,7 @@ typedef	struct		s_line
 	int				curs;
 	int				col;
 	int				row;
+	int				nline;
 	int				pmt_s;
 }					t_line;
 
@@ -69,6 +72,10 @@ void	save_list(t_hist *his_head, int fd);
 void	navigate_history(t_line *line, int buff, t_hist **current, int *index);
 void	move_by_word(t_line *line, int buff);
 char	*trim_cmd(char *s);
-void	move_curs(t_line *line, int buff);
+void	move_curs(t_line *line, int buff, int curs);
+int		verify_new_line(t_line *line);
+int		get_last_newline(t_line *line);
+void	go_up(t_line *line, int curs);
+void	go_down(t_line *line, int curs);
 
 #endif

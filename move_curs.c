@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-void	move_curs(t_line *line, int buff)
+void	move_curs(t_line *line, int buff, int curs)
 {
 	if (buff == LFTARROW)
 		go_left(line);
@@ -24,4 +24,8 @@ void	move_curs(t_line *line, int buff)
 		go_home(line);
 	else if (buff == END)
 		go_end(line);
+	else if (buff == UPLINE)
+		go_up(line, curs);
+	else if (buff == DWNLINE)
+		go_down(line, curs);
 }

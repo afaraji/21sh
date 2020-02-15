@@ -14,7 +14,6 @@
 
 char	*join_line_2(char *str, char *s1, int i, int j)
 {
-	fprintf(ttyfd, "i : %d   , j : %d\n", i, j);
 	while (j < (int)ft_strlen(str))
 	{
 		i++;

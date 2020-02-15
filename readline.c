@@ -44,6 +44,7 @@ void	ft_prompt(char *prompt)
 
 void	get_cmd(t_line *line, char buff, t_hist **his_head)
 {
+	fprintf(ttyfd, "****** here get cmd******\n");
 	line->str = join_line(line->str, buff, line->curs);
 	display_line(line);
 	go_right(line);
@@ -90,7 +91,8 @@ char	*read_line(char *prompt, t_hist **his_head)
 		}
 		else
 		{
-			move_curs(line, buff);
+			curs = line->curs;
+			move_curs(line, buff, curs);
 			navigate_history(line, buff, his_head, &index);
 			move_by_word(line, buff);
 		}
