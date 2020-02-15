@@ -60,12 +60,20 @@ struct SimpleCommand
 
 // ***************************************
 
-typedef struct			s_pipe_seq
+typedef struct				s_simple_cmd
 {
-	int						type;
-	char					*data;
-	
-	struct s_list_token        *next;
+	char					*cmd;
+	char					**cmd_tab;
+}							t_simple_cmd;
+
+typedef struct				s_pipe_seq
+{
+	int						in;
+	int						out;
+	char					*output;
+	char					*input;
+	t_simple_cmd			*left;
+	struct s_pipe_seq		*right;
 }							t_pipe_seq;
 
 typedef struct			s_redirect

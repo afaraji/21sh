@@ -270,14 +270,22 @@ t_list_token	*__tokenize(char *str)
 	return (head);
 }
 
+void	ast(t_list_token *tokens)
+{
+	
+}
+
 int main()
 {
-	char    *line = "echo \"hello world ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
+//	char    *line = "echo \"hello world\" ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
+	char    *line = "ls | cat | wc -c > fifi";
+
 	t_list_token    *tokens;
 	char    **cmd_tab;
 	char    *cmd;
 
     tokens = __tokenize(line);
     token_print(tokens);
+	ast(tokens);
 	return (0);
 }

@@ -154,22 +154,100 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 					return (2); // should break or return ??? break == return unless there is code after while
 				}
 			}
-			
 		}
 		node = node->next;
 	}
+	return (0);
+}
 
-	// after the while should be brace expension.
+int		tilde_sub(t_list_token **cmd_token)
+{
+	char *tmp;
+	char *tilde_prefix;
+	char *rest;
+	t_list_token	*node;
+	int i;
+
+	node = *cmd_token;
+	while (node)
+	{
+		if (node->type == WORD && node->data[0] == '~')
+		{
+			i = 1;
+			while (node->data[i] && node->data[i] != '/')
+				i++;
+			(node->data[i] == '/') ? (rest = ft_strdup(&(node->data[i]))) : (rest = ft_strdup(""));
+			tilde_prefix = ft_strsub(node->data, 1, i - 1);
+			if (!ft_strcmp(tilde_prefix, ""))
+			{// $HOME
+				char *home = NULL;
+				if (home)
+				{
+					free(node->data);
+					node->data = ft_strjoin(home, rest);
+				}
+				else if (1)
+				{
+					struct passwd	*pw;
+					pw = getpwuid(getuid());
+					free(node->data);
+					node->data = ft_strjoin(pw->pw_dir, rest);
+				}
+			}
+			else if(!ft_strcmp(tilde_prefix, "-"))
+			{// $OLDPWD | ~-
+				char *oldpwd = "/Users/afaraji/Desktop";
+				if(oldpwd)
+				{
+					free(node->data);
+					node->data = ft_strjoin(oldpwd, rest);
+				}
+			}
+			else if (!ft_strcmp(tilde_prefix, "+"))
+			{// $PWD
+				char *pwd = NULL;
+				if(!pwd)
+					pwd = getcwd(NULL, 0);
+				if(pwd)
+				{
+					free(node->data);
+					node->data = ft_strjoin(pwd, rest);
+				}
+			}
+			else if (node->next->type != QUOTE && node->next->type != DQUOTE)
+			{
+				tmp = ft_strjoin("/Users/", tilde_prefix);
+				if (!access(tmp, F_OK))
+				{
+					free(node->data);
+					node->data = ft_strjoin(tmp, rest);
+					free(tmp);
+					free(tilde_prefix);
+				}
+			}
+		}
+		//	freeeeeesss (rest, tilde_prefix, tmp)
+		//	reduce var num 
+		node = node->next;
+	}
+	return (0);
+}
+
+int		dollar_sub(t_list_token **cmd_token)
+{
+	
 	return (0);
 }
 
 int		lexer(t_list_token **cmd_token)
 {
 	keywords_alias_sub(cmd_token);
-//	brace_expansion(cmd_token);
-//	sub_?  Substitutes the user’s home directory ($HOME) for tilde if it is at the beginning of a word
-//	sub_user_home(cmd_token); eg. ~USER
+//	4 - brace_expansion(cmd_token);  a{b,c} becomes ab ac
+//	5 - sub_?  Substitutes the user’s home directory ($HOME) for tilde if it is at the beginning of a word
+//	6 - sub_user_home(cmd_token); eg. ~USER
+	tilde_sub(cmd_token);
 //	7 - dollar_var_sub(cmd_token); eg. $HOME $PWD...		&	10 - split to tokens using isspace
+	dollar_sub(cmd_token);
 //	8 - Does command substitution for any expression of the form $(string).		&	10 - split to tokens using isspace
 //	9 - Evaluates arithmetic expressions of the form $((string)).		&	10 - split to tokens using isspace
 //	11 - wilde_card_sub(cmd_token);
