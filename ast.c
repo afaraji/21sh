@@ -53,11 +53,11 @@ void	token_print(t_list_token *node)
 			printf("[%d:%s]", node->is_ok, node->data);
 		else
 		{
-			printf("(%d)", node->type);
-		/*	switch (node->type)
+			//printf("(%d)", node->type);
+			switch (node->type)
 			{
 			case -1:
-				printf("_");
+				printf(" ");
 				break;
 			case -4:
 				printf(";");
@@ -95,11 +95,32 @@ void	token_print(t_list_token *node)
 			default:
 				printf("[%d]", node->type);
 				break;
-			}   */
+			}
 		}
 		node = node->next;
 	}
-	printf("\n");
+	//printf("\n");
+}
+
+void	print_ast(t_pipe_seq *cmd)
+{
+	while(cmd)
+	{
+		printf("cmd[");
+		token_print(cmd->left->tokens);
+		printf("] --PIPE--> ");
+		if (cmd->right)
+		{
+			printf("cmd[");
+			token_print(cmd->right->left->tokens);
+			printf("]\n");
+		}
+		else
+		{
+			printf("standard output");
+		}
+		cmd = cmd->right;
+	}
 }
 
 t_list_token	*add_quote(int *index, char *str)
@@ -270,22 +291,68 @@ t_list_token	*__tokenize(char *str)
 	return (head);
 }
 
-void	ast(t_list_token *tokens)
+t_comp_cmd	*get_comp_cmd(t_list_token *pipe)
 {
-	
+	t_list_token	*node;
+	t_comp_cmd		*ret;
+
+	node = pipe;
+	pipe->prec = NULL;
+	while (node->next && node->next->type != PIP)
+		node = node->next;
+	if (node->next)
+	{
+		//free node->next;
+		node->next = NULL;
+	}
+	ret = (t_comp_cmd *)malloc(sizeof(t_comp_cmd));
+	ret->tokens = pipe;
+	return (ret);
+}
+
+t_pipe_seq	*ast(t_list_token *tokens)
+{
+	t_list_token	*node;
+	t_pipe_seq		*tmp = NULL;
+
+	node = tokens;
+	while (node)
+	{
+		if (node->type == PIP)
+		{
+		
+			tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
+			tmp->left = get_comp_cmd(tokens);
+			tmp->right = ast(node->next);
+			return(tmp);
+		}
+		node = node->next;
+	}
+	tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
+	tmp->left = get_comp_cmd(tokens);
+	tmp->right = NULL;
+	return(tmp);
 }
 
 int main()
 {
 //	char    *line = "echo \"hello world\" ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
-	char    *line = "ls | cat | wc -c > fifi";
+	char    *line = "echo 'lol'";
 
 	t_list_token    *tokens;
+	t_pipe_seq	*cmd;
 	char    **cmd_tab;
-	char    *cmd;
 
     tokens = __tokenize(line);
     token_print(tokens);
-	ast(tokens);
+	/*
+	should split tokens by ';' '&' '&&' '||' and specifie the two variables 
+	bg = 0/1 ===> is it a background routine ? 1 : 0
+	dependant = 0/1/2 (0 not dependt, 1 exec if $? == 0, 2 exec if $? != 0)
+	*/
+	cmd = ast(tokens); // should take tokens_tab from the split above AKA tokens_list
+	printf("\n---------------------\n");
+	print_ast(cmd);
+	printf("\n---------------------\n");
 	return (0);
 }
