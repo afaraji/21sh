@@ -356,3 +356,5 @@ int main()
 	printf("\n---------------------\n");
 	return (0);
 }
+
+//AST for pipes-seq done v1 / to do: add comp_cmd and simple_cmd to AST and generate pipe_seq list from tokens
