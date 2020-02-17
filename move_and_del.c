@@ -86,8 +86,7 @@ void	move_to_position(t_line *line)
 		else
 			tputs(tgoto(tgetstr("ch", NULL), 0, count + line->pmt_s - 1), 1, ft_intputchar);
 	}
-	(*line).curs++;
-
+	line->curs++;
 }
 
 void	go_left_2(t_line *line)
@@ -101,7 +100,6 @@ void	go_left_2(t_line *line)
 		go_upline(line);
 	else
 		tputs(tgetstr("le", NULL), 1, ft_intputchar);
-
 }
 
 void	go_left(t_line *line)
@@ -123,23 +121,33 @@ void	go_left(t_line *line)
 
 /********************************************************/
 
+void	go_right_2(t_line *line)
+{
+	tputs(tgetstr("nd", NULL), 1, ft_intputchar);
+	line->curs++;
+}
+
+void	go_right_3(t_line *line)
+{
+	tputs(tgetstr("do", NULL), 1, ft_intputchar);
+	line->curs++;
+}
+
 void	go_right(t_line *line)
 {
-	
 	if (line->curs < (int)ft_strlen(line->str))
 	{
 		if (verify_new_line(line) != 0)
 		{
-			if (((line->curs + line->pmt_s) % line->col) == 0 || line->curs%line->col == 0)
+			if (((line->curs + line->pmt_s) % line->col) == 0
+			|| line->curs%line->col == 0)
 			{
-				tputs(tgetstr("nd", NULL), 1, ft_intputchar);
-				line->curs++;
+				go_right_2(line);
 				return;
 			}
-			else if ((get_last_newline(line) + 1)  % line->col == 0)
+			else if ((get_last_newline(line))  % line->col == 0)
 			{
-				tputs(tgetstr("do", NULL), 1, ft_intputchar);
-				line->curs++;
+				go_right_3(line);
 				return;
 			}
 		}

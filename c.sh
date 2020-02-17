@@ -1,1 +1,1 @@
-gcc -Wall -Werror -Wextra -g main.c initiat_term.c ft_intputchar.c readline.c move_and_del.c join_line.c trim_line.c get_next_line.c manage_history.c navigate_history.c move_by_word.c trim_cmd.c move_curs.c display_line.c del_char_line.c move_by_line.c libft/libft.a -ltermcap
+gcc -Wall -Werror -Wextra -g main.c initiat_term.c ft_intputchar.c readline.c move_and_del.c join_line.c trim_line.c get_next_line.c manage_history.c navigate_history.c move_by_word.c trim_cmd.c move_curs.c display_line.c del_char_line.c move_by_line.c ft_strsplit_2.c libft/libft.a -ltermcap

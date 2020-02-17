@@ -72,10 +72,11 @@ void	save_list(t_hist *his_head, int fd);
 void	navigate_history(t_line *line, int buff, t_hist **current, int *index);
 void	move_by_word(t_line *line, int buff);
 char	*trim_cmd(char *s);
-void	move_curs(t_line *line, int buff, int curs);
+void	move_curs(t_line *line, int buff);
 int		verify_new_line(t_line *line);
 int		get_last_newline(t_line *line);
-void	go_up(t_line *line, int curs);
-void	go_down(t_line *line, int curs);
+void	go_up(t_line *line);
+void	go_down(t_line *line);
+char			**ft_strsplit_2(char *s, char c);
 
 #endif

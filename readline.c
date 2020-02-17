@@ -91,8 +91,7 @@ char	*read_line(char *prompt, t_hist **his_head)
 		}
 		else
 		{
-			curs = line->curs;
-			move_curs(line, buff, curs);
+			move_curs(line, buff);
 			navigate_history(line, buff, his_head, &index);
 			move_by_word(line, buff);
 		}
