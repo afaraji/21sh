@@ -19,7 +19,7 @@
 # define DWNARROW 0x425B1B
 # define HOME 0x485B1B
 # define END 0x465B1B
-# define TAB 0x465B09
+//# define TAB 0x465B09
 # define DEL 0x7f
 # define ENTER 0xa
 # define BUFF_SIZE 4
@@ -27,6 +27,10 @@
 # define LFTWORD 0xA5C3
 # define UPLINE 0x9188E2
 # define DWNLINE 0x9FC3
+# define DWNLINE 0x9FC3
+# define SELECT 0x7E325B1B
+# define COPY 0x10
+
 
 typedef	struct		s_line
 {
@@ -72,11 +76,12 @@ void	save_list(t_hist *his_head, int fd);
 void	navigate_history(t_line *line, int buff, t_hist **current, int *index);
 void	move_by_word(t_line *line, int buff);
 char	*trim_cmd(char *s);
-void	move_curs(t_line *line, int buff);
+void	move_curs(t_line *line, int buff, int *copy, int *curs, char **to_past);
 int		verify_new_line(t_line *line);
 int		get_last_newline(t_line *line);
 void	go_up(t_line *line);
 void	go_down(t_line *line);
-char			**ft_strsplit_2(char *s, char c);
+char	**ft_strsplit_2(char *s, char c);
+//void    ft_select(t_line *line, int buff);
 
 #endif

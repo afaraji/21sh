@@ -19,16 +19,16 @@ char	*trim_cmd(char *s)
 
 	if (s == NULL)
 		return (NULL);
-	len = ft_strlen(s);
-	while (ft_isspace(s[len - 1]))
-		len--;
 	i = 0;
 	while (ft_isspace(s[i]))
-	{
 		i++;
+	len = ft_strlen(s) - 1;
+	while (ft_isspace(s[len]))
 		len--;
-	}
-	if (len <= 0)
-		len = 0;
+	fprintf(ttyfd, "len : %d\n", len);
+	fprintf(ttyfd, "i : %d\n", i);
+	len = len - i + 1;
+	if (len < 0)
+	 	len = 0;
 	return (ft_strsub(s, i, len));
 }
