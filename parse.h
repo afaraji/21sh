@@ -62,8 +62,9 @@ struct SimpleCommand
 
 typedef struct				s_simple_cmd
 {
-	char					*cmd;
-	char					**cmd_tab;
+	char					*outFile; 
+	char					*inFile; 
+	char					*errFile;
 	struct s_simple_cmd		*next;
 }							t_simple_cmd;
 
@@ -79,7 +80,7 @@ typedef struct				s_comp_cmd
 
 typedef struct				s_pipe_seq
 {
-	int						dependent;	// 0/1/2 (0 not dependt, 1 exec if $? == 0, 2 exec if $? != 0)
+	int						dependent;	//(0';&' not dependt, 1 exec if $? == 0 '&&', 2 exec if $? != 0 '||')
 	t_comp_cmd				*left;
 	struct s_pipe_seq		*right;
 }							t_pipe_seq;

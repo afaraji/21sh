@@ -101,7 +101,7 @@ t_alias		*get_aliases(void)
 	node->next = (t_alias *)malloc(sizeof(t_alias));
 	node = node->next;
 	node->key = ft_strdup("lolo");
-	node->sub = ft_strdup("samsam khayba");
+	node->sub = ft_strdup("gggg khayba");
 	node->next = NULL;
 	return (aliases);
 }
