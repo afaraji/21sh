@@ -466,7 +466,7 @@ void	*parser_2(char *str)
 
 int main()
 {
-	char *line = "echo \"hello world\" ; mkdir test ; cd ~ ~ ~/lol ~-; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
+	char *line = "var=lol ; echo \"hello world\" ; mkdir test ; cd ~ ~ ~/lol ~-; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
 	char *parsed;
 	char **cmd_tab;
 	char *cmd;

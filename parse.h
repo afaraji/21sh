@@ -26,7 +26,14 @@
 # define GRT	-20 		/* >	*/
 # define GRTGRT	-21			/* >>	*/
 # define SML	-22			/* <	*/
-# define SMLSML	-23 		/* <<	*/
+# define SMLSML	-30 		/* <<	*/
+
+# define SMLAND	-24 		/* <&	*/
+# define GRTAND	-25 		/* >&	*/
+# define SMLGRT	-26 		/* <>	*/
+# define CLOBBER -27 		/* >|	*/
+# define DSMLDASH -31 		/* <<-	*/
+
 # define WORD	-42			/* word */
 
 # define _OR(m,a,b,c,d,e) (m==a||m==b||m==c||m==d||m==e) ? 1 : 0
@@ -60,12 +67,46 @@ struct SimpleCommand
 
 // ***************************************
 
+typedef struct				s_variable
+{
+	/*
+	*	env == 0 --> part of env(eg. export).
+	*	env == 1 --> part of set && only tmp.
+	*	env == 2 --> part of set && permanent.
+	*/
+	int						env;
+	char					*key;
+	char					*value;
+}							t_variable;
+
+
+typedef struct				s_io_redirect
+{
+	int						redirect_type;
+	int						io_num;
+	char					*filename;
+}							t_io_redirect;
+
+typedef struct				s_cmd_suffix
+{
+	char					*word;
+	t_io_redirect			*io_redirect;
+	struct s_cmd_suffix		*suffix;
+}							t_cmd_suffix;
+
+typedef struct				s_cmd_prefix
+{
+	t_io_redirect			*io_redirect;
+	t_variable				*ass_word;
+	struct s_cmd_prefix		*prefix;
+}							t_cmd_prefix;
+
 typedef struct				s_simple_cmd
 {
-	char					*outFile; 
-	char					*inFile; 
-	char					*errFile;
-	struct s_simple_cmd		*next;
+	char					*word;
+	char					*name;
+	t_cmd_prefix			*prefix;
+	t_cmd_suffix			*suffix;
 }							t_simple_cmd;
 
 typedef struct				s_comp_cmd
