@@ -78,10 +78,14 @@ void	move_by_word(t_line *line, int buff);
 char	*trim_cmd(char *s);
 void	move_curs(t_line *line, int buff, int *copy, int *curs, char **to_past);
 int		verify_new_line(t_line *line);
-int		get_last_newline(t_line *line);
+int		left_newline(t_line *line);
+int		len_between_newlines(t_line *line);
 void	go_up(t_line *line);
 void	go_down(t_line *line);
 char	**ft_strsplit_2(char *s, char c);
-//void    ft_select(t_line *line, int buff);
+int		get_lines_len(char **table, int limit);
+int     is_multline(char *s);
+int		len_str_from_nl(t_line *line, int pos);
+t_hist	*get_node_index(t_hist **current, int index);
 
 #endif

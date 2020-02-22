@@ -29,7 +29,7 @@ int		get_lines_len(char **table, int limit)
 
 void	go_up_2(t_line *line, char **table)
 {
-	int	len_2;
+	int	len;
 	int i;
 
 
@@ -37,10 +37,10 @@ void	go_up_2(t_line *line, char **table)
 	if ((i - 1) >= 0)
 	{
 		if (i == 1)
-			len_2 = line->curs - line->pmt_s - ft_strlen(table[i - 1]);
+			len = line->curs - line->pmt_s - ft_strlen(table[i - 1]);
 		else
-			len_2 = line->curs - ft_strlen(table[i - 1]) - 1;
-		if (len_2 >= get_lines_len(table, i - 1))
+			len = line->curs - ft_strlen(table[i - 1]) - 1;
+		if (len >= get_lines_len(table, i - 1))
 		{
 			if (line->str[line->curs] == '\n')
 				line->curs--;
@@ -49,7 +49,7 @@ void	go_up_2(t_line *line, char **table)
 		}
 		else
 		{
-			while (line->curs > 0 && line->curs > len_2)
+			while (line->curs > 0 && line->curs > len)
 				go_left(line);
 		}
 	}
@@ -60,11 +60,13 @@ void	go_up(t_line *line)
 	char	**table;
 
 	table = ft_strsplit_2(line->str, '\n');
+	
 	if (line->curs > 0)
 	{
 		go_up_2(line, table);
 	}
 }
+/*******************************************************/
 
 void	go_down_2(t_line *line, char **table)
 {

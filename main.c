@@ -36,7 +36,7 @@ int	main(int ac, char **av, char **env)
 	char	*buff;
 
 	buff = NULL;
-	ttyfd = fopen("/dev/ttys002", "w");
+	ttyfd = fopen("/dev/ttys001", "w");
 	fd = open(ft_strjoin(getcwd(buff, 500) , "/.myshell_history"), O_RDONLY);
 	if (fd < 0)
 		return (-1);

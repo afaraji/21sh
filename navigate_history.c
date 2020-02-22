@@ -12,28 +12,6 @@
 
 #include "readline.h"
 
-t_hist	*get_node_index(t_hist **current, int index)
-{
-	t_hist	*node;
-
-	node = *current;
-	if (index == 0)
-	{
-		while (node->next)
-			node = node->next;
-		return (node);
-	}
-	while (node)
-	{
-		if (node->index == index)
-		{
-			return (node);
-		}
-		node = node->next;
-	}
-	return (NULL);
-}
-
 void	navigate_history_2(t_line *line, t_hist **current, int *index)
 {
 	t_hist	*to_print;
@@ -45,7 +23,9 @@ void	navigate_history_2(t_line *line, t_hist **current, int *index)
 		*index = to_print->index;
 		ft_strdel(&line->str);
 		line->str = ft_strdup(to_print->hist_str);
-		ft_putstr_fd(line->str, 1);
+		display_line(line);
+		while (line->curs < (int)ft_strlen(line->str))
+			go_right(line);
 		line->curs = ft_strlen(to_print->hist_str);
 	}
 	else if (*index - 1 > 0)
@@ -55,7 +35,9 @@ void	navigate_history_2(t_line *line, t_hist **current, int *index)
 		del_line(line);
 		ft_strdel(&line->str);
 		line->str = ft_strdup(to_print->hist_str);
-		ft_putstr(line->str);
+		display_line(line);
+		while (line->curs < (int)ft_strlen(line->str))
+			go_right(line);
 		line->curs = ft_strlen(to_print->hist_str);
 	}
 }
@@ -73,7 +55,9 @@ void	navigate_history_3(t_line *line, t_hist **curr, int *i, char *old_line)
 		del_line(line);
 		ft_strdel(&line->str);
 		line->str = ft_strdup(to_print->hist_str);
-		ft_putstr(line->str);
+		display_line(line);
+		while (line->curs < (int)ft_strlen(line->str))
+			go_right(line);
 		line->curs = ft_strlen(to_print->hist_str);
 	}
 	else if (*i == last)
@@ -81,7 +65,9 @@ void	navigate_history_3(t_line *line, t_hist **curr, int *i, char *old_line)
 		del_line(line);
 		ft_strdel(&line->str);
 		line->str = ft_strdup(old_line);
-		ft_putstr(line->str);
+		display_line(line);
+		while (line->curs < (int)ft_strlen(line->str))
+			go_right(line);
 		line->curs = ft_strlen(old_line);
 		(*i)++;
 	}

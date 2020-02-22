@@ -16,7 +16,7 @@ int		ft_cnt_parts(char *s, char c)
 {
 	int		cnt;
 
-	cnt = 0;
+	cnt = 1;
 	while (*s != '\0')
 	{
         if (*s == c)
@@ -57,7 +57,7 @@ char			**ft_strsplit_2(char *s, char c)
     if (!(table = (char **)malloc(sizeof(char *) * (nb_word + 1))))
 		return (NULL);
     i = 0;
-    while (i <= nb_word)
+    while (i < nb_word)
     {
         get_var(s, &start, &len);
         if(!len)

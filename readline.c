@@ -44,6 +44,7 @@ void	ft_prompt(char *prompt)
 
 void	get_cmd(t_line *line, char buff, t_hist **his_head)
 {
+	line->row = 0;
 	line->str = join_line(line->str, buff, line->curs);
 	display_line(line);
 	go_right(line);

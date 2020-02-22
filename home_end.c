@@ -1,43 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   del_char_line.c                                    :+:      :+:    :+:   */
+/*   arrow.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/12 23:08:18 by sazouaka          #+#    #+#             */
-/*   Updated: 2020/02/12 23:08:20 by sazouaka         ###   ########.fr       */
+/*   Created: 2020/01/17 22:15:42 by sazouaka          #+#    #+#             */
+/*   Updated: 2020/01/17 22:15:48 by sazouaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "readline.h"
 
-void	del_char(t_line *line)
+void	go_home(t_line *line)
 {
-	if (line->curs > 0)
-	{
+	while (line->curs > 0)
 		go_left(line);
-		line->str = trim_pos(line->str, line->curs);
-		display_line(line);
-	}
 }
 
-void	del_line(t_line *line)
+void	go_end(t_line *line)
 {
-	// int i;
-
-	// i = ft_strlen(line->str);
-	// while (line->curs < i)
-	// 	go_right(line);
-	// while (i > 0)
-	// {
-	// 	go_left(line);
-	// 	tputs(tgetstr("dc", NULL), 1, ft_intputchar);
-	// 	i--;
-	// }
-	go_end(line);
-	while (line->curs)
-	{
-		del_char(line);
-	}
+	while (line->curs < (int)ft_strlen(line->str))
+		go_right(line);
 }
