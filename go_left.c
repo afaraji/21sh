@@ -19,37 +19,6 @@ void	go_upline(t_line *line)
 	tputs(tgoto(tgetstr("ch", NULL), 0, line->col - 1), 1, ft_intputchar);
 }
 
-int     is_multline(char *s)
-{
-	while (*s)
-	{
-		if (*s == '\n')
-			return (1);
-		s++;
-	}
-	return (0);
-}
-
-int		len_str_from_nl(t_line	*line, int pos)
-{
-	int i;
-	int count;
-
-	i = pos;
-	count = 0;
-	while (i > 0)
-	{
-		if (line->str[i - 1] == '\n')
-			return (count);
-		count++;
-		i--;
-	}
-	return (count + line->pmt_s - 1);
-	
-}
-
-// if line->str[line->curs + 1] == '\n' && len % line->col == 0 (add one line->curs++)
-
 void    go_left(t_line *line)
 {
 	int len;

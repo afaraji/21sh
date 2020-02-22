@@ -29,40 +29,31 @@ int		verify_new_line(t_line *line)
 	return (count);
 }
 
-int		left_newline(t_line *line)
+int     is_multline(char *s)
 {
-	int j;
-	int count;
-	j = 0;
-	count = 0;
-	while (j < (*line).curs)
+	while (*s)
 	{
-		count++;
-		if ((*line).str[j] == '\n')
-			count = 0;
-		j++;
+		if (*s == '\n')
+			return (1);
+		s++;
 	}
-	if ((count % (*line).col) == 0)
-    {
-		return (1);
-    }
 	return (0);
 }
 
-
-
-int		len_between_newlines(t_line *line)
+int		len_str_from_nl(t_line	*line, int pos)
 {
 	int i;
 	int count;
 
-	i = 0;
-	while (i < line->curs)
+	i = pos;
+	count = 0;
+	while (i > 0)
 	{
-		if (line->str[i] == '\n')
-			count = 0;
-		i++;
+		if (line->str[i - 1] == '\n')
+			return (count);
 		count++;
+		i--;
 	}
-	return (count);
+	return (count + line->pmt_s - 1);
+	
 }

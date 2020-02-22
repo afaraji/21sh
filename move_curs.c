@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-char	*select_copy_char(t_line *line, int curs)
+char	*copy_char(t_line *line, int curs)
 {
 	int	i;
 	int j;
@@ -60,7 +60,6 @@ void	past_char(t_line *line)
 	i = 0;
 	while (i < (int)ft_strlen(line->str))
 	{
-		//sleep(1);
 		ft_putchar(line->str[i]);
 		i++;
 	}
@@ -77,18 +76,13 @@ char	*join_str(t_line *line, char *to_past)
 
 	curs = line->curs;
 	tmp1 = ft_strsub(line->str, 0, curs);
-	//fprintf(ttyfd, "tmp1: %s\n", tmp1);
 	tmp2 = ft_strjoin(tmp1, to_past);
-	//fprintf(ttyfd, "tmp2: %s\n", tmp2);
 	str = ft_strjoin(tmp2, &line->str[curs]);
-	//fprintf(ttyfd, "str: %s\n", str);
 	return(str);
 }
 
-void	move_curs(t_line *line, int buff, int *start, int *curs, char **to_past)
+void	move_curs(t_line *line, int buff)
 {
-	//fprintf(ttyfd, "%X\n", buff);
-	//fprintf(ttyfd, "to-past : %s,  curs : %d\n", to_past, *curs);
 	if (buff == LFTARROW)
 		go_left(line);
 	else if (buff == RTARROW)
@@ -103,45 +97,36 @@ void	move_curs(t_line *line, int buff, int *start, int *curs, char **to_past)
 		go_up(line);
 	else if (buff == DWNLINE)
 		go_down(line);
-	else if (buff == SELECT)
-	{
-		if (*start == 1)
-		{
-			tputs(tgetstr("mr", NULL), 1, ft_intputchar);
-			//fprintf(ttyfd, "to-past : %s,  curs : %d\n", to_past, *curs);
-			*to_past = ft_strdup(select_copy_char(line, *curs));
-			tputs(tgetstr("me", NULL), 1, ft_intputchar);
-			while (line->curs <= *curs)
-				go_right(line);
-			display_line(line);
-			*start = 0;
-			//go_end(line);
-		}
-		else if (*start == 0)
-		{
-			//fprintf(ttyfd, "line->str  :  |%s|  , to-past : %s,  curs : %d\n",line->str , *to_past, *curs);
-			*curs = line->curs;
-			*start = 1;
-		}
-		
-	}
-	else if (buff == COPY && *to_past)
-	{
-		line->str = join_str(line, *to_past);
-		//fprintf(ttyfd, "line->str : %s\n", line->str);
-		int i;
+}
 
-		i = line->curs + (int)ft_strlen(*to_past);
-		while (line->curs > 0)
-		{
-			//sleep(1);
-			go_left(line);
-		}
-		past_char(line);
-		//fprintf(ttyfd, "%d\n", (int)ft_strlen(line->str) - (int)ft_strlen(*to_past));
-		while (line->curs < i)
-		{
+void	copy(t_line *line, int *start, int *curs, char **to_past)
+{
+	if (*start == 1)
+	{
+		tputs(tgetstr("mr", NULL), 1, ft_intputchar);
+		*to_past = ft_strdup(copy_char(line, *curs));
+		tputs(tgetstr("me", NULL), 1, ft_intputchar);
+		while (line->curs <= *curs)
 			go_right(line);
-		}
+		display_line(line);
+		*start = 0;
 	}
+	else if (*start == 0)
+	{
+		*curs = line->curs;
+		*start = 1;
+	}
+}
+
+void	past(t_line *line, char **to_past)
+{
+	int i;
+
+	i = line->curs + (int)ft_strlen(*to_past);
+	line->str = join_str(line, *to_past);
+	while (line->curs > 0)
+		go_left(line);
+	past_char(line);
+	while (line->curs < i)
+		go_right(line);
 }

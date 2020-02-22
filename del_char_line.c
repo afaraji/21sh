@@ -24,20 +24,7 @@ void	del_char(t_line *line)
 
 void	del_line(t_line *line)
 {
-	// int i;
-
-	// i = ft_strlen(line->str);
-	// while (line->curs < i)
-	// 	go_right(line);
-	// while (i > 0)
-	// {
-	// 	go_left(line);
-	// 	tputs(tgetstr("dc", NULL), 1, ft_intputchar);
-	// 	i--;
-	// }
 	go_end(line);
 	while (line->curs)
-	{
 		del_char(line);
-	}
 }

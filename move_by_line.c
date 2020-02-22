@@ -83,13 +83,11 @@ void	go_down_2(t_line *line, char **table)
 			len_2 = line->curs + ft_strlen(table[i]) + 1;
 		if (len_2 < get_lines_len(table, i + 1))
 		{
-			fprintf(ttyfd, "*** 1 \n");
 			while (line->curs < (int)ft_strlen(line->str) && line->curs < len_2)
 				go_right(line);
 		}
 		else
 		{
-			fprintf(ttyfd, "*** 2 \n");
 			if (line->str[line->curs] == '\n')
 			{
 				while (line->curs < (int)ft_strlen(line->str) && line->str[line->curs + 1] != '\n')

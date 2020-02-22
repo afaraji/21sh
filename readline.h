@@ -28,8 +28,8 @@
 # define UPLINE 0x9188E2
 # define DWNLINE 0x9FC3
 # define DWNLINE 0x9FC3
-# define SELECT 0x7E325B1B
-# define COPY 0x10
+# define SELECT 0xA7C3
+# define PAST 0x9A88E2
 
 
 typedef	struct		s_line
@@ -60,13 +60,14 @@ char	*read_line(char *prompt, t_hist **his_head);
 int		ft_intputchar(int c);
 void	go_left(t_line *line);
 void	go_right(t_line *line);
+void	go_up(t_line *line);
+void	go_down(t_line *line);
 void	go_home(t_line *line);
 void	go_end(t_line *line);
 void	del_char(t_line *line);
 void	del_line(t_line *line);
 char	*join_line(char *str, char c, int curs);
 char	*trim_pos(char *str, int curs);
-void	put_line_curs(t_line *line);
 void	display_line(t_line *line);
 int		get_next_line(const int fd, char **line);
 t_hist	*get_his_node(char *file_str, t_hist *prec, int index);
@@ -76,16 +77,14 @@ void	save_list(t_hist *his_head, int fd);
 void	navigate_history(t_line *line, int buff, t_hist **current, int *index);
 void	move_by_word(t_line *line, int buff);
 char	*trim_cmd(char *s);
-void	move_curs(t_line *line, int buff, int *copy, int *curs, char **to_past);
+void	move_curs(t_line *line, int buff);
 int		verify_new_line(t_line *line);
-int		left_newline(t_line *line);
-int		len_between_newlines(t_line *line);
-void	go_up(t_line *line);
-void	go_down(t_line *line);
 char	**ft_strsplit_2(char *s, char c);
 int		get_lines_len(char **table, int limit);
 int     is_multline(char *s);
 int		len_str_from_nl(t_line *line, int pos);
 t_hist	*get_node_index(t_hist **current, int index);
+void	copy(t_line *line, int *start, int *curs, char **to_past);
+void	past(t_line *line, char **to_past);
 
 #endif

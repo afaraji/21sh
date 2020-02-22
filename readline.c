@@ -58,6 +58,27 @@ void	get_cmd(t_line *line, char buff, t_hist **his_head)
 			add_cmd_to_his_list(line->str, his_head);
 	}
 }
+/****************************************************************/
+int	printable_char(t_line	*line, t_hist **his_head, int buff)
+{
+	int	curs;
+
+	if ((ft_isprint(buff) || buff == ENTER))
+	{
+		get_cmd(line, buff, his_head);
+		if (buff == ENTER)
+		{
+			curs = line->curs;
+			while (curs <= (int)ft_strlen(line->str))
+			{
+				go_right(line);
+				curs++;
+			}
+			return(1);
+		}
+	}
+	return (0);
+}
 
 /****************************************************************/
 
@@ -65,46 +86,39 @@ char	*read_line(char *prompt, t_hist **his_head)
 {
 	int		buff;
 	t_line	*line;
-	int		curs;
 	int		index;
 	int 	start;
 	static char	*to_past = NULL;
-	int curs2;
+	int curs;
 
 	buff = 0;
+	index = 0;
+	start = 0;
+	curs = 0;
 	line = init_line(prompt);
 	if (read(0, &buff, 0) < 0)
 		return (NULL);
 	ft_prompt(prompt);
-	index = 0;
-	start = 0;
-	curs2 = 0;
 	while (1)
 	{
 		buff = 0;
 		read(0, &buff, 4);
-	//	fprintf(ttyfd, "%d\n", buff);
-		if ((ft_isprint(buff) || buff == ENTER))
+		if (printable_char(line, his_head, buff))
+			break;
+		if (!(ft_isprint(buff)))
 		{
-			get_cmd(line, buff, his_head);
-			if (buff == ENTER)
+			if (buff == SELECT)
+				copy(line, &start, &curs, &to_past);
+			else if (buff == PAST && to_past)
+				past(line, &to_past);
+			else
 			{
-				curs = line->curs;
-				while (curs <= (int)ft_strlen(line->str))
-				{
-					go_right(line);
-					curs++;
-				}
-				break ;
+				move_curs(line, buff);
+				navigate_history(line, buff, his_head, &index);
+				move_by_word(line, buff);
 			}
 		}
-		else
-		{
-			move_curs(line, buff, &start, &curs2, &to_past);
-			navigate_history(line, buff, his_head, &index);
-			move_by_word(line, buff);
-		}
 	}
-	fprintf(ttyfd, "------------> line->cmd : |%s|\n", line->str);
+	fprintf( ttyfd, "cmd : |%s|\n", line->str);
 	return (line->str);
 }
