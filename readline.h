@@ -54,7 +54,7 @@ typedef struct		s_hist
 FILE	*ttyfd;
 
 int		termtype(void);
-int		ft_set_attr(void);
+int		ft_set_attr(struct termios	*s_termios);
 t_line	*init_line(char *prompt);
 char	*read_line(char *prompt, t_hist **his_head);
 int		ft_intputchar(int c);
