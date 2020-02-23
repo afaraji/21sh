@@ -38,6 +38,8 @@
 
 # define _OR(m,a,b,c,d,e) (m==a||m==b||m==c||m==d||m==e) ? 1 : 0
 
+FILE			*ttyfd;
+
 typedef union	u_token
 {
 	/* data */
