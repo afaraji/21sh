@@ -457,7 +457,7 @@ t_io_redirect	*io_redirect(t_list_token **cmd)
 			*cmd = (*cmd)->prec;
 		}
 	}
-	free(io_r);
+	//free(io_r);
 	return(NULL);
 }
 
@@ -484,9 +484,9 @@ t_variable		*ass_word(t_list_token **cmd)
 		var->key = ft_strsub((*cmd)->data, 0, i);
 		if (!is_valid_word(var->key))
 		{
-			free(var->value);
-			free(var->key);
-			free(var);
+			// free(var->value);
+			// free(var->key);
+			// free(var);
 			return (NULL);
 		}
 		var->value = ft_strdup(&((*cmd)->data[i + 1]));
@@ -531,7 +531,7 @@ t_cmd_prefix	*cmd_prefix(t_list_token **cmd)
 		return (node);
 	}
 	fprintf(ttyfd, "-----9------ cmd_prefix NULL returned\n");
-	free(node);
+	//free(node);
 	return (NULL);
 }
 
@@ -689,8 +689,6 @@ int main()
 	ttyfd = fopen("/dev/ttys003", "w");
     tokens = __tokenize(line);
     token_print(tokens);
-	printf("*************\n");
-	sleep(2);
 	/*
 	should split tokens by ';' '&' '&&' '||' and specifie the two variables 
 	bg = 0/1 ===> is it a background routine ? 1 : 0
