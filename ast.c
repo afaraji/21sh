@@ -369,6 +369,11 @@ void	print_cmdprefix(t_cmd_prefix *head)
 	}
 }
 
+void	print_simple_cmd(t_simple_cmd *cmd)
+{
+	//	look at evaluate tree from geeksforgeeks.com
+}
+
 //**********************************
 
 int				is_valid_word(char *s)
@@ -565,7 +570,7 @@ t_cmd_prefix	*cmd_prefix(t_list_token **cmd, t_list_token **end)
 	return (NULL);
 }
 
-char			*cmd_word(t_list_token **cmd, t_list_token **end)
+char			*cmd_word(t_list_token **cmd, t_list_token **end) // need to apply rule 7b ?
 {
 	char	*word;
 
@@ -585,19 +590,46 @@ char			*cmd_word(t_list_token **cmd, t_list_token **end)
 
 t_cmd_suffix	*cmd_suffix(t_list_token	**cmd, t_list_token **end)
 {
+	t_cmd_suffix	*node;
+
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd))
 		return (NULL);
 	return (NULL);
+	node = (t_cmd_suffix *)malloc(sizeof(t_cmd_suffix));
+	node->io_redirect = io_redirect(cmd, end);
+	if (node->io_redirect)
+	{
+		node->word = NULL;
+		node->suffix = cmd_suffix(cmd, end);
+		return (node);
+	}
+	node->word = cmd_word(cmd, end);
+	if (node->word)
+	{
+		node->io_redirect = NULL;
+		node->suffix = cmd_suffix(cmd, end);
+		return (node);
+	}
+	//free(node);
+	return (NULL);
 }
 
-char			*cmd_name(t_list_token	**cmd, t_list_token **end)
+char			*cmd_name(t_list_token	**cmd, t_list_token **end)	// need to apply rule 7a ?
 {
+	char	*name;
+
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd))
 		return (NULL);
+	if ((*cmd)->type == WORD)
+	{
+		name = ft_strdup((*cmd)->data);
+		*cmd = (*cmd)->next;
+		return (name);
+	}
 	return (NULL);
 }
 
@@ -638,6 +670,7 @@ t_comp_cmd	*get_comp_cmd(t_list_token *start, t_list_token *end)
 	ret = (t_comp_cmd *)malloc(sizeof(t_comp_cmd));
 	ret->tokens = start;
 	ret->cmd_list = get_simple_cmd(start, end);
+	print_simple_cmd(ret->cmd_list);
 	return (ret);
 }
 
@@ -668,7 +701,7 @@ t_pipe_seq	*ast(t_list_token *tokens)
 int main()
 {
 //	char    *line = "echo \"hello world\" ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
-	char    *line = "ls | cat | 2>> pop <& las";
+	char    *line = "ls";
 
 	t_list_token    *tokens;
 	t_pipe_seq	*cmd;
