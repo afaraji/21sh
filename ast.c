@@ -583,13 +583,21 @@ char			*cmd_word(t_list_token **cmd, t_list_token **end)
 	return (NULL);
 }
 
-t_cmd_suffix	*cmd_suffix()
+t_cmd_suffix	*cmd_suffix(t_list_token	**cmd, t_list_token **end)
 {
+	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
+		*cmd = (*cmd)->next;
+	if (!cmd || !(*cmd))
+		return (NULL);
 	return (NULL);
 }
 
 char			*cmd_name(t_list_token	**cmd, t_list_token **end)
 {
+	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
+		*cmd = (*cmd)->next;
+	if (!cmd || !(*cmd))
+		return (NULL);
 	return (NULL);
 }
 
@@ -604,14 +612,14 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 		ret->word = cmd_word(&start, &end);
 		if (ret->word)
 		{
-			ret->suffix = cmd_suffix();
+			ret->suffix = cmd_suffix(&start, &end);
 			return (ret);
 		}
 		return (ret);
 	}
 	else if ((ret->name = cmd_name(&start, &end)))
 	{
-		ret->suffix = cmd_suffix();
+		ret->suffix = cmd_suffix(&start, &end);
 		return (ret);
 	}
 	else

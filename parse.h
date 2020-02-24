@@ -92,8 +92,8 @@ typedef struct				s_io_redirect
 
 typedef struct				s_cmd_suffix
 {
-	char					*word;
 	t_io_redirect			*io_redirect;
+	char					*word;
 	struct s_cmd_suffix		*suffix;
 }							t_cmd_suffix;
 
