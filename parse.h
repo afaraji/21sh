@@ -49,7 +49,8 @@ typedef union	u_token
 typedef struct					s_list_token
 {
 	int							type;
-	int							is_ok; // for ' and " closed or not
+//	int							burned;	// if a node is read successful
+	int							is_ok;	// for ' and " closed or not
 	char						*data;
 	struct s_list_token			*next;
 	struct s_list_token			*prec;
