@@ -25,8 +25,6 @@ char	*trim_cmd(char *s)
 	len = ft_strlen(s) - 1;
 	while (ft_isspace(s[len]))
 		len--;
-	fprintf(ttyfd, "len : %d\n", len);
-	fprintf(ttyfd, "i : %d\n", i);
 	len = len - i + 1;
 	if (len < 0)
 	 	len = 0;

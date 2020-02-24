@@ -10,13 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "readline.h"
 
-int		verify_new_line(t_line *line)
+int	verify_new_line(t_line *line)
 {
-	int i;
-	int count;
+	int	i;
+	int	count;
 
 	i = 0;
 	count = 0;
@@ -29,7 +28,7 @@ int		verify_new_line(t_line *line)
 	return (count);
 }
 
-int     is_multline(char *s)
+int	is_multline(char *s)
 {
 	while (*s)
 	{
@@ -40,10 +39,10 @@ int     is_multline(char *s)
 	return (0);
 }
 
-int		len_str_from_nl(t_line	*line, int pos)
+int	len_str_from_nl(t_line *line, int pos)
 {
-	int i;
-	int count;
+	int	i;
+	int	count;
 
 	i = pos;
 	count = 0;
@@ -55,5 +54,19 @@ int		len_str_from_nl(t_line	*line, int pos)
 		i--;
 	}
 	return (count + line->pmt_s - 1);
-	
+}
+
+int	get_lines_len(char **table, int limit)
+{
+	int r;
+	int i;
+
+	r = 0;
+	i = 0;
+	while (i <= limit)
+	{
+		r = r + 1 + ft_strlen(table[i]);
+		i++;
+	}
+	return (r);
 }

@@ -19,54 +19,59 @@ int		ft_cnt_parts(char *s, char c)
 	cnt = 1;
 	while (*s != '\0')
 	{
-        if (*s == c)
-            cnt++;
+		if (*s == c)
+			cnt++;
 		s++;
 	}
 	return (cnt);
 }
 
-void    get_var(char *s, int *start, int *len)
+void	get_var(char *s, int *start, int *len)
 {
-    int i;
-    int l;
+	int i;
+	int l;
 
-    i = *start;
-    l = 0;
-    while (s[i] != '\0' && s[i] != '\n')
-    {
-        l++;
-        i++;
-    }
-    *len = l;
+	i = *start;
+	l = 0;
+	while (s[i] != '\0' && s[i] != '\n')
+	{
+		l++;
+		i++;
+	}
+	*len = l;
 }
 
-char			**ft_strsplit_2(char *s, char c)
+void	init_variables(int *len, int *start)
 {
-    char    **table;
-    int     nb_word;
-    int     i;
-    int     start;
-    int     len;
+	*len = 0;
+	*start = 0;
+}
 
-    len = 0;
-    start = 0;
-    if (!s)
-        return (NULL);
-    nb_word = ft_cnt_parts(s, c);
-    if (!(table = (char **)malloc(sizeof(char *) * (nb_word + 1))))
+char	**ft_strsplit_2(char *s, char c)
+{
+	char	**table;
+	int		nb_word;
+	int		i;
+	int		start;
+	int		len;
+
+	if (!s)
 		return (NULL);
-    i = 0;
-    while (i < nb_word)
-    {
-        get_var(s, &start, &len);
-        if(!len)
-            table[i] = ft_strdup("");
-        else
-            table[i] = ft_strsub(s, start, len);
-        start = start + len + 1;
-        i++;
-    }
-    table[i] = NULL;
-    return(table);    
+	nb_word = ft_cnt_parts(s, c);
+	if (!(table = (char **)malloc(sizeof(char *) * (nb_word + 1))))
+		return (NULL);
+	init_variables(&len, &start);
+	i = 0;
+	while (i < nb_word)
+	{
+		get_var(s, &start, &len);
+		if (!len)
+			table[i] = ft_strdup("");
+		else
+			table[i] = ft_strsub(s, start, len);
+		start = start + len + 1;
+		i++;
+	}
+	table[i] = NULL;
+	return (table);
 }

@@ -13,8 +13,6 @@
 #include "readline.h"
 
 /*****************************************************************/
-/****** - manage multiple spaces on moving left and right by word *******/
-/****** - reinicialiser termcap avant exit *****/
 /****** - find a solution for copy past with mouse *******/
 /****************************************************************/
 
@@ -119,6 +117,5 @@ char	*read_line(char *prompt, t_hist **his_head)
 			}
 		}
 	}
-	fprintf( ttyfd, "cmd : |%s|\n", line->str);
 	return (line->str);
 }

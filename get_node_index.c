@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "readline.h"
 
 t_hist	*get_node_index(t_hist **current, int index)
@@ -27,9 +26,7 @@ t_hist	*get_node_index(t_hist **current, int index)
 	while (node)
 	{
 		if (node->index == index)
-		{
 			return (node);
-		}
 		node = node->next;
 	}
 	return (NULL);

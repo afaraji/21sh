@@ -12,7 +12,13 @@
 
 #include "readline.h"
 
-void	navigate_history_2(t_line *line, t_hist **current, int *index)
+void	move_curs_right(t_line *line)
+{
+	while (line->curs < (int)ft_strlen(line->str))
+		go_right(line);
+}
+
+void	history_up(t_line *line, t_hist **current, int *index)
 {
 	t_hist	*to_print;
 
@@ -24,8 +30,7 @@ void	navigate_history_2(t_line *line, t_hist **current, int *index)
 		ft_strdel(&line->str);
 		line->str = ft_strdup(to_print->hist_str);
 		display_line(line);
-		while (line->curs < (int)ft_strlen(line->str))
-			go_right(line);
+		move_curs_right(line);
 		line->curs = ft_strlen(to_print->hist_str);
 	}
 	else if (*index - 1 > 0)
@@ -36,13 +41,12 @@ void	navigate_history_2(t_line *line, t_hist **current, int *index)
 		ft_strdel(&line->str);
 		line->str = ft_strdup(to_print->hist_str);
 		display_line(line);
-		while (line->curs < (int)ft_strlen(line->str))
-			go_right(line);
+		move_curs_right(line);
 		line->curs = ft_strlen(to_print->hist_str);
 	}
 }
 
-void	navigate_history_3(t_line *line, t_hist **curr, int *i, char *old_line)
+void	history_down(t_line *line, t_hist **curr, int *i, char *old_line)
 {
 	t_hist	*to_print;
 	int		last;
@@ -56,8 +60,7 @@ void	navigate_history_3(t_line *line, t_hist **curr, int *i, char *old_line)
 		ft_strdel(&line->str);
 		line->str = ft_strdup(to_print->hist_str);
 		display_line(line);
-		while (line->curs < (int)ft_strlen(line->str))
-			go_right(line);
+		move_curs_right(line);
 		line->curs = ft_strlen(to_print->hist_str);
 	}
 	else if (*i == last)
@@ -66,8 +69,7 @@ void	navigate_history_3(t_line *line, t_hist **curr, int *i, char *old_line)
 		ft_strdel(&line->str);
 		line->str = ft_strdup(old_line);
 		display_line(line);
-		while (line->curs < (int)ft_strlen(line->str))
-			go_right(line);
+		move_curs_right(line);
 		line->curs = ft_strlen(old_line);
 		(*i)++;
 	}
@@ -77,10 +79,13 @@ void	navigate_history(t_line *line, int buff, t_hist **current, int *index)
 {
 	static char *old_line = NULL;
 
-	if (*index == 0 || *index == (get_node_index(current, 0))->index + 1)
-		old_line = ft_strdup(line->str);
-	if (buff == UPARROW)
-		navigate_history_2(line, current, index);
-	else if (buff == DWNARROW)
-		navigate_history_3(line, current, index, old_line);
+	if (*current)
+	{
+		if (*index == 0 || *index == (get_node_index(current, 0))->index + 1)
+			old_line = ft_strdup(line->str);
+		if (buff == UPARROW)
+			history_up(line, current, index);
+		else if (buff == DWNARROW)
+			history_down(line, current, index, old_line);
+	}
 }
