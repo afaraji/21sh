@@ -342,36 +342,69 @@ t_list_token	*__tokenize(char *str)
 
 //*********** tmp print ************
 
+void	print_io_redirect(t_io_redirect *head)
+{
+	t_io_redirect *node;
+
+	fprintf(ttyfd,"IO_redirect: ");
+	if (!head)
+		return;
+	node = head;
+	fprintf(ttyfd,"[type:%d|%d|%s]\n", node->redirect_type, node->io_num, node->filename);
+}
+
 void	print_cmdprefix(t_cmd_prefix *head)
 {
 	t_cmd_prefix *node;
-	int i = 0;
 
+	fprintf(ttyfd,"------- prefix: ------\n");
 	if (!head)
-	{
-		fprintf(ttyfd, "no cmdPrefix\n");
 		return;
-	}
 	node = head;
-	while (node)
+	if (node->io_redirect)
+		print_io_redirect(head->io_redirect);
+	if (node->ass_word)
+		fprintf(ttyfd, "assWord [env = %d, %s=%s]\n", node->ass_word->env, node->ass_word->key, node->ass_word->value);
+	if (node->prefix)
+		print_cmdprefix(node->prefix);
+}
+
+void	print_cmdsuffix(t_cmd_suffix *head)
+{
+	if (!head)
+		return;
+	fprintf(ttyfd,"------- suffix: ------\n");
+	if (head->io_redirect)
 	{
-		if (node->ass_word)
-		{
-			t_variable *tmp;
-			tmp = node->ass_word;
-		}
-		if (node->io_redirect)
-		{
-			t_io_redirect *tmp;
-			tmp = node->io_redirect;
-		}
-		node = node->prefix; i++;
+		print_io_redirect(head->io_redirect);
 	}
+	if (head->word)
+	{
+		fprintf(ttyfd, "WORD:[%s]\n", head->word);
+	}
+	if (head->suffix)
+		print_cmdsuffix(head->suffix);
+	
 }
 
 void	print_simple_cmd(t_simple_cmd *cmd)
 {
-	//	look at evaluate tree from geeksforgeeks.com
+	if (cmd->prefix)
+	{
+		print_cmdprefix(cmd->prefix);
+		fprintf(ttyfd,"cmdWord ==>[%s]\n", cmd->word);
+		print_cmdsuffix(cmd->suffix);
+	}
+	else if (cmd->name)
+	{
+		fprintf(ttyfd,"cmdName ==>[%s]\n", cmd->name);
+		print_cmdsuffix(cmd->suffix);
+	}
+	else
+	{
+		fprintf(ttyfd,"naaaaaaaaaaaaaallllll\n");
+	}
+	
 }
 
 //**********************************
@@ -596,7 +629,6 @@ t_cmd_suffix	*cmd_suffix(t_list_token	**cmd, t_list_token **end)
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd))
 		return (NULL);
-	return (NULL);
 	node = (t_cmd_suffix *)malloc(sizeof(t_cmd_suffix));
 	node->io_redirect = io_redirect(cmd, end);
 	if (node->io_redirect)
@@ -605,7 +637,7 @@ t_cmd_suffix	*cmd_suffix(t_list_token	**cmd, t_list_token **end)
 		node->suffix = cmd_suffix(cmd, end);
 		return (node);
 	}
-	node->word = cmd_word(cmd, end);
+	node->word = cmd_word(cmd, end); //fprintf(ttyfd, "----------> |%s|\n", node->word);
 	if (node->word)
 	{
 		node->io_redirect = NULL;
@@ -698,16 +730,19 @@ t_pipe_seq	*ast(t_list_token *tokens)
 	return(tmp);
 }
 
-int main()
+int main(int ac, char **av)
 {
 //	char    *line = "echo \"hello world\" ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
-	char    *line = "ls";
+	char    *line;
+
+	line = ft_strdup(av[1]);
 
 	t_list_token    *tokens;
 	t_pipe_seq	*cmd;
 	
 	char    **cmd_tab;
 	ttyfd = fopen("/dev/ttys003", "w");
+	fprintf(ttyfd, "\033[H\033[2J");
     tokens = __tokenize(line);
     token_print(tokens);
 	printf("\n**********\n");

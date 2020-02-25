@@ -44,7 +44,8 @@ typedef union	u_token
 {
 	/* data */
 } 				t_token;
-
+// <& (fd or file name) check if number => fd or string => filename only in aggr
+// ls <& 0 << file 
  
 typedef struct					s_list_token
 {
