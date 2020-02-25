@@ -482,3 +482,4 @@ void    test_parse()
     //     syntax_error("Syntax error near %c\n", g_token.kind);
 }
 **************************************/
+https://lol.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.na.exe
