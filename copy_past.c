@@ -18,20 +18,31 @@ char	*copy_char(t_line *line, int curs)
 	int		j;
 	char	*to_copy;
 
-	to_copy = (char *)malloc(sizeof(char) * curs + 1);
-	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
-	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-	i = line->curs;
+	
 	j = 0;
-	while (i <= curs)
+	if (line->curs > curs)
 	{
-		to_copy[j] = line->str[i];
-		ft_putchar(line->str[i]);
-		i++;
-		j++;
+		to_copy = (char *)malloc(sizeof(char) * (line->curs - curs + 2));
+		i = curs;
+		while (i <= line->curs)
+		{
+			to_copy[j] = line->str[i];
+			i++;
+			j++;
+		}
+	}
+	else
+	{
+		to_copy = (char *)malloc(sizeof(char) * curs + 1);
+		i = line->curs;
+		while (i <= curs)
+		{
+			to_copy[j] = line->str[i];
+			i++;
+			j++;
+		}
 	}
 	to_copy[j] = '\0';
-	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 	return (to_copy);
 }
 
@@ -64,22 +75,25 @@ char	*join_lines_to_past(t_line *line, char *to_past)
 	return (str);
 }
 
-void	copy(t_line *line, int *start, int *curs, char **to_past)
+void	ft_copy(t_line *line, t_select *select, char **to_past)
 {
-	if (*start == 1)
+	int curs;
+
+	if (select->on == 1)
 	{
-		tputs(tgetstr("mr", NULL), 1, ft_intputchar);
-		*to_past = ft_strdup(copy_char(line, *curs));
-		tputs(tgetstr("me", NULL), 1, ft_intputchar);
-		while (line->curs <= *curs)
-			go_right(line);
-		display_line(line);
-		*start = 0;
-	}
-	else if (*start == 0)
-	{
-		*curs = line->curs;
-		*start = 1;
+		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
+		curs = line->curs;
+		while (line->curs)
+			go_left(line);
+		display_line_from_begin(line);
+		while (curs)
+		{
+			line->curs++;
+			curs--;
+		}
+		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
+		*to_past = ft_strdup(copy_char(line, select->start));
+		select->on = 0;
 	}
 }
 

@@ -14,8 +14,10 @@
 
 void	move_curs_right(t_line *line)
 {
-	while (line->curs < (int)ft_strlen(line->str))
+	while (line->str[line->curs])
+	{
 		go_right(line);
+	}
 }
 
 void	history_up(t_line *line, t_hist **current, int *index)

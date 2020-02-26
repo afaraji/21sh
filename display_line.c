@@ -26,3 +26,17 @@ void	display_line(t_line *line)
 	}
 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }
+
+void	display_line_from_begin(t_line *line)
+{
+	int	i;
+
+	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
+	i = line->curs;
+	while (i < (int)ft_strlen(line->str))
+	{
+		ft_putchar(line->str[i]);
+		i++;
+	}
+}
+

@@ -24,7 +24,7 @@ t_line	*init_line(char *prompt)
 	line->curs = 0;
 //	line->cmd = ft_strdup("");
 	line->str = ft_strdup("");
-	line->pmt_s = ft_strlen(prompt);
+	line->pmt_s = ft_strlen(prompt) + 1;
 	line->col = tgetnum("co");
 	return (line);
 }
@@ -42,7 +42,7 @@ void	ft_prompt(char *prompt)
 
 void	get_cmd(t_line *line, char buff, t_hist **his_head)
 {
-	line->row = 0;
+	//fprintf(ttyfd, "line->str : |%s|\n", line->str);
 	line->str = join_line(line->str, buff, line->curs);
 	display_line(line);
 	go_right(line);
@@ -78,7 +78,69 @@ int	printable_char(t_line	*line, t_hist **his_head, int buff)
 	return (0);
 }
 
-/****************************************************************/
+char	*read_line(char *prompt, t_hist **his_head)
+{
+	int		buff;
+	t_line	*line;
+	int		index;
+	t_select	*select;
+	static char	*to_past = NULL;
+
+	buff = 0;
+	index = 0;
+	select = (t_select *)malloc(sizeof(t_select));
+	select->on = 0;
+	line = init_line(prompt);
+	if (read(0, &buff, 0) < 0)
+		return (NULL);
+	ft_prompt(prompt);
+	while (1)
+	{
+		buff = 0;
+		read(0, &buff, 4);
+		if (printable_char(line, his_head, buff))
+			break;
+		if (!(ft_isprint(buff)))
+		{
+			if (buff == SELECT)
+			{
+				select->len = 0;
+				select->on = 1;
+				select->start = line->curs;
+			}
+			else if (buff == COPY)
+				ft_copy(line, select, &to_past);
+			else if (buff == PAST && to_past)
+				past(line, &to_past);
+			else
+			{
+				move_curs(line, buff, select);
+				navigate_history(line, buff, his_head, &index);
+				move_by_word(line, buff);
+			}
+		}
+	}
+	fprintf(ttyfd, "+++ line->str : |%s|\n", line->str);
+	return (line->str);
+}
+
+
+/*************************** nounous ****************************
+
+char	*ft_copy(t_line *line)
+{
+	int buff;
+
+	buff = 0;
+	read(0, &buff, 4);
+	while ()
+	{
+		
+	}
+	
+
+}
+
 
 char	*read_line(char *prompt, t_hist **his_head)
 {
@@ -100,15 +162,15 @@ char	*read_line(char *prompt, t_hist **his_head)
 	while (1)
 	{
 		buff = 0;
-		read(0, &buff, 4);
+		read(0, &buff, 4);fprintf(ttyfd,"+-+-+>%X\n", buff);
 		if (printable_char(line, his_head, buff))
 			break;
 		if (!(ft_isprint(buff)))
 		{
 			if (buff == SELECT)
-				copy(line, &start, &curs, &to_past);
-			else if (buff == PAST && to_past)
-				past(line, &to_past);
+				to_past = ft_copy(line);
+			else if (buff == PAST)
+				ft_past();
 			else
 			{
 				move_curs(line, buff);
@@ -119,3 +181,5 @@ char	*read_line(char *prompt, t_hist **his_head)
 	}
 	return (line->str);
 }
+
+************************************************************/

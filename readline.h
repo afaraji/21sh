@@ -28,7 +28,9 @@
 # define UPLINE 0x9188E2
 # define DWNLINE 0x9FC3
 # define DWNLINE 0x9FC3
-# define SELECT 0xA7C3
+# define SELECT 0x7E325B1B
+# define COPY 0xA7C3
+# define CUT 0x8889E2
 # define PAST 0x9A88E2
 
 
@@ -38,7 +40,6 @@ typedef	struct		s_line
 	char			*cmd;
 	int				curs;
 	int				col;
-	int				row;
 	int				nline;
 	int				pmt_s;
 }					t_line;
@@ -50,6 +51,13 @@ typedef struct		s_hist
 	struct s_hist	*next;
 	struct s_hist	*prec;
 }					t_hist;
+
+typedef struct		s_select
+{
+	int				start;
+	int				on;
+	int				len;
+}					t_select;
 
 FILE	*ttyfd;
 
@@ -77,14 +85,16 @@ void	save_list(t_hist *his_head, int fd);
 void	navigate_history(t_line *line, int buff, t_hist **current, int *index);
 void	move_by_word(t_line *line, int buff);
 char	*trim_cmd(char *s);
-void	move_curs(t_line *line, int buff);
+void	move_curs(t_line *line, int buff, t_select *select);
 int		verify_new_line(t_line *line);
 char	**ft_strsplit_2(char *s, char c);
 int		get_lines_len(char **table, int limit);
 int     is_multline(char *s);
 int		len_str_from_nl(t_line *line, int pos);
 t_hist	*get_node_index(t_hist **current, int index);
-void	copy(t_line *line, int *start, int *curs, char **to_past);
+void	ft_copy(t_line *line, t_select *select, char **to_past);
+//void	copy(t_line *line);
 void	past(t_line *line, char **to_past);
+void	display_line_from_begin(t_line *line);
 
 #endif
