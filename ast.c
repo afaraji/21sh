@@ -110,6 +110,67 @@ void	token_print(t_list_token *node)
 	//printf("\n");
 }
 
+char	*tokentoa(int token)
+{
+	
+	switch (token)
+	{
+		case -1:
+			return(" ");
+			break;
+		case -4:
+			return(";");
+			break;
+		case -5:
+			return("&&");
+			break;
+		case -6:
+			return("||");
+			break;
+		case -10:
+			return("|");
+			break;
+		case -11:
+			return("&");
+			break;
+		case -12:
+			return("[\\]");
+			break;
+		case -20:
+			return(">");
+			break;
+		case -21:
+			return(">>");
+			break;
+		case -22:
+			return("<");
+			break;
+		case -30:
+			return("<<");
+			break;
+		case -24:
+			return("<&");
+			break;
+		case -25:
+			return(">&");
+			break;
+		case -26:
+			return("<>");
+			break;
+		case -27:
+			return(">|");
+			break;
+		case -31:
+			return("<<-");
+			break;
+		
+		default:
+			return(ft_itoa(token));
+			break;
+	}
+		
+}
+
 t_list_token	*remove_space(t_list_token *oldcmd)
 {
 	t_list_token *node;
@@ -144,6 +205,14 @@ t_list_token	*remove_space(t_list_token *oldcmd)
 	}
 	return (oldcmd);
 }
+
+// void	ft_errno()
+// {
+// 	if (g_var.errno == 120)
+// 	{
+// 		ft_putstr_fd("", 2)
+// 	}
+// }
 
 void	print_ast(t_pipe_seq *cmd)
 {
@@ -442,7 +511,7 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
-	if (!cmd || !(*cmd))
+	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
 	if((*cmd)->type >= CLOBBER && (*cmd)->type <= GRT)
 	{
@@ -450,13 +519,16 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 		*cmd = (*cmd)->next;
 		while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 			*cmd = (*cmd)->next;
-		if ((*cmd)->type == WORD)	// QOTE and DQOTE ??
+		if (*cmd && (*cmd)->type == WORD)	// QOTE and DQOTE ??
 		{
 			file = ft_strdup((*cmd)->data);
 			*cmd = (*cmd)->next;
 			return (file);
 		}
-		printf("syntax error, unexpected token near %d -- expected filename found\n", *r_type);
+		ft_putstr_fd("syntax error, unexpected token near ", 2);
+		ft_putstr_fd(tokentoa((*cmd)->type), 2);
+		ft_putstr_fd("\n", 2);
+		g_var.errno = 120;
 		*cmd = NULL;
 		return (NULL);
 	}
@@ -469,7 +541,7 @@ char		*io_here(t_list_token **cmd, t_list_token **end,int *r_type)
 
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
-	if (!cmd || !(*cmd))
+	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
 	if((*cmd)->type == SMLSML || (*cmd)->type == DSMLDASH)
 	{
@@ -477,13 +549,16 @@ char		*io_here(t_list_token **cmd, t_list_token **end,int *r_type)
 		*cmd = (*cmd)->next;
 		while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 			*cmd = (*cmd)->next;
-		if ((*cmd)->type == WORD)	// QOTE and DQOTE ??
+		if (*cmd && (*cmd)->type == WORD)	// QOTE and DQOTE ??
 		{
 			file = ft_strdup((*cmd)->data);
 			*cmd = (*cmd)->next;
 			return (file);
 		}
-		printf("syntax error, unexpected token near %d -- expected here doc EOF\n", *r_type);
+		ft_putstr_fd("syntax error, unexpected token near ", 2);
+		ft_putstr_fd(tokentoa((*cmd)->type), 2);
+		ft_putstr_fd("\n", 2);
+		g_var.errno = 121;
 		*cmd = NULL;
 		return (NULL);
 	}
@@ -498,7 +573,7 @@ t_io_redirect	*io_redirect(t_list_token **cmd, t_list_token **end)
 	
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
-	if (!cmd || !(*cmd))
+	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
 	io_r = (t_io_redirect *)malloc(sizeof(t_io_redirect));
 	io_r->filename = io_file(cmd, end, &(io_r->redirect_type));
@@ -511,7 +586,7 @@ t_io_redirect	*io_redirect(t_list_token **cmd, t_list_token **end)
 	{
 		return (io_r);
 	}
-	if ((*cmd)->type == WORD)
+	if (*cmd && (*cmd)->type == WORD)
 	{
 		if (is_all_digits((*cmd)->data))
 		{
@@ -544,9 +619,9 @@ t_variable		*ass_word(t_list_token **cmd, t_list_token **end)
 
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
-	if (!cmd || !(*cmd))
+	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
-	if ((*cmd)->type == WORD)
+	if (*cmd && (*cmd)->type == WORD)
 	{
 		i = 1;
 		while ((*cmd)->data[i])
@@ -574,15 +649,13 @@ t_variable		*ass_word(t_list_token **cmd, t_list_token **end)
 	return (NULL);
 }
 
-int count_prefix = 0;
-
 t_cmd_prefix	*cmd_prefix(t_list_token **cmd, t_list_token **end)
 {
 	t_cmd_prefix	*node;
 
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
-	if (!cmd || !(*cmd))
+	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
 	node = (t_cmd_prefix *)malloc(sizeof(t_cmd_prefix));
 	node->io_redirect = io_redirect(cmd, end);
@@ -609,7 +682,7 @@ char			*cmd_word(t_list_token **cmd, t_list_token **end) // need to apply rule 7
 
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
-	if (!cmd || !(*cmd))
+	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
 	if ((*cmd)->type == WORD)
 	{
@@ -627,7 +700,7 @@ t_cmd_suffix	*cmd_suffix(t_list_token	**cmd, t_list_token **end)
 
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
-	if (!cmd || !(*cmd))
+	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
 	node = (t_cmd_suffix *)malloc(sizeof(t_cmd_suffix));
 	node->io_redirect = io_redirect(cmd, end);
@@ -654,7 +727,7 @@ char			*cmd_name(t_list_token	**cmd, t_list_token **end)	// need to apply rule 7
 
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
-	if (!cmd || !(*cmd))
+	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
 	if ((*cmd)->type == WORD)
 	{
@@ -669,6 +742,8 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 {
 	t_simple_cmd *ret;
 
+	if (g_var.errno)
+		return (NULL);
 	ret = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
 	ret->prefix = cmd_prefix(&start, &end);
 	if (ret->prefix)
@@ -688,7 +763,10 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 	}
 	else
 	{
-		fprintf(ttyfd, "getSimpleCmd: syntax error near unexpected token %s\n", start->data);
+		ft_putstr_fd("syntax error, unexpected token near ", 2);
+		ft_putstr_fd(tokentoa(start->type), 2);
+		ft_putstr_fd("\n", 2);
+		g_var.errno = 122;
 		return(NULL);
 	}
 }
@@ -697,7 +775,7 @@ t_comp_cmd	*get_comp_cmd(t_list_token *start, t_list_token *end)
 {
 	t_comp_cmd		*ret;
 
-	if(!start)
+	if(!start || g_var.errno)
 		return (NULL);
 	ret = (t_comp_cmd *)malloc(sizeof(t_comp_cmd));
 	ret->tokens = start;
@@ -711,6 +789,8 @@ t_pipe_seq	*ast(t_list_token *tokens)
 	t_list_token	*node;
 	t_pipe_seq		*tmp = NULL;
 
+	if (!tokens || g_var.errno)
+		return (NULL);
 	node = tokens;
 	while (node)
 	{
@@ -735,26 +815,35 @@ int main(int ac, char **av)
 //	char    *line = "echo \"hello world\" ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
 	char    *line;
 
+	if (ac != 2)
+	{
+		printf("usage: ./a.out \"ls -la > file\"\n");
+		return (-1);
+	}
 	line = ft_strdup(av[1]);
 
 	t_list_token    *tokens;
 	t_pipe_seq	*cmd;
-	
 	char    **cmd_tab;
+
 	ttyfd = fopen("/dev/ttys003", "w");
 	fprintf(ttyfd, "\033[H\033[2J");
     tokens = __tokenize(line);
-    token_print(tokens);
-	printf("\n**********\n");
+    // token_print(tokens);
 	/*
 	should split tokens by ';' '&' '&&' '||' and specifie the two variables 
 	bg = 0/1 ===> is it a background routine ? 1 : 0
 	dependant = 0/1/2 (0 not dependt, 1 exec if $? == 0, 2 exec if $? != 0)
 	*/
-	cmd = ast(tokens); // should take tokens_tab from the split above AKA tokens_list
-	printf("\n---------------------\n");
-	print_ast(cmd);
-	printf("\n---------------------\n");
+	if (!(cmd = ast(tokens))) // should take tokens_tab from the split above AKA tokens_list
+	{
+		g_var.exit_status = g_var.errno;
+		g_var.errno = 0;
+		return (g_var.exit_status);
+	}
+	// printf("\n---------------------\n");
+	// print_ast(cmd);
+	// printf("\n---------------------\n");
 	return (0);
 }
 

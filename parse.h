@@ -46,6 +46,9 @@ typedef union	u_token
 } 				t_token;
 // <& (fd or file name) check if number => fd or string => filename only in aggr
 // ls <& 0 << file 
+// cmd >& 2>file
+// cmd  2>&5>file>>foo&>2|bar
+// ' and " WORDs
  
 typedef struct					s_list_token
 {
@@ -64,10 +67,13 @@ typedef struct					s_alias
 	struct s_alias				*next;
 }                               t_alias;
 
-struct SimpleCommand
+typedef struct					s_shell_var
 {
-        char ** _arguments;
-};
+	int							errno;
+	int							exit_status;
+}								t_shell_var;
+
+t_shell_var						g_var;
 
 // ***************************************
 
