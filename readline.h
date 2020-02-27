@@ -28,7 +28,7 @@
 # define UPLINE 0x9188E2
 # define DWNLINE 0x9FC3
 # define DWNLINE 0x9FC3
-# define SELECT 0x7E325B1B
+# define SELECT 0x10
 # define COPY 0xA7C3
 # define CUT 0x8889E2
 # define PAST 0x9A88E2
@@ -96,5 +96,7 @@ void	ft_copy(t_line *line, t_select *select, char **to_past);
 //void	copy(t_line *line);
 void	past(t_line *line, char **to_past);
 void	display_line_from_begin(t_line *line);
+void	left_select(t_line *line, t_select *select);
+void	right_select(t_line *line, t_select *select);
 
 #endif

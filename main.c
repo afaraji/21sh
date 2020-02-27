@@ -12,6 +12,19 @@
 
 #include "readline.h"
 
+// void	print_list(t_hist *his_head)
+// {
+// 	t_hist	*node;
+
+// 	fprintf(ttyfd, "*** got here\n");
+// 	node = his_head;
+// 	while (node)
+// 	{
+// 		fprintf(ttyfd, "\n\n------------> history : |%s|\n", node->hist_str);
+// 		node = node->next;
+// 	}
+// }
+
 int	main(int ac, char **av, char **env)
 {
 	struct termios	s_termios;

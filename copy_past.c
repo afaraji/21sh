@@ -77,20 +77,10 @@ char	*join_lines_to_past(t_line *line, char *to_past)
 
 void	ft_copy(t_line *line, t_select *select, char **to_past)
 {
-	int curs;
-
 	if (select->on == 1)
 	{
 		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-		curs = line->curs;
-		while (line->curs)
-			go_left(line);
 		display_line_from_begin(line);
-		while (curs)
-		{
-			line->curs++;
-			curs--;
-		}
 		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 		*to_past = ft_strdup(copy_char(line, select->start));
 		select->on = 0;

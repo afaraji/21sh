@@ -83,11 +83,13 @@ void	navigate_history(t_line *line, int buff, t_hist **current, int *index)
 
 	if (*current)
 	{
+		//fprintf(ttyfd, "line->curs : |%d|\n", line->curs);
 		if (*index == 0 || *index == (get_node_index(current, 0))->index + 1)
 			old_line = ft_strdup(line->str);
 		if (buff == UPARROW)
 			history_up(line, current, index);
 		else if (buff == DWNARROW)
 			history_down(line, current, index, old_line);
+		fprintf(ttyfd, "line->curs : |%d|\n", line->curs);
 	}
 }

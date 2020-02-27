@@ -30,13 +30,21 @@ void	display_line(t_line *line)
 void	display_line_from_begin(t_line *line)
 {
 	int	i;
+	int curs;
 
+	curs = line->curs;
+	go_home(line);
 	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
 	i = line->curs;
 	while (i < (int)ft_strlen(line->str))
 	{
 		ft_putchar(line->str[i]);
 		i++;
+	}
+	while (curs)
+	{
+		line->curs++;
+		curs--;
 	}
 }
 
