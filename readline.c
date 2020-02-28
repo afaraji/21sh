@@ -42,7 +42,6 @@ void	ft_prompt(char *prompt)
 
 void	get_cmd(t_line *line, char buff, t_hist **his_head)
 {
-	//fprintf(ttyfd, "line->str : |%s|\n", line->str);
 	line->str = join_line(line->str, buff, line->curs);
 	display_line(line);
 	go_right(line);
@@ -120,6 +119,8 @@ char	*read_line(char *prompt, t_hist **his_head)
 			}
 			else if (buff == COPY)
 				ft_copy(line, select, &to_past);
+			else if (buff == CUT)
+				ft_cut(line, select, &to_past);
 			else if (buff == PAST && to_past)
 				past(line, &to_past);
 			else if (buff == LFTARROW)
