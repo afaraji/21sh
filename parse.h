@@ -14,6 +14,10 @@
 # define PARSE_H
 # include "21sh.h"
 
+# define STDIN	 0
+# define STDOUT  1
+# define STDERR  2
+
 # define SPACE	-1			/* white space */
 # define QUOTE	-2			/* '	*/
 # define DQUOTE	-3			/* "	*/
@@ -30,9 +34,9 @@
 
 # define SMLAND	-24 		/* <&	*/
 # define GRTAND	-25 		/* >&	*/
-# define SMLGRT	-26 		/* <>	*/
-# define CLOBBER -27 		/* >|	*/
-# define DSMLDASH -31 		/* <<-	*/
+// # define SMLGRT	-26 		/* <>	*/
+// # define CLOBBER -27 		/* >|	*/
+// # define DSMLDASH -31 		/* <<-	*/
 
 # define WORD	-42			/* word */
 
@@ -45,10 +49,11 @@ typedef union	u_token
 	/* data */
 } 				t_token;
 // <& (fd or file name) check if number => fd or string => filename only in aggr
-// ls <& 0 << file 
-// cmd >& 2>file
-// cmd  2>&5>file>>foo&>2|bar
 // ' and " WORDs
+// ls -la & | 
+
+// ./a.out "cm2 <<>"
+// io here should take io_here and io_end
  
 typedef struct					s_list_token
 {
@@ -136,13 +141,13 @@ typedef struct				s_pipe_seq
 	struct s_pipe_seq		*right;
 }							t_pipe_seq;
 
-typedef struct			s_redirect
+typedef struct				s_cmdlist
 {
-	int						in;
-	int						out;
-	char					*output;
-	char					*input;
-}							t_redirect;
+	int						dependent;	//(0';&' not dependt, 1 exec if $? == 0 '&&', 2 exec if $? != 0 '||')
+	int						background;
+	t_list_token			*tokens;
+	struct s_cmdlist		*next;
+}							t_cmdlist;
 
 // ***************************************
 
