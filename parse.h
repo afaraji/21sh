@@ -50,10 +50,12 @@ typedef union	u_token
 } 				t_token;
 // <& (fd or file name) check if number => fd or string => filename only in aggr
 // ' and " WORDs
-// ls -la & | 
 
-// ./a.out "cm2 <<>"
-// io here should take io_here and io_end
+// ./a.out "<<eof"
+
+// ./a.out "cmd || cmd1 <file|"
+// ls 2>&1 < kuhkj | cat -e
+// gjjjh 2>&1 | cat -e
  
 typedef struct					s_list_token
 {
@@ -122,30 +124,37 @@ typedef struct				s_simple_cmd
 	char					*name;
 	t_cmd_prefix			*prefix;
 	t_cmd_suffix			*suffix;
+	t_list_token			*tokens;
 }							t_simple_cmd;
 
-typedef struct				s_comp_cmd
-{ 
-	char					*outFile; 
-	char					*inFile; 
-	char					*errFile; 
-	int						background;
-	t_simple_cmd			*cmd_list;
-	t_list_token			*tokens;
-}							t_comp_cmd;
+// typedef struct				s_comp_cmd
+// { 
+// 	char					*outFile; 
+// 	char					*inFile; 
+// 	char					*errFile; 
+// 	int						background;
+// 	t_simple_cmd			*cmd_list;
+// 	t_list_token			*tokens;
+// }							t_comp_cmd;
 
 typedef struct				s_pipe_seq
 {
 	int						dependent;	//(0';&' not dependt, 1 exec if $? == 0 '&&', 2 exec if $? != 0 '||')
-	t_comp_cmd				*left;
+	t_simple_cmd			*left;
 	struct s_pipe_seq		*right;
 }							t_pipe_seq;
 
-typedef struct				s_cmdlist
+typedef struct				s_and_or
 {
 	int						dependent;	//(0';&' not dependt, 1 exec if $? == 0 '&&', 2 exec if $? != 0 '||')
-	int						background;
 	t_pipe_seq				*ast;
+	struct s_and_or			*next;
+}							t_and_or;
+
+typedef struct				s_cmdlist
+{
+	int						background;
+	t_and_or				*and_or;
 	struct s_cmdlist		*next;
 }							t_cmdlist;
 

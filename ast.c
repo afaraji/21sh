@@ -817,7 +817,7 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 	}
 	else
 	{
-		if (!g_var.errno && 0)
+		if (!g_var.errno)// here if sigfaults
 		{
 			ft_putstr_fd("syntax error(122), unexpected token near '", 2);
 			ft_putstr_fd(tokentoa(start->type), 2);
@@ -828,19 +828,19 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 	}
 }
 
-t_comp_cmd	*get_comp_cmd(t_list_token *start, t_list_token *end)
-{
-	t_comp_cmd		*ret;
+// t_comp_cmd	*get_comp_cmd(t_list_token *start, t_list_token *end)
+// {
+// 	t_comp_cmd		*ret;
 
-	if(!start || g_var.errno)
-		return (NULL);
-	ret = (t_comp_cmd *)malloc(sizeof(t_comp_cmd));
-	ret->tokens = start;
-	ret->cmd_list = get_simple_cmd(start, end);
-	// fprintf(ttyfd, "*********** pipe_seq ************\n");
-	// print_simple_cmd(ret->cmd_list);
-	return (ret);
-}
+// 	if(!start || g_var.errno)
+// 		return (NULL);
+// 	ret = (t_comp_cmd *)malloc(sizeof(t_comp_cmd));
+// 	ret->tokens = start;
+// 	ret->cmd_list = get_simple_cmd(start, end);
+// 	// fprintf(ttyfd, "*********** pipe_seq ************\n");
+// 	// print_simple_cmd(ret->cmd_list);
+// 	return (ret);
+// }
 
 t_pipe_seq	*ast(t_list_token *tokens)
 {
@@ -849,14 +849,18 @@ t_pipe_seq	*ast(t_list_token *tokens)
 	t_pipe_seq		*tmp = NULL;
 
 	if (!tokens || g_var.errno)
+	{
+		ft_putstr_fd("syntax error, unexpected <newline>\n", 2);
+		g_var.errno = 122;
 		return (NULL);
+	}
 	node = tokens;
 	while (node)
 	{
 		if (node->type == PIP)
 		{
 			tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
-			tmp->left = get_comp_cmd(tokens, node);
+			tmp->left = get_simple_cmd(tokens, node);
 			tmp->right = ast(node->next);
 			return(tmp);
 		}
@@ -864,7 +868,7 @@ t_pipe_seq	*ast(t_list_token *tokens)
 		node = node->next;
 	}
 	tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
-	tmp->left = get_comp_cmd(tokens, prec);
+	tmp->left = get_simple_cmd(tokens, prec);
 	tmp->right = NULL;
 	return(tmp);
 }
@@ -890,35 +894,31 @@ t_list_token	*list_sub(t_list_token *start, t_list_token *end)
 			node->next->prec = node;
 			node = node->next;
 		}
-		node->data = ft_strdup(start->data);
+		(start->data) ? (node->data = ft_strdup(start->data)) : (node->data = NULL);
 		node->is_ok = start->is_ok;
 		node->type = start->type;
 		node->next = NULL;
 		if (start == end)
-			break;	
+			break;
 		start = start->next;
 	}
 	return (head);
 }
 
-t_cmdlist	*get_cmdlist(t_list_token *strt, int dep, t_list_token *end, int bg)
+t_and_or	*get_cmdlist(t_list_token *strt, int dep, t_list_token *end, int bg)
 {
-	t_cmdlist		*node;
-	t_pipe_seq		*tmp;
+	t_and_or		*node;
+	t_list_token	*tmp;
 
 	if (!strt)
 		return (NULL);
-	node = (t_cmdlist *)malloc(sizeof(t_cmdlist));
+	node = (t_and_or *)malloc(sizeof(t_and_or));
 	node->next = NULL;
 	tmp = list_sub(strt, end);
 	node->ast = ast(tmp);
 	// free(tmp);
 	// if (!ast) what sould do ?
-
-	node->background = 0;
 	node->dependent = 0;
-	if (bg == BGJOB)
-		node->background = 1;
 	if (dep == ANDLG)
 		node->dependent = 1;
 	if (dep == ORLG)
@@ -926,27 +926,31 @@ t_cmdlist	*get_cmdlist(t_list_token *strt, int dep, t_list_token *end, int bg)
 	return (node);
 }
 
-t_cmdlist	*token_split(t_list_token *tokens)
+// stuck here
+t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 {
 	t_cmdlist		*list;
 	t_cmdlist		*node;
 	t_list_token	*tmp;
 
+	if (!tokens || g_var.errno)
+		return (NULL);
 	tmp = tokens;
 	list = NULL;
 	while (tmp)
 	{
-		if (_OR(tmp->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN))
+		if (tmp->type == SMCLN || tmp->type ==BGJOB)
 		{
 			if (!list)
 			{
-				list = get_cmdlist(tokens, SMCLN, tmp->prec, tmp->type);
+				list->and_or = get_cmdlist(tokens, SMCLN, tmp->prec, tmp->type);
+				(tmp->type == BGJOB) ? (list->background = 1) : (list->background = 0);
 				node = list;
 				tokens = tmp;
 			}
 			else
 			{
-				node->next = get_cmdlist(tokens->next, tokens->type, tmp->prec, tmp->type);
+				node->next->and_or = get_cmdlist(tokens->next, tokens->type, tmp->prec, tmp->type);
 				tokens = tmp;
 				node = node->next;
 			}
@@ -954,7 +958,9 @@ t_cmdlist	*token_split(t_list_token *tokens)
 		tmp = tmp->next;
 	}
 	if (!list)
-		list = get_cmdlist(tokes, NULL);
+		list->and_or = get_cmdlist(tokens, SMCLN, NULL, SMCLN);
+	else
+		node->next->and_or = get_cmdlist(tokens->next, tokens->type, NULL, SMCLN);
 	return (list);
 }
 
@@ -964,9 +970,54 @@ void	print_tokenlist(t_pipe_seq *ast)
 
 	if (!ast)
 		return;
-	node = ast->left->cmd_list;
+	node = ast->left;
 	print_simple_cmd(node);
 	print_tokenlist(ast->right);	
+}
+
+int		verify_tokens(t_list_token *token)
+{
+	t_list_token	*node;
+	t_list_token	*tmp;
+
+	if (!token)
+		return (1);
+	if (_OR(token->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN))
+	{
+		ft_putstr_fd("syntax error, unexpected token `", 2);
+		ft_putstr_fd(tokentoa(token->type), 2);
+		ft_putstr_fd("'\n'", 2);
+		g_var.errno = 130;
+		return (2);
+	}
+	node = token;
+	while (node)
+	{
+		if (_OR(node->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN))
+		{
+			tmp = node->next;
+			while(tmp && tmp->type == SPACE)
+				tmp = tmp->next;
+			if (!tmp && (node->type == ANDLG || node->type == ORLG))
+			{
+				ft_putstr_fd("syntax error after `", 2);
+				ft_putstr_fd(tokentoa(node->type), 2);
+				ft_putstr_fd("'\n'", 2);
+				g_var.errno = 131;
+				return (3);
+			}
+			if (tmp && (tmp->type == ANDLG || tmp->type == ORLG))
+			{
+				ft_putstr_fd("syntax error, unexpected token `", 2);
+				ft_putstr_fd(tokentoa(tmp->type), 2);
+				ft_putstr_fd("'\n'", 2);
+				g_var.errno = 132;
+				return (4);
+			}
+		}
+		node = node->next;
+	}
+	return (0);
 }
 
 int main(int ac, char **av)
@@ -982,19 +1033,23 @@ int main(int ac, char **av)
 	line = ft_strdup(av[1]);
 
 	t_list_token    *tokens;
-	t_cmdlist		*token_list;
+	t_cmdlist		*token_list = NULL;
 	t_cmdlist		*node;
-	t_pipe_seq	*cmd;
-	char    **cmd_tab;
+	t_pipe_seq		*cmd;
+	char			**cmd_tab;
 
 	ttyfd = fopen("/dev/ttys003", "w");
 	fprintf(ttyfd, "\033[H\033[2J");
 
     tokens = __tokenize(line);
-	token_list = token_split(tokens);
 	// token_print(tokens);printf("\n");
+	if (verify_tokens(tokens) || g_var.errno)
+	{
+		return (0);
+	}
+
+	token_list = token_split_sep_op(tokens);
 	// free_tokens(tokens);
-	
 	node = token_list;
 	int i = 0;
 	while (node)
@@ -1005,9 +1060,9 @@ int main(int ac, char **av)
 		// (more important) and parser.c (most of it alredy implimented)
 		*/
 
-		fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d| exec_if: %d) ++++++++++\n", i, node->background, node->dependent);
+		fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d| exec_if: %d) ++++++++++\n", i, node->background, node->and_or->dependent);
 		i++;
-		print_tokenlist(node);
+		print_tokenlist(node->and_or->ast);
 		fprintf(ttyfd, "-----------------------------------------------------\n");
 		node = node->next;
 	}
