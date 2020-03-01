@@ -837,8 +837,8 @@ t_comp_cmd	*get_comp_cmd(t_list_token *start, t_list_token *end)
 	ret = (t_comp_cmd *)malloc(sizeof(t_comp_cmd));
 	ret->tokens = start;
 	ret->cmd_list = get_simple_cmd(start, end);
-	fprintf(ttyfd, "*********** pipe_seq ************\n");
-	print_simple_cmd(ret->cmd_list);
+	// fprintf(ttyfd, "*********** pipe_seq ************\n");
+	// print_simple_cmd(ret->cmd_list);
 	return (ret);
 }
 
@@ -869,6 +869,63 @@ t_pipe_seq	*ast(t_list_token *tokens)
 	return(tmp);
 }
 
+t_list_token	*list_sub(t_list_token *start, t_list_token *end)
+{
+	t_list_token *head = NULL;
+	t_list_token *node;
+
+	if (!start)
+		return (NULL);
+	while (start)
+	{
+		if (!head)
+		{
+			node = (t_list_token *)malloc(sizeof(t_list_token));
+			node->prec = NULL;
+			head = node;
+		}
+		else
+		{
+			node->next = (t_list_token *)malloc(sizeof(t_list_token));
+			node->next->prec = node;
+			node = node->next;
+		}
+		node->data = ft_strdup(start->data);
+		node->is_ok = start->is_ok;
+		node->type = start->type;
+		node->next = NULL;
+		if (start == end)
+			break;	
+		start = start->next;
+	}
+	return (head);
+}
+
+t_cmdlist	*get_cmdlist(t_list_token *strt, int dep, t_list_token *end, int bg)
+{
+	t_cmdlist		*node;
+	t_pipe_seq		*tmp;
+
+	if (!strt)
+		return (NULL);
+	node = (t_cmdlist *)malloc(sizeof(t_cmdlist));
+	node->next = NULL;
+	tmp = list_sub(strt, end);
+	node->ast = ast(tmp);
+	// free(tmp);
+	// if (!ast) what sould do ?
+
+	node->background = 0;
+	node->dependent = 0;
+	if (bg == BGJOB)
+		node->background = 1;
+	if (dep == ANDLG)
+		node->dependent = 1;
+	if (dep == ORLG)
+		node->dependent = 2;
+	return (node);
+}
+
 t_cmdlist	*token_split(t_list_token *tokens)
 {
 	t_cmdlist		*list;
@@ -877,26 +934,39 @@ t_cmdlist	*token_split(t_list_token *tokens)
 
 	tmp = tokens;
 	list = NULL;
-	node = list;
 	while (tmp)
 	{
-		if (_OR(tmp->type, SMCLN, ANDLG, ORLG, BGJOB, 0))
+		if (_OR(tmp->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN))
 		{
-			if (!node)
+			if (!list)
 			{
-				//creat head and node = head;
+				list = get_cmdlist(tokens, SMCLN, tmp->prec, tmp->type);
+				node = list;
+				tokens = tmp;
 			}
 			else
 			{
-				//fill node->next
+				node->next = get_cmdlist(tokens->next, tokens->type, tmp->prec, tmp->type);
+				tokens = tmp;
+				node = node->next;
 			}
-			
 		}
 		tmp = tmp->next;
 	}
-	
-
+	if (!list)
+		list = get_cmdlist(tokes, NULL);
 	return (list);
+}
+
+void	print_tokenlist(t_pipe_seq *ast)
+{
+	t_simple_cmd	*node;
+
+	if (!ast)
+		return;
+	node = ast->left->cmd_list;
+	print_simple_cmd(node);
+	print_tokenlist(ast->right);	
 }
 
 int main(int ac, char **av)
@@ -913,27 +983,47 @@ int main(int ac, char **av)
 
 	t_list_token    *tokens;
 	t_cmdlist		*token_list;
+	t_cmdlist		*node;
 	t_pipe_seq	*cmd;
 	char    **cmd_tab;
 
 	ttyfd = fopen("/dev/ttys003", "w");
 	fprintf(ttyfd, "\033[H\033[2J");
+
     tokens = __tokenize(line);
 	token_list = token_split(tokens);
 	// token_print(tokens);printf("\n");
-	/*
-	should split tokens by ';' '&' '&&' '||' and specifie the two variables 
-	bg = 0/1 ===> is it a background routine ? 1 : 0
-	dependant = 0/1/2 (0 not dependt, 1 exec if $? == 0, 2 exec if $? != 0)
-	*/
-	if (!(cmd = ast(tokens))) // should take tokens_tab from the split above AKA tokens_list
+	// free_tokens(tokens);
+	
+	node = token_list;
+	int i = 0;
+	while (node)
 	{
-		g_var.exit_status = g_var.errno;
-		g_var.errno = 0;
-		return (g_var.exit_status);
+		/*
+		execFunc(node);
+		// right before exec, this func should impliment what is in lexer.c 
+		// (more important) and parser.c (most of it alredy implimented)
+		*/
+
+		fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d| exec_if: %d) ++++++++++\n", i, node->background, node->dependent);
+		i++;
+		print_tokenlist(node);
+		fprintf(ttyfd, "-----------------------------------------------------\n");
+		node = node->next;
 	}
+
+	// if (!(cmd = ast(tokens))) // should take tokens_tab from the split above AKA tokens_list
+	// {
+	// 	g_var.exit_status = g_var.errno;
+	// 	g_var.errno = 0;
+	// 	return (g_var.exit_status);
+	// }
 	// printf("\n---------------------\n");
 	// print_ast(cmd);
 	// printf("\n---------------------\n");
 	return (0);
 }
+
+// don't forget quote, dquote, expansions...
+// should remove t_comp_cmd, it have no meaning
+// correct error management with (g_var.[errno, err_str])

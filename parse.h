@@ -145,7 +145,7 @@ typedef struct				s_cmdlist
 {
 	int						dependent;	//(0';&' not dependt, 1 exec if $? == 0 '&&', 2 exec if $? != 0 '||')
 	int						background;
-	t_list_token			*tokens;
+	t_pipe_seq				*ast;
 	struct s_cmdlist		*next;
 }							t_cmdlist;
 
