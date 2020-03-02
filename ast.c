@@ -941,7 +941,7 @@ int		verify_tokens(t_list_token *token)
 	{
 		ft_putstr_fd("syntax error, unexpected token `", 2);
 		ft_putstr_fd(tokentoa(token->type), 2);
-		ft_putstr_fd("'\n'", 2);
+		ft_putstr_fd("'\n", 2);
 		g_var.errno = 130;
 		return (2);
 	}
@@ -965,7 +965,7 @@ int		verify_tokens(t_list_token *token)
 			{
 				ft_putstr_fd("syntax error, unexpected token `", 2);
 				ft_putstr_fd(tokentoa(tmp->type), 2);
-				ft_putstr_fd("'\n'", 2);
+				ft_putstr_fd("'\n", 2);
 				g_var.errno = 132;
 				return (4);
 			}
