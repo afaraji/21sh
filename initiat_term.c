@@ -36,7 +36,6 @@ int	termtype(void)
 
 int	ft_set_attr(struct termios	*s_termios)
 {
-
 	if (termtype())
 	{
 		if (tcgetattr(0, s_termios) == -1)

@@ -47,6 +47,7 @@ char				**ft_path(t_lst *head);
 void				ft_exec(char **flag, t_lst *env_list);
 void				ft_printlist(t_lst *list);
 int	    			ft_cd(char *operand, t_lst *head);
+int	    			ft_cd_1(char *operand, t_lst *head);
 void				ft_cd_old(t_lst *head);
 int 				ft_cd_home(t_lst *head);
 void				ft_setenv(char **flag, t_lst *head);

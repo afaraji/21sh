@@ -47,4 +47,3 @@ void	display_line_from_begin(t_line *line)
 		curs--;
 	}
 }
-

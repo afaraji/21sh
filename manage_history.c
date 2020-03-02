@@ -61,7 +61,7 @@ void	get_his_list(char *file_str, t_hist **head, int index)
 void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
 {
 	t_hist	*node;
-	int 	i;
+	int		i;
 
 	if (!(*his_head))
 	{
