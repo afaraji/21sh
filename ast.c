@@ -905,65 +905,6 @@ t_list_token	*list_sub(t_list_token *start, t_list_token *end)
 	return (head);
 }
 
-t_and_or	*get_cmdlist(t_list_token *strt, int dep, t_list_token *end, int bg)
-{
-	t_and_or		*node;
-	t_list_token	*tmp;
-
-	if (!strt)
-		return (NULL);
-	node = (t_and_or *)malloc(sizeof(t_and_or));
-	node->next = NULL;
-	tmp = list_sub(strt, end);
-	node->ast = ast(tmp);
-	// free(tmp);
-	// if (!ast) what sould do ?
-	node->dependent = 0;
-	if (dep == ANDLG)
-		node->dependent = 1;
-	if (dep == ORLG)
-		node->dependent = 2;
-	return (node);
-}
-
-// stuck here
-t_cmdlist	*token_split_sep_op(t_list_token *tokens)
-{
-	t_cmdlist		*list;
-	t_cmdlist		*node;
-	t_list_token	*tmp;
-
-	if (!tokens || g_var.errno)
-		return (NULL);
-	tmp = tokens;
-	list = NULL;
-	while (tmp)
-	{
-		if (tmp->type == SMCLN || tmp->type ==BGJOB)
-		{
-			if (!list)
-			{
-				list->and_or = get_cmdlist(tokens, SMCLN, tmp->prec, tmp->type);
-				(tmp->type == BGJOB) ? (list->background = 1) : (list->background = 0);
-				node = list;
-				tokens = tmp;
-			}
-			else
-			{
-				node->next->and_or = get_cmdlist(tokens->next, tokens->type, tmp->prec, tmp->type);
-				tokens = tmp;
-				node = node->next;
-			}
-		}
-		tmp = tmp->next;
-	}
-	if (!list)
-		list->and_or = get_cmdlist(tokens, SMCLN, NULL, SMCLN);
-	else
-		node->next->and_or = get_cmdlist(tokens->next, tokens->type, NULL, SMCLN);
-	return (list);
-}
-
 void	print_tokenlist(t_pipe_seq *ast)
 {
 	t_simple_cmd	*node;
@@ -973,6 +914,20 @@ void	print_tokenlist(t_pipe_seq *ast)
 	node = ast->left;
 	print_simple_cmd(node);
 	print_tokenlist(ast->right);	
+}
+
+void	print_andor(t_cmdlist *list)
+{
+	t_and_or	*node;
+
+	node = list->and_or;
+	while (node)
+	{
+		fprintf(ttyfd,"+-+-+-+-+-+-+-+-+-+-+---+-+\ndependent ===>[%d]\n", node->dependent);
+		print_tokenlist(node->ast);
+		node = node->next;
+	}
+	
 }
 
 int		verify_tokens(t_list_token *token)
@@ -1020,6 +975,119 @@ int		verify_tokens(t_list_token *token)
 	return (0);
 }
 
+t_and_or	*get_andor_list(t_list_token *strt, int dep, t_list_token *end)
+{
+	t_and_or		*node;
+	t_list_token	*tmp;
+
+	if (!strt)
+		return (NULL);
+	node = (t_and_or *)malloc(sizeof(t_and_or));
+	node->next = NULL;
+	tmp = list_sub(strt, end);
+	node->ast = ast(tmp);
+	// free(tmp);
+	// if (!ast) what sould do ?
+	node->dependent = 0;
+	if (dep == ANDLG)
+		node->dependent = 1;
+	if (dep == ORLG)
+		node->dependent = 2;
+	return (node);
+}
+
+t_and_or	*token_split_andor(t_list_token *start, t_list_token *end, int bg)
+{
+	t_and_or		*list;
+	t_and_or		*node;
+	t_list_token	*tmp;
+
+	if (!start || g_var.errno)
+		return (NULL);
+	tmp = start;
+	list = NULL;
+	while (tmp && tmp != end)
+	{
+		if (tmp->type == ORLG || tmp->type == ANDLG)
+		{
+			if (!list)
+			{
+				node = get_andor_list(start, 0, tmp->prec);
+				list = node;
+			}
+			else
+			{
+				node->next = get_andor_list(start->next, start->type, tmp->prec);
+				node = node->next;
+			}
+			start = tmp;
+		}
+		tmp = tmp->next;
+	}
+	if (!list)
+	{
+		list = get_andor_list(start, 0, NULL);
+	}
+	else
+	{
+		node->next = get_andor_list(start->next, start->type, NULL);
+	}
+	return (list);	
+}
+
+t_cmdlist	*token_split_sep_op(t_list_token *tokens)
+{
+	t_cmdlist		*list;
+	t_cmdlist		*node;
+	t_list_token	*tmp;
+
+	if (!tokens || g_var.errno)
+		return (NULL);
+	tmp = tokens;
+	list = NULL;
+	while (tmp)
+	{
+		if (tmp->type == SMCLN || tmp->type ==BGJOB)
+		{
+			// printf("-------1------>[%d]\n", tmp->type);
+			if (!list)
+			{
+				node = (t_cmdlist *)malloc(sizeof(t_cmdlist));
+				node->and_or = token_split_andor(tokens, tmp->prec, tmp->type);
+				list = node;
+			}
+			else
+			{
+				node->next = (t_cmdlist *)malloc(sizeof(t_cmdlist));
+				node = node->next;
+				node->and_or = token_split_andor(tokens->next, tmp->prec, tmp->type);
+			}
+			(tmp->type == BGJOB) ? (node->bg = 1) : (node->bg = 0);
+			tokens = tmp;
+			node->next = NULL;
+		}
+		tmp = tmp->next;
+	}
+	if (!list)
+	{
+		// printf("-------2------>[%d]\n", tokens->type);
+		list = (t_cmdlist *)malloc(sizeof(t_cmdlist));
+		list->and_or = token_split_andor(tokens, NULL, SMCLN);
+		list->bg = 0;
+		list->next = NULL;
+	}
+	else if (tokens->next)
+	{
+		// printf("-------3------>[%d]\n", tokens->next->type);
+		node->next = (t_cmdlist *)malloc(sizeof(t_cmdlist));
+		node = node->next;
+		node->and_or = token_split_andor(tokens->next, NULL, SMCLN);
+		node->bg = 0;
+		node->next = NULL;
+	}
+	return (list);
+}
+
 int main(int ac, char **av)
 {
 //	char    *line = "echo \"hello world\" ; mkdir test ; cd test ; toto ; ls -a ; ls | cat | wc -c > fifi ; cat fifi";
@@ -1033,10 +1101,8 @@ int main(int ac, char **av)
 	line = ft_strdup(av[1]);
 
 	t_list_token    *tokens;
-	t_cmdlist		*token_list = NULL;
+	t_cmdlist		*cmdlist = NULL;
 	t_cmdlist		*node;
-	t_pipe_seq		*cmd;
-	char			**cmd_tab;
 
 	ttyfd = fopen("/dev/ttys003", "w");
 	fprintf(ttyfd, "\033[H\033[2J");
@@ -1047,11 +1113,10 @@ int main(int ac, char **av)
 	{
 		return (0);
 	}
-
-	token_list = token_split_sep_op(tokens);
-	// free_tokens(tokens);
-	node = token_list;
+	cmdlist = token_split_sep_op(tokens);
+	// free_tokens(tokens);	
 	int i = 0;
+	node = cmdlist;
 	while (node)
 	{
 		/*
@@ -1060,9 +1125,10 @@ int main(int ac, char **av)
 		// (more important) and parser.c (most of it alredy implimented)
 		*/
 
-		fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d| exec_if: %d) ++++++++++\n", i, node->background, node->and_or->dependent);
+		fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d) ++++++++++\n", i, node->bg);
 		i++;
-		print_tokenlist(node->and_or->ast);
+		print_andor(node);
+		// print_tokenlist(node->and_or->ast);
 		fprintf(ttyfd, "-----------------------------------------------------\n");
 		node = node->next;
 	}

@@ -153,7 +153,7 @@ typedef struct				s_and_or
 
 typedef struct				s_cmdlist
 {
-	int						background;
+	int						bg;
 	t_and_or				*and_or;
 	struct s_cmdlist		*next;
 }							t_cmdlist;
