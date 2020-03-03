@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "readline.h"
+#include "parse.h"
 
 // void	print_list(t_hist *his_head)
 // {
@@ -52,20 +53,23 @@ int	main(int ac, char **av, char **env)
 {
 	char	*line;
 	t_hist	*his_list = NULL;
+	int		ret;
 
 	ttyfd = fopen("/dev/ttys003", "w");
 	create_history(&his_list);
 	if (ft_set_attr(0))
 		return (0);
 	line = readline(-1, &his_list);
-	int i = 0;
 	while (1)
 	{
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
 			ft_exit(his_list, ft_atoi(&line[4]));
 		}
-		line = readline(i, &his_list);
+		ret = main_parse(line);
+		printf("\n");
+		line = readline(ret, &his_list);
+		fprintf(ttyfd, "------------->(%d) - (%s)\n", ret, line);
 	}
 	(void)ac;
 	(void)av;

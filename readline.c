@@ -165,19 +165,19 @@ char	*readline(int prompt, t_hist **his_list)
 	char *prmt;
 	
 	if (prompt == 0)
-		prmt = "\n$> ";
+		prmt = "$> ";
 	else if (prompt == -1)
 		prmt = "$> ";
 	else if (prompt == 1)
-		prmt = "\nquote> ";
+		prmt = "quote> ";
 	else if (prompt == 2)
-		prmt = "\ndquote> ";
+		prmt = "dquote> ";
 	else if (prompt == 3)
-		prmt = "\nheredoc> ";
+		prmt = "heredoc> ";
 	else if (prompt == 4)
-		prmt = "\npipe> ";
+		prmt = "pipe> ";
 	else
-		prmt = "\n> ";
+		prmt = "> ";
 	return (read_line(prmt, his_list));
 }
 

@@ -42,7 +42,7 @@
 
 # define _OR(m,a,b,c,d,e) (m==a||m==b||m==c||m==d||m==e) ? 1 : 0
 
-FILE			*ttyfd;
+// FILE			*ttyfd;
 
 typedef union	u_token
 {
@@ -153,6 +153,8 @@ typedef struct				s_cmdlist
 	t_and_or				*and_or;
 	struct s_cmdlist		*next;
 }							t_cmdlist;
+
+int 	main_parse(char *line);
 
 // ***************************************
 
