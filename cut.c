@@ -52,7 +52,7 @@ void	ft_cut(t_line *line, t_select *select, char **to_past)
 			ft_putchar(line->str[line->curs]);
 			line->curs++;
 		}
-		while (line->curs >= curs)
+		while (line->curs && line->curs >= curs)
 			go_left(line);
 		select->on = 0;
 	}

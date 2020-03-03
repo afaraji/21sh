@@ -79,15 +79,20 @@ void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
 	}
 }
 
-void	save_list(t_hist *his_head, int fd)
+int		save_list(t_hist *his_head)
 {
 	t_hist	*node;
+	int		fd;
 
 	node = his_head;
+	if (!(fd = open("./.myshell_history", O_WRONLY)))
+		return (-1);
 	while (node)
 	{
 		ft_putstr_fd(node->hist_str, fd);
 		ft_putchar_fd('\n', fd);
 		node = node->next;
 	}
+	close(fd);
+	return (0);
 }

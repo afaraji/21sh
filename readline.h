@@ -62,7 +62,7 @@ typedef struct		s_select
 FILE	*ttyfd;
 
 int		termtype(void);
-int		ft_set_attr(struct termios	*s_termios);
+int		ft_set_attr(int index);
 t_line	*init_line(char *prompt);
 char	*read_line(char *prompt, t_hist **his_head);
 int		ft_intputchar(int c);
@@ -81,7 +81,7 @@ int		get_next_line(const int fd, char **line);
 t_hist	*get_his_node(char *file_str, t_hist *prec, int index);
 void	get_his_list(char *file_str, t_hist **head, int index);
 void	add_cmd_to_his_list(char *cmd, t_hist **his_head);
-void	save_list(t_hist *his_head, int fd);
+int		save_list(t_hist *his_head);
 void	navigate_history(t_line *line, int buff, t_hist **current, int *index);
 void	move_by_word(t_line *line, int buff);
 char	*trim_cmd(char *s);

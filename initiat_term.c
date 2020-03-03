@@ -34,15 +34,27 @@ int	termtype(void)
 	return (1);
 }
 
-int	ft_set_attr(struct termios	*s_termios)
+int	ft_set_attr(int	index)
 {
-	if (termtype())
+	static struct termios	old_termios;
+	struct termios	s_termios;
+
+	if (index == 0)
 	{
-		if (tcgetattr(0, s_termios) == -1)
-			return (1);
-		(*s_termios).c_lflag &= ~(ECHO | ICANON);
-		if (tcsetattr(0, 0, s_termios) == -1)
-			return (1);
+		tcgetattr(0, &old_termios);
+		if (termtype())
+		{
+			if (tcgetattr(0, &s_termios) == -1)
+				return (1);
+			s_termios.c_lflag &= ~(ECHO | ICANON);
+			if (tcsetattr(0, 0, &s_termios) == -1)
+				return (1);
+		}
+	}
+	else
+	{
+		tcsetattr(0, 0, &old_termios);
+		return (1);
 	}
 	return (0);
 }
