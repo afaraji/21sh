@@ -25,6 +25,14 @@ void	get_cmd(t_line *line, char buff, t_hist **his_head)
 	}
 }
 
+void	printable_2(t_line *line, t_select *select)
+{
+	select->on = 0;
+	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
+	display_line_from_begin(line);
+	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
+}
+
 int		printable(t_line *line, t_hist **his_head, t_select *select, int buff)
 {
 	int	curs;
@@ -32,12 +40,7 @@ int		printable(t_line *line, t_hist **his_head, t_select *select, int buff)
 	if ((ft_isprint(buff) || buff == ENTER))
 	{
 		if (select->on == 1)
-		{
-			select->on = 0;
-			tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-			display_line_from_begin(line);
-			tputs(tgetstr("rc", NULL), 1, ft_intputchar);
-		}
+			printable_2(line, select);
 		else
 		{
 			get_cmd(line, buff, his_head);

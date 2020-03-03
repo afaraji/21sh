@@ -23,7 +23,7 @@ t_select	*initiate_variables(int *buff, int *index)
 	return (select);
 }
 
-char	*manage_line(char *prompt, t_hist **his_head)
+char		*manage_line(char *prompt, t_hist **his_head)
 {
 	int			buff;
 	t_line		*line;
@@ -57,10 +57,10 @@ char	*manage_line(char *prompt, t_hist **his_head)
 	return (line->str);
 }
 
-char	*readline(int prompt, t_hist **his_list)
+char		*readline(int prompt, t_hist **his_list)
 {
 	char *prmt;
-	
+
 	if (prompt == 0)
 		prmt = "$> ";
 	else if (prompt == -1)
@@ -77,4 +77,3 @@ char	*readline(int prompt, t_hist **his_list)
 		prmt = "> ";
 	return (manage_line(prmt, his_list));
 }
-

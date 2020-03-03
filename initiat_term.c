@@ -34,10 +34,10 @@ int	termtype(void)
 	return (1);
 }
 
-int	ft_set_attr(int	index)
+int	ft_set_attr(int index)
 {
 	static struct termios	old_termios;
-	struct termios	s_termios;
+	struct termios			s_termios;
 
 	if (index == 0)
 	{
