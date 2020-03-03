@@ -73,7 +73,7 @@ void	token_print(t_list_token *node)
 				printf(";");
 				break;
 			case -5:
-				printf("&&");
+				printf("(&&)");
 				break;
 			case -6:
 				printf("||");
@@ -850,8 +850,11 @@ t_pipe_seq	*ast(t_list_token *tokens)
 
 	if (!tokens || g_var.errno)
 	{
-		ft_putstr_fd("syntax error, unexpected <newline>\n", 2);
-		g_var.errno = 122;
+		if (!g_var.errno)
+		{
+			ft_putstr_fd("syntax error, unexpected <newline>\n", 2);
+			g_var.errno = 122;
+		}
 		return (NULL);
 	}
 	node = tokens;
@@ -961,7 +964,7 @@ int		verify_tokens(t_list_token *token)
 				g_var.errno = 131;
 				return (3);
 			}
-			if (tmp && (tmp->type == ANDLG || tmp->type == ORLG))
+			if (tmp && (_OR(tmp->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN)))
 			{
 				ft_putstr_fd("syntax error, unexpected token `", 2);
 				ft_putstr_fd(tokentoa(tmp->type), 2);

@@ -50,13 +50,9 @@ typedef union	u_token
 } 				t_token;
 // <& (fd or file name) check if number => fd or string => filename only in aggr
 // ' and " WORDs
+// ls 2>&1 < kuhkj | cat -e  plan should read all command before exec
 
-// ./a.out "<<eof"
 
-// ./a.out "cmd || cmd1 <file|"
-// ls 2>&1 < kuhkj | cat -e
-// gjjjh 2>&1 | cat -e
- 
 typedef struct					s_list_token
 {
 	int							type;
