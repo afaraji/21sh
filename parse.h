@@ -53,6 +53,12 @@ typedef union	u_token
 // ls 2>&1 < kuhkj | cat -e  plan should read all command before exec
 
 
+// cmd > file4 && cmd1 >> file3 || cmd2 7&> file2 & cmd3 1>&5  | cmd4 <&5 | cmd5 <<EOF | cmd6
+// the line above return invalid read (doesn t stop at & BG)
+
+
+// < cmd > file4 allo  && cmd1 >> file3 allo   | cmd2 7&> file2 allo ballo  | acmd3 1>&5 toto koko & cmd4 <&5 mimi | cmd5 <<EOF wowo ; cmd6 -p;
+
 typedef struct					s_list_token
 {
 	int							type;

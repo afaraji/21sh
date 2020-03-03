@@ -1056,6 +1056,7 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 			if (!list)
 			{
 				node = (t_cmdlist *)malloc(sizeof(t_cmdlist));
+				printf("[%d:%s]--1--[%d:%s]\n",tokens->type,tokens->data,tmp->prec->type,tmp->prec->data);
 				node->and_or = token_split_andor(tokens, tmp->prec, tmp->type);
 				list = node;
 			}
@@ -1063,6 +1064,7 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 			{
 				node->next = (t_cmdlist *)malloc(sizeof(t_cmdlist));
 				node = node->next;
+				printf("[%d:%s]--1--[%d:%s]\n",tokens->next->type,tokens->data,tmp->prec->type,tmp->prec->data);
 				node->and_or = token_split_andor(tokens->next, tmp->prec, tmp->type);
 			}
 			(tmp->type == BGJOB) ? (node->bg = 1) : (node->bg = 0);
@@ -1102,6 +1104,7 @@ int main_parse(char *line)
 	fprintf(ttyfd, "*********** maain parse --> %d\n", g_var.errno);
     tokens = __tokenize(line);
 	// token_print(tokens);printf("\n");
+	
 	g_var.errno = 0;
 	if (verify_tokens(tokens))// || g_var.errno)
 	{
@@ -1126,7 +1129,10 @@ int main_parse(char *line)
 		fprintf(ttyfd, "-----------------------------------------------------\n");
 		node = node->next;
 	}
-
+	// if (g_var.errno)
+	// {
+	// 	ft_errno();
+	// }
 	// if (!(cmd = ast(tokens))) // should take tokens_tab from the split above AKA tokens_list
 	// {
 	// 	g_var.exit_status = g_var.errno;
