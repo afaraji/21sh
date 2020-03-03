@@ -63,8 +63,12 @@ FILE	*ttyfd;
 
 int		termtype(void);
 int		ft_set_attr(int index);
+char	*manage_line(char *prompt, t_hist **his_head);
 t_line	*init_line(char *prompt);
-char	*read_line(char *prompt, t_hist **his_head);
+void	ft_prompt(char *prompt);
+int		printable(t_line *line, t_hist **his_head, t_select *select, int buff);
+int		unprintable(t_line *line, t_select *select, int buff, char **to_past);
+int		unprintable_2(t_line *line, t_select *select, int buff);
 int		ft_intputchar(int c);
 void	go_left(t_line *line);
 void	go_right(t_line *line);
