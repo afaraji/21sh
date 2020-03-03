@@ -57,14 +57,15 @@ int	main(int ac, char **av, char **env)
 	create_history(&his_list);
 	if (ft_set_attr(0))
 		return (0);
-	line = read_line("$> ", &his_list);
+	line = readline(-1, &his_list);
+	int i = 0;
 	while (1)
 	{
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
 			ft_exit(his_list, ft_atoi(&line[4]));
 		}
-		line = read_line("\n$> ", &his_list);
+		line = readline(i, &his_list);
 	}
 	(void)ac;
 	(void)av;

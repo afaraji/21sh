@@ -99,5 +99,6 @@ void	past(t_line *line, char **to_past);
 void	display_line_from_begin(t_line *line);
 void	left_select(t_line *line, t_select *select);
 void	right_select(t_line *line, t_select *select);
+char	*readline(int prompt, t_hist **his_list);
 
 #endif
