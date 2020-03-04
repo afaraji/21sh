@@ -1029,11 +1029,11 @@ t_and_or	*token_split_andor(t_list_token *start, t_list_token *end, int bg)
 	}
 	if (!list)
 	{
-		list = get_andor_list(start, 0, NULL);
+		list = get_andor_list(start, 0, end);
 	}
 	else
 	{
-		node->next = get_andor_list(start->next, start->type, NULL);
+		node->next = get_andor_list(start->next, start->type, end);
 	}
 	return (list);	
 }
@@ -1052,11 +1052,9 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	{
 		if (tmp->type == SMCLN || tmp->type ==BGJOB)
 		{
-			// printf("-------1------>[%d]\n", tmp->type);
 			if (!list)
 			{
 				node = (t_cmdlist *)malloc(sizeof(t_cmdlist));
-				printf("[%d:%s]--1--[%d:%s]\n",tokens->type,tokens->data,tmp->prec->type,tmp->prec->data);
 				node->and_or = token_split_andor(tokens, tmp->prec, tmp->type);
 				list = node;
 			}
@@ -1064,7 +1062,6 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 			{
 				node->next = (t_cmdlist *)malloc(sizeof(t_cmdlist));
 				node = node->next;
-				printf("[%d:%s]--1--[%d:%s]\n",tokens->next->type,tokens->data,tmp->prec->type,tmp->prec->data);
 				node->and_or = token_split_andor(tokens->next, tmp->prec, tmp->type);
 			}
 			(tmp->type == BGJOB) ? (node->bg = 1) : (node->bg = 0);
@@ -1075,7 +1072,6 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	}
 	if (!list)
 	{
-		// printf("-------2------>[%d]\n", tokens->type);
 		list = (t_cmdlist *)malloc(sizeof(t_cmdlist));
 		list->and_or = token_split_andor(tokens, NULL, SMCLN);
 		list->bg = 0;
@@ -1083,7 +1079,7 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	}
 	else if (tokens->next)
 	{
-		// printf("-------3------>[%d]\n", tokens->next->type);
+		
 		node->next = (t_cmdlist *)malloc(sizeof(t_cmdlist));
 		node = node->next;
 		node->and_or = token_split_andor(tokens->next, NULL, SMCLN);
