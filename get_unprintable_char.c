@@ -12,50 +12,62 @@
 
 #include "readline.h"
 
-int		unprintable_2(t_line *line, t_select *select, int buff)
+int		unprintable_2(t_terminal *term)
 {
-	if (buff == LFTARROW)
+	if (term->buff == LFTARROW)
 	{
-		if (select->on)
-			left_select(line, select);
-		go_left(line);
+		if (term->select->on)
+			left_select(term);
+		go_left(term->line);
 		return (1);
 	}
-	else if (buff == RTARROW)
+	else if (term->buff == RTARROW)
 	{
-		if (select->on)
-			right_select(line, select);
-		go_right(line);
+		if (term->select->on)
+			right_select(term);
+		go_right(term->line);
 		return (1);
 	}
 	return (0);
 }
 
-int		unprintable(t_line *line, t_select *select, int buff, char **to_past)
+int		unprintable_1(t_terminal *term, char **to_past)
 {
-	if (buff == SELECT)
+	if (term->buff == SELECT)
 	{
-		select->len = 0;
-		select->on = 1;
-		select->start = line->curs;
+		term->select->len = 0;
+		term->select->on = 1;
+		term->select->start = term->line->curs;
 		return (1);
 	}
-	else if (buff == COPY)
+	else if (term->buff == COPY)
 	{
-		ft_copy(line, select, to_past);
+		ft_copy(term, to_past);
 		return (1);
 	}
-	else if (buff == CUT)
+	else if (term->buff == CUT)
 	{
-		ft_cut(line, select, to_past);
+		ft_cut(term, to_past);
 		return (1);
 	}
-	else if (buff == PAST && *to_past)
+	else if (term->buff == PAST && *to_past)
 	{
-		past(line, to_past);
+		past(term->line, to_past);
 		return (1);
 	}
-	else if (unprintable_2(line, select, buff))
+	else if (unprintable_2(term))
 		return (1);
 	return (0);
+}
+
+void	unprintable(t_terminal *term, t_hist **his_head, char **to_past)
+{
+	if (unprintable_1(term, to_past))
+		return ;
+	else
+	{
+		move_curs(term);
+		navigate_history(term, his_head);
+		move_by_word(term->line, term->buff);
+	}
 }

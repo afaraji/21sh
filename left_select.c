@@ -29,37 +29,37 @@ void	left_select_1(t_line *line)
 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }
 
-void	left_select_2(t_line *line, t_select *select)
+void	left_select_2(t_terminal *term)
 {
 	int i;
 
 	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
 	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-	i = line->curs;
+	i = term->line->curs;
 	ft_putstr("\e[45m");
-	while (i <= select->start)
+	while (i <= term->select->start)
 	{
-		ft_putchar(line->str[i]);
+		ft_putchar(term->line->str[i]);
 		i++;
 	}
 	ft_putstr("\e[0m");
 	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
-	while (line->str[i])
+	while (term->line->str[i])
 	{
-		ft_putchar(line->str[i]);
+		ft_putchar(term->line->str[i]);
 		i++;
 	}
 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }
 
-void	left_select(t_line *line, t_select *select)
+void	left_select(t_terminal *term)
 {
-	if (line->curs)
+	if (term->line->curs)
 	{
-		select->len--;
-		if (select->len >= 0)
-			left_select_1(line);
+		term->select->len--;
+		if (term->select->len >= 0)
+			left_select_1(term->line);
 		else
-			left_select_2(line, select);
+			left_select_2(term);
 	}
 }

@@ -61,14 +61,14 @@ char	*copy_char(t_line *line, int curs)
 	return (to_copy);
 }
 
-void	ft_copy(t_line *line, t_select *select, char **to_past)
+void	ft_copy(t_terminal *term, char **to_past)
 {
-	if (select->on == 1)
+	if (term->select->on == 1)
 	{
 		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-		display_line_from_begin(line);
+		display_line_from_begin(term->line);
 		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
-		*to_past = ft_strdup(copy_char(line, select->start));
-		select->on = 0;
+		*to_past = ft_strdup(copy_char(term->line, term->select->start));
+		term->select->on = 0;
 	}
 }

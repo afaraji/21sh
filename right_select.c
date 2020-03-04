@@ -34,38 +34,38 @@ void	right_select_1(t_line *line)
 	go_left(line);
 }
 
-void	right_select_2(t_line *line, t_select *select)
+void	right_select_2(t_terminal *term)
 {
 	int i;
 
 	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
 	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-	ft_putchar(line->str[line->curs]);
-	i = line->curs + 1;
+	ft_putchar(term->line->str[term->line->curs]);
+	i = term->line->curs + 1;
 	ft_putstr("\e[45m");
-	while (i <= select->start)
+	while (i <= term->select->start)
 	{
-		ft_putchar(line->str[i]);
+		ft_putchar(term->line->str[i]);
 		i++;
 	}
 	ft_putstr("\e[0m");
 	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
-	while (line->str[i])
+	while (term->line->str[i])
 	{
-		ft_putchar(line->str[i]);
+		ft_putchar(term->line->str[i]);
 		i++;
 	}
 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }
 
-void	right_select(t_line *line, t_select *select)
+void	right_select(t_terminal *term)
 {
-	if (line->str[line->curs])
+	if (term->line->str[term->line->curs])
 	{
-		if (select->len >= 0)
-			right_select_1(line);
+		if (term->select->len >= 0)
+			right_select_1(term->line);
 		else
-			right_select_2(line, select);
-		select->len++;
+			right_select_2(term);
+		term->select->len++;
 	}
 }

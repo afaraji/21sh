@@ -20,74 +20,75 @@ void	move_curs_right(t_line *line)
 	}
 }
 
-void	history_up(t_line *line, t_hist **current, int *index)
+void	history_up(t_terminal *term, t_hist **current)
 {
 	t_hist	*to_print;
 
-	if (*index == 0)
+	if (term->index == 0)
 	{
-		to_print = get_node_index(current, *index);
-		del_line(line);
-		*index = to_print->index;
-		ft_strdel(&line->str);
-		line->str = ft_strdup(to_print->hist_str);
-		display_line(line);
-		move_curs_right(line);
-		line->curs = ft_strlen(to_print->hist_str);
+		to_print = get_node_index(current, term->index);
+		del_line(term->line);
+		term->index = to_print->index;
+		ft_strdel(&(term->line->str));
+		term->line->str = ft_strdup(to_print->hist_str);
+		display_line(term->line);
+		move_curs_right(term->line);
+		term->line->curs = ft_strlen(to_print->hist_str);
 	}
-	else if (*index - 1 > 0)
+	else if (term->index - 1 > 0)
 	{
-		(*index)--;
-		to_print = get_node_index(current, *index);
-		del_line(line);
-		ft_strdel(&line->str);
-		line->str = ft_strdup(to_print->hist_str);
-		display_line(line);
-		move_curs_right(line);
-		line->curs = ft_strlen(to_print->hist_str);
+		(term->index)--;
+		to_print = get_node_index(current, term->index);
+		del_line(term->line);
+		ft_strdel(&(term->line->str));
+		term->line->str = ft_strdup(to_print->hist_str);
+		display_line(term->line);
+		move_curs_right(term->line);
+		term->line->curs = ft_strlen(to_print->hist_str);
 	}
 }
 
-void	history_down(t_line *line, t_hist **curr, int *i, char *old_line)
+void	history_down(t_terminal *term, t_hist **current, char *old_line)
 {
 	t_hist	*to_print;
 	int		last;
 
-	last = (get_node_index(curr, 0))->index;
-	if (*i + 1 <= last && *i)
+	last = (get_node_index(current, 0))->index;
+	if (term->index + 1 <= last && term->index)
 	{
-		(*i)++;
-		to_print = get_node_index(curr, *i);
-		del_line(line);
-		ft_strdel(&line->str);
-		line->str = ft_strdup(to_print->hist_str);
-		display_line(line);
-		move_curs_right(line);
-		line->curs = ft_strlen(to_print->hist_str);
+		(term->index)++;
+		to_print = get_node_index(current, term->index);
+		del_line(term->line);
+		ft_strdel(&(term->line->str));
+		term->line->str = ft_strdup(to_print->hist_str);
+		display_line(term->line);
+		move_curs_right(term->line);
+		term->line->curs = ft_strlen(to_print->hist_str);
 	}
-	else if (*i == last)
+	else if (term->index == last)
 	{
-		del_line(line);
-		ft_strdel(&line->str);
-		line->str = ft_strdup(old_line);
-		display_line(line);
-		move_curs_right(line);
-		line->curs = ft_strlen(old_line);
-		(*i)++;
+		del_line(term->line);
+		ft_strdel(&(term->line->str));
+		term->line->str = ft_strdup(old_line);
+		display_line(term->line);
+		move_curs_right(term->line);
+		term->line->curs = ft_strlen(old_line);
+		(term->index)++;
 	}
 }
 
-void	navigate_history(t_line *line, int buff, t_hist **current, int *index)
+void	navigate_history(t_terminal *term, t_hist **current)
 {
 	static char *old_line = NULL;
 
 	if (*current)
 	{
-		if (*index == 0 || *index == (get_node_index(current, 0))->index + 1)
-			old_line = ft_strdup(line->str);
-		if (buff == UPARROW)
-			history_up(line, current, index);
-		else if (buff == DWNARROW)
-			history_down(line, current, index, old_line);
+		if (term->index == 0
+		|| term->index == (get_node_index(current, 0))->index + 1)
+			old_line = ft_strdup(term->line->str);
+		if (term->buff == UPARROW)
+			history_up(term, current);
+		else if (term->buff == DWNARROW)
+			history_down(term, current, old_line);
 	}
 }

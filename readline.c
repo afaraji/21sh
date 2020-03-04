@@ -12,49 +12,37 @@
 
 #include "readline.h"
 
-t_select	*initiate_variables(int *buff, int *index)
+t_terminal	*initiate_unprint_var(void)
 {
-	t_select	*select;
+	t_terminal	*term;
 
-	*buff = 0;
-	*index = 0;
-	select = (t_select *)malloc(sizeof(t_select));
-	select->on = 0;
-	return (select);
+	term = (t_terminal *)malloc(sizeof(t_terminal));
+	term->index = 0;
+	term->select = (t_select *)malloc(sizeof(t_select));
+	term->select->on = 0;
+	return (term);
 }
 
 char		*manage_line(char *prompt, t_hist **his_head)
 {
-	int			buff;
-	t_line		*line;
-	int			index;
-	t_select	*select;
+	t_terminal	*term;
 	static char	*to_past = NULL;
 
-	select = initiate_variables(&buff, &index);
-	line = init_line(prompt);
-	if (read(0, &buff, 0) < 0)
+	term = initiate_unprint_var();
+	term->line = init_line(prompt);
+	if (read(0, &term->buff, 0) < 0)
 		return (NULL);
 	ft_prompt(prompt);
 	while (1)
 	{
-		buff = 0;
-		read(0, &buff, 4);
-		if (printable(line, his_head, select, buff))
+		term->buff = 0;
+		read(0, &term->buff, 4);
+		if (printable(term, his_head))
 			break ;
-		else if (!(ft_isprint(buff)))
-		{
-			if (unprintable(line, select, buff, &to_past))
-				continue;
-			else
-			{
-				move_curs(line, buff, select);
-				navigate_history(line, buff, his_head, &index);
-				move_by_word(line, buff);
-			}
-		}
+		else if (!(ft_isprint(term->buff)))
+			unprintable(term, his_head, &to_past);
 	}
-	return (line->str);
+	return (term->line->str);
 }
 
 char		*readline(int prompt, t_hist **his_list)

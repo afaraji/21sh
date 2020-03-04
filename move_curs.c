@@ -12,23 +12,23 @@
 
 #include "readline.h"
 
-void	move_curs(t_line *line, int buff, t_select *select)
+void	move_curs(t_terminal *term)
 {
-	if (select->on == 1)
+	if (term->select->on == 1)
 	{
-		select->on = 0;
+		term->select->on = 0;
 		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-		display_line_from_begin(line);
+		display_line_from_begin(term->line);
 		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 	}
-	if (buff == DEL)
-		del_char(line);
-	else if (buff == HOME)
-		go_home(line);
-	else if (buff == END)
-		go_end(line);
-	else if (buff == UPLINE)
-		go_up(line);
-	else if (buff == DWNLINE)
-		go_down(line);
+	if (term->buff == DEL)
+		del_char(term->line);
+	else if (term->buff == HOME)
+		go_home(term->line);
+	else if (term->buff == END)
+		go_end(term->line);
+	else if (term->buff == UPLINE)
+		go_up(term->line);
+	else if (term->buff == DWNLINE)
+		go_down(term->line);
 }

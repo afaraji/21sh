@@ -12,44 +12,44 @@
 
 #include "readline.h"
 
-void	get_cmd(t_line *line, char buff, t_hist **his_head)
+void	get_cmd(t_terminal *term, t_hist **his_head)
 {
-	line->str = join_line(line->str, buff, line->curs);
-	display_line(line);
-	go_right(line);
-	if (buff == ENTER)
+	term->line->str = join_line(term->line->str, term->buff, term->line->curs);
+	display_line(term->line);
+	go_right(term->line);
+	if (term->buff == ENTER)
 	{
-		line->str = trim_cmd(line->str);
-		if (ft_strcmp(line->str, "") != 0)
-			add_cmd_to_his_list(line->str, his_head);
+		term->line->str = trim_cmd(term->line->str);
+		if (ft_strcmp(term->line->str, "") != 0)
+			add_cmd_to_his_list(term->line->str, his_head);
 	}
 }
 
-void	printable_2(t_line *line, t_select *select)
+void	printable_2(t_terminal *term)
 {
-	select->on = 0;
+	term->select->on = 0;
 	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-	display_line_from_begin(line);
+	display_line_from_begin(term->line);
 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }
 
-int		printable(t_line *line, t_hist **his_head, t_select *select, int buff)
+int		printable(t_terminal *term, t_hist **his_head)
 {
 	int	curs;
 
-	if ((ft_isprint(buff) || buff == ENTER))
+	if ((ft_isprint(term->buff) || term->buff == ENTER))
 	{
-		if (select->on == 1)
-			printable_2(line, select);
+		if (term->select->on == 1)
+			printable_2(term);
 		else
 		{
-			get_cmd(line, buff, his_head);
-			if (buff == ENTER)
+			get_cmd(term, his_head);
+			if (term->buff == ENTER)
 			{
-				curs = line->curs;
-				while (curs <= (int)ft_strlen(line->str))
+				curs = term->line->curs;
+				while (curs <= (int)ft_strlen(term->line->str))
 				{
-					go_right(line);
+					go_right(term->line);
 					curs++;
 				}
 				return (1);
