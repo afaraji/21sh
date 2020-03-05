@@ -76,27 +76,30 @@ typedef struct					s_alias
 	struct s_alias				*next;
 }                               t_alias;
 
-typedef struct					s_shell_var
-{
-	int							errno;
-	int							exit_status;
-}								t_shell_var;
-
-t_shell_var						g_var;
-
-// ***************************************
-
 typedef struct				s_variable
 {
 	/*
 	*	env == 0 --> part of env(eg. export).
 	*	env == 1 --> part of set && only tmp.
-	*	env == 2 --> part of set && permanent.
+	*	env == 2 --> part of set && permanent and read only.
 	*/
 	int						env;
 	char					*key;
 	char					*value;
+	struct s_variable		*next;
 }							t_variable;
+
+typedef struct					s_shell_var
+{
+	int							errno;
+	int							exit_status;
+	t_alias						*aliases;
+	t_variable					*var;
+}								t_shell_var;
+
+t_shell_var						g_var;
+
+// ***************************************
 
 
 typedef struct				s_io_redirect
