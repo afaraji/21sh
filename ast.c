@@ -172,7 +172,7 @@ char	*tokentoa(int token)
 		
 }
 
-t_list_token	*remove_space(t_list_token *oldcmd)
+t_list_token	*remove_space(t_list_token *oldcmd) // not used
 {
 	t_list_token *node;
 	t_list_token *tmp;
@@ -243,7 +243,8 @@ t_list_token	*add_quote(int *index, char *str)
 	t_list_token	*node;
 	int i = *index;
 
-	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	if (!(node = (t_list_token *)malloc(sizeof(t_list_token))))	//need protection if malloc fails.
+		return(NULL);
 	i++;
 	while (str[i] && str[i] != 39)
 		i++;
@@ -1096,10 +1097,9 @@ int main_parse(char *line)
 	t_cmdlist		*node;
 
 	// ttyfd = fopen("/dev/ttys003", "w");
-	// fprintf(ttyfd, "\033[H\033[2J");
-	fprintf(ttyfd, "*********** maain parse --> %d\n", g_var.errno);
+	fprintf(ttyfd, "\033[H\033[2J");
     tokens = __tokenize(line);
-	// token_print(tokens);printf("\n");
+	printf("\n");token_print(tokens);printf("\n");
 	
 	g_var.errno = 0;
 	if (verify_tokens(tokens))// || g_var.errno)
