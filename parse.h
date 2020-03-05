@@ -13,6 +13,7 @@
 #ifndef PARSE_H
 # define PARSE_H
 # include "21sh.h"
+# include "readline.h"
 
 # define STDIN	 0
 # define STDOUT  1
@@ -63,7 +64,7 @@ typedef struct					s_list_token
 {
 	int							type;
 //	int							burned;	// if a node is read successful
-	int							is_ok;	// for ' and " closed or not
+	int							is_ok;	// for ' and " closed or not (1=closed)
 	char						*data;
 	struct s_list_token			*next;
 	struct s_list_token			*prec;
@@ -95,6 +96,7 @@ typedef struct					s_shell_var
 	int							exit_status;
 	t_alias						*aliases;
 	t_variable					*var;
+	t_hist						*history;
 }								t_shell_var;
 
 t_shell_var						g_var;
@@ -167,23 +169,6 @@ int 	main_parse(char *line);
 
 // ***************************************
 
-// struct Command { 
-//         int _numberOfAvailableSimpleCommands; 
-//         int _numberOfSimpleCommands; 
-//         SimpleCommand ** _simpleCommands; 
-//         char * _outFile; 
-//         char * _inputFile; 
-//         char * _errFile; 
-//         int _background; 
-//         void prompt(); 
-//         void print(); 
-//         void execute(); 
-//         void clear(); 
-//         Command(); 
-//         void insertSimpleCommand( SimpleCommand * simpleCommand ); 
-//         static Command _currentCommand; 
-//         static SimpleCommand *_currentSimpleCommand; 
-// }; 
 
 /*
 	https://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_03
