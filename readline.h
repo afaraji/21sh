@@ -92,7 +92,7 @@ int					get_next_line(const int fd, char **line);
 t_hist				*get_his_node(char *file_str, t_hist *prec, int index);
 void				get_his_list(char *file_str, t_hist **head, int index);
 void				add_cmd_to_his_list(char *cmd, t_hist **his_head);
-int					save_list(t_hist *his_head);
+int					save_list(void);
 void				navigate_history(t_terminal *term, t_hist **current);
 void				move_by_word(t_line *line, int buff);
 char				*trim_cmd(char *s);

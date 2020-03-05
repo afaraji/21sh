@@ -42,10 +42,10 @@ t_hist	*create_history(void)
 	return (his_list);
 }
 
-int		ft_exit(t_hist	*his_list, int status)
+int		ft_exit(int status)
 {
 	ft_set_attr(1);
-	save_list(his_list);
+	save_list();
 	ft_putstr("\nexit\n");
 	exit(status);
 }
@@ -133,7 +133,6 @@ int		init_shell(char **env)
 int		main(int ac, char **av, char **env)
 {
 	char	*line = NULL;
-	t_hist	*his_list = NULL;
 	int		ret = 0;
 
 	ttyfd = fopen("/dev/ttys003", "w");
@@ -144,7 +143,7 @@ int		main(int ac, char **av, char **env)
 	{
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
-			ft_exit(his_list, ft_atoi(&line[4]));
+			ft_exit(ft_atoi(&line[4]));
 		}
 		//ret = main_parse(line);
 		printf("\n");

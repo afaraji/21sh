@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "readline.h"
+#include "parse.h"
 
 t_hist	*get_his_node(char *file_str, t_hist *prec, int i)
 {
@@ -63,12 +64,12 @@ void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
 	}
 }
 
-int		save_list(t_hist *his_head)
+int		save_list(void)
 {
 	t_hist	*node;
 	int		fd;
 
-	node = his_head;
+	node = g_var.history;
 	if (!(fd = open("./.myshell_history", O_WRONLY)))
 		return (-1);
 	while (node)
