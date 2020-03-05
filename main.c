@@ -29,12 +29,12 @@
 t_hist	*create_history(void)
 {
 	char	*file_str;
-	t_hist	*his_list;
+	t_hist	*his_list = NULL;
 	int fd;
 	int i;
 
 	if (!(fd = open("./.myshell_history", O_RDONLY | O_CREAT, 0700)))
-		return (-1);
+		return (NULL);
 	i = 1;
 	while (get_next_line(fd, &file_str) == 1)
 		get_his_list(file_str, &his_list, i++);
