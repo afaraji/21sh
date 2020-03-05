@@ -12,12 +12,12 @@
 
 #include "minishell.h"
 
-void	ft_change_d(t_lst *head, char *str1, char *str2)
+int	ft_change_d(t_lst *head, char *str1, char *str2)
 {
 	t_lst	*node;
 
 	if (!head)
-		return ;
+		return (1);
 	node = head;
 	while (node)
 	{
@@ -25,16 +25,18 @@ void	ft_change_d(t_lst *head, char *str1, char *str2)
 		{
 			free(node->content);
 			node->content = ft_strdup(str2);
-			return ;
+			return (0);
 		}
 		node = node->next;
 	}
 	node = head;
 	while (node->next)
 		node = node->next;
-	node->next = (t_lst *)malloc(sizeof(t_lst));
+	if (!(node->next = (t_lst *)malloc(sizeof(t_lst))))
+		return (1);
 	node = node->next;
 	node->name = ft_strdup(str1);
 	node->content = ft_strdup(str2);
 	node->next = NULL;
+	return (0);
 }

@@ -33,7 +33,8 @@ int 	ft_cd_home(t_lst *head)
 	char	*buff;
 	t_lst	*node;
 
-	buff = (char *)malloc(sizeof(char) * 1000);
+	if (!(buff = (char *)malloc(sizeof(char) * 1000)))
+		return (0);
 	node = head;
 	while (node)
 	{
@@ -59,7 +60,8 @@ int	    ft_cd_1(char *operand, t_lst *head)
 
 	if (ft_pdenied(operand))
 		return (1);
-	buff = (char *)malloc(sizeof(char) * 1000);
+	if (!(buff = (char *)malloc(sizeof(char) * 1000)))
+		return (0);
 	if (getcwd(buff, 500))
 		ft_change_d(head, "OLDPWD", getcwd(buff, 500));
 	chdir(operand);
@@ -106,7 +108,8 @@ int	ft_cd_3(char *operend, t_lst *head)
 
 	if (ft_pdenied(operend))
 		return (1) ;
-	buff = (char *)malloc(sizeof(char) * 1000);
+	if (!(buff = (char *)malloc(sizeof(char) * 1000)))
+		return (1);
 	if (getcwd(buff, 500))
 		ft_change_d(head, "OLDPWD", getcwd(buff, 500));
 	chdir(operend);

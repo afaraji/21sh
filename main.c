@@ -26,9 +26,10 @@
 // 	}
 // }
 
-int	create_history(t_hist **his_list)
+t_hist	*create_history(void)
 {
 	char	*file_str;
+	t_hist	*his_list;
 	int fd;
 	int i;
 
@@ -36,9 +37,9 @@ int	create_history(t_hist **his_list)
 		return (-1);
 	i = 1;
 	while (get_next_line(fd, &file_str) == 1)
-		get_his_list(file_str, his_list, i++);
+		get_his_list(file_str, &his_list, i++);
 	close(fd);
-	return (0);
+	return (his_list);
 }
 
 int		ft_exit(t_hist	*his_list, int status)
@@ -115,40 +116,41 @@ t_variable	*get_set(char **env)
 		node = node->next;
 		i++;
 	}
-	print_set_with_typ(head);
+	//print_set_with_typ(head);
 	return (head);	
 }
 
-int		init_shell(char **env, t_hist **history)
+int		init_shell(char **env)
 {
 	if (ft_set_attr(0))
 		return (1);
 	g_var = (t_shell_var){0, 0, NULL, NULL};
 	g_var.var = get_set(env);
-	create_history(history);
+	g_var.history = create_history();
 	return (0);
 }
 
 int		main(int ac, char **av, char **env)
 {
-	char	*line;
+	char	*line = NULL;
 	t_hist	*his_list = NULL;
-	int		ret;
+	int		ret = 0;
 
 	ttyfd = fopen("/dev/ttys003", "w");
-	if (init_shell(env, &his_list))
+	if (init_shell(env))
 		return (1);
-	line = readline(-1, &his_list);
+	line = readline(-1);
 	while (1)
 	{
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
 			ft_exit(his_list, ft_atoi(&line[4]));
 		}
-		ret = main_parse(line);
+		//ret = main_parse(line);
 		printf("\n");
-		free(line);
-		line = readline(ret, &his_list);
+		if (line)
+			ft_strdel(&line);
+		line = readline(ret);
 		// fprintf(ttyfd, "------------->(%d) - (%s)\n", ret, line);
 	}
 	(void)ac;

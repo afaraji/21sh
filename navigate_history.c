@@ -23,6 +23,7 @@ void	move_curs_right(t_line *line)
 void	history_up(t_terminal *term, t_hist **current)
 {
 	t_hist	*to_print;
+	char	*tmp;
 
 	if (term->index == 0)
 	{
@@ -30,7 +31,9 @@ void	history_up(t_terminal *term, t_hist **current)
 		del_line(term->line);
 		term->index = to_print->index;
 		ft_strdel(&(term->line->str));
-		term->line->str = ft_strdup(to_print->hist_str);
+		tmp = ft_strdup(to_print->hist_str);
+		free(term->line->str);
+		term->line->str = tmp;
 		display_line(term->line);
 		move_curs_right(term->line);
 		term->line->curs = ft_strlen(to_print->hist_str);
@@ -41,7 +44,9 @@ void	history_up(t_terminal *term, t_hist **current)
 		to_print = get_node_index(current, term->index);
 		del_line(term->line);
 		ft_strdel(&(term->line->str));
-		term->line->str = ft_strdup(to_print->hist_str);
+		tmp = ft_strdup(to_print->hist_str);
+		free(term->line->str);
+		term->line->str = tmp;
 		display_line(term->line);
 		move_curs_right(term->line);
 		term->line->curs = ft_strlen(to_print->hist_str);
@@ -52,6 +57,7 @@ void	history_down(t_terminal *term, t_hist **current, char *old_line)
 {
 	t_hist	*to_print;
 	int		last;
+	char	*tmp;
 
 	last = (get_node_index(current, 0))->index;
 	if (term->index + 1 <= last && term->index)
@@ -60,7 +66,9 @@ void	history_down(t_terminal *term, t_hist **current, char *old_line)
 		to_print = get_node_index(current, term->index);
 		del_line(term->line);
 		ft_strdel(&(term->line->str));
-		term->line->str = ft_strdup(to_print->hist_str);
+		tmp = ft_strdup(to_print->hist_str);
+		free(term->line->str);
+		term->line->str = tmp;
 		display_line(term->line);
 		move_curs_right(term->line);
 		term->line->curs = ft_strlen(to_print->hist_str);
@@ -69,7 +77,9 @@ void	history_down(t_terminal *term, t_hist **current, char *old_line)
 	{
 		del_line(term->line);
 		ft_strdel(&(term->line->str));
-		term->line->str = ft_strdup(old_line);
+		tmp = ft_strdup(old_line);
+		free(term->line->str);
+		term->line->str = tmp;
 		display_line(term->line);
 		move_curs_right(term->line);
 		term->line->curs = ft_strlen(old_line);
@@ -85,7 +95,11 @@ void	navigate_history(t_terminal *term, t_hist **current)
 	{
 		if (term->index == 0
 		|| term->index == (get_node_index(current, 0))->index + 1)
+		{
+			if (old_line)
+				free(old_line);
 			old_line = ft_strdup(term->line->str);
+		}
 		if (term->buff == UPARROW)
 			history_up(term, current);
 		else if (term->buff == DWNARROW)

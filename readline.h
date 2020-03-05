@@ -13,6 +13,7 @@
 #ifndef _READLINE_H
 # define _READLINE_H
 # include "21sh.h"
+
 # define LFTARROW 0x445B1B
 # define RTARROW 0x435B1B
 # define UPARROW 0x415B1B
@@ -35,7 +36,6 @@
 typedef	struct		s_line
 {
 	char			*str;
-	char			*cmd;
 	int				curs;
 	int				col;
 	int				nline;
@@ -110,6 +110,7 @@ void				past(t_line *line, char **to_past);
 void				display_line_from_begin(t_line *line);
 void				left_select(t_terminal *term);
 void				right_select(t_terminal *term);
-char				*readline(int prompt, t_hist **his_list);
+char				*readline(int prompt);
+void    			free_line(t_line *line);
 
 #endif

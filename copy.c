@@ -18,7 +18,8 @@ char	*copy_char_1(t_line *line, int curs)
 	int		j;
 	char	*to_copy;
 
-	to_copy = (char *)malloc(sizeof(char) * (line->curs - curs + 2));
+	if (!(to_copy = (char *)malloc(sizeof(char) * (line->curs - curs + 2))))
+		return (NULL);
 	i = curs;
 	j = 0;
 	while (i <= line->curs)
@@ -37,7 +38,8 @@ char	*copy_char_2(t_line *line, int curs)
 	int		j;
 	char	*to_copy;
 
-	to_copy = (char *)malloc(sizeof(char) * curs + 1);
+	if (!(to_copy = (char *)malloc(sizeof(char) * curs + 1)))
+		return (NULL);
 	i = line->curs;
 	j = 0;
 	while (i <= curs)

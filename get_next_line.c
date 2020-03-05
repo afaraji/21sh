@@ -15,27 +15,31 @@
 int		get_next_line(const int fd, char **line)
 {
 	char			buff[BUFF_SIZE + 1];
-	static	char	*str[256];
-	int				ret;
+	static	char	*str;
+	char			*tmp;
 	int				i;
 
-	i = 0;
 	if (fd < 0 || read(fd, buff, 0) < 0 || line == NULL)
 		return (-1);
-	if (str[fd] == NULL)
-		str[fd] = ft_strnew(1);
-	while ((ret = read(fd, buff, BUFF_SIZE)))
+	if (str == NULL)
+		str = ft_strnew(1);
+	while ((i = read(fd, buff, BUFF_SIZE)))
 	{
-		buff[ret] = '\0';
-		str[fd] = ft_strjoin(str[fd], buff);
-		if (ft_strchr(str[fd], '\n'))
+		buff[i] = '\0';
+		tmp = str;
+		str = ft_strjoin(str, buff);
+		free(tmp);
+		if (ft_strchr(str, '\n'))
 			break ;
 	}
-	if (ft_strlen(str[fd]) == 0 && ret == 0)
+	if (ft_strlen(str) == 0 && i == 0)
 		return (0);
-	while (str[fd][i] != '\n' && str[fd][i] != '\0')
+	i = 0;
+	while (str[i] != '\n' && str[i] != '\0')
 		i++;
-	*line = ft_strsub(str[fd], 0, i);
-	str[fd] = ft_strdup(str[fd] + i + 1);
+	*line = ft_strsub(str, 0, i);
+	tmp = ft_strdup(str + i + 1);
+	free(str);
+	str = tmp;
 	return (1);
 }

@@ -11,14 +11,25 @@
 /* ************************************************************************** */
 
 #include "readline.h"
+#include "parse.h"
+
+void	free_term(t_terminal **term)
+{
+	//free((*term)->line->str);
+	free((*term)->line);
+	free((*term)->select);
+	free(*term);
+}
 
 t_terminal	*initiate_unprint_var(void)
 {
 	t_terminal	*term;
 
-	term = (t_terminal *)malloc(sizeof(t_terminal));
+	if (!(term = (t_terminal *)malloc(sizeof(t_terminal))))
+		return (NULL);
 	term->index = 0;
-	term->select = (t_select *)malloc(sizeof(t_select));
+	if (!(term->select = (t_select *)malloc(sizeof(t_select))))
+		return (NULL);
 	term->select->on = 0;
 	return (term);
 }
@@ -27,6 +38,7 @@ char		*manage_line(char *prompt, t_hist **his_head)
 {
 	t_terminal	*term;
 	static char	*to_past = NULL;
+	char		*tmp;
 
 	term = initiate_unprint_var();
 	term->line = init_line(prompt);
@@ -42,10 +54,12 @@ char		*manage_line(char *prompt, t_hist **his_head)
 		else if (!(ft_isprint(term->buff)))
 			unprintable(term, his_head, &to_past);
 	}
-	return (term->line->str);
+	tmp = ft_strdup(term->line->str);
+	free_term(&term);
+	return (tmp);
 }
 
-char		*readline(int prompt, t_hist **his_list)
+char		*readline(int prompt)
 {
 	char *prmt;
 
@@ -63,5 +77,5 @@ char		*readline(int prompt, t_hist **his_list)
 		prmt = "pipe> ";
 	else
 		prmt = "> ";
-	return (manage_line(prmt, his_list));
+	return (manage_line(prmt, &(g_var.history)));
 }

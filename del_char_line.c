@@ -14,10 +14,14 @@
 
 void	del_char(t_line *line)
 {
+	char	*tmp;
+
 	if (line->curs > 0)
 	{
 		go_left(line);
+		tmp = line->str;
 		line->str = trim_pos(line->str, line->curs);
+		ft_strdel(&tmp);
 		display_line(line);
 	}
 }

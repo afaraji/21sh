@@ -23,6 +23,7 @@ char	*join_line_2(char *str, char *s1, int i, int j)
 	if (j == (int)ft_strlen(str))
 		i++;
 	s1[i] = '\0';
+	free(str);
 	return (s1);
 }
 

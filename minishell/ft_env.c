@@ -17,7 +17,8 @@ t_lst	*ft_get_node(char *str)
 	t_lst	*node;
 	int		i;
 
-	node = (t_lst *)malloc(sizeof(t_lst));
+	if (!(node = (t_lst *)malloc(sizeof(t_lst))))
+		return (NULL);
 	i = 0;
 	while (str[i])
 	{

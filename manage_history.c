@@ -12,28 +12,14 @@
 
 #include "readline.h"
 
-char	*tmp_strdup(char *str)
-{
-	char	*s;
-	int		i;
-
-	s = ft_strdup(str);
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == '#')
-			s[i] = '\n';
-		i++;
-	}
-	return (s);
-}
-
 t_hist	*get_his_node(char *file_str, t_hist *prec, int i)
 {
 	t_hist	*node;
 
-	node = (t_hist *)malloc(sizeof(t_hist));
-	node->hist_str = tmp_strdup(file_str);
+	if (!(node = (t_hist *)malloc(sizeof(t_hist))))
+		return (NULL);
+	node->hist_str = ft_strdup(file_str);
+	ft_strdel(&file_str);
 	node->index = i;
 	node->next = NULL;
 	node->prec = prec;
@@ -72,9 +58,7 @@ void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
 	{
 		node = *his_head;
 		while (node->next)
-		{
 			node = node->next;
-		}
 		node->next = get_his_node(cmd, node, node->index + 1);
 	}
 }
