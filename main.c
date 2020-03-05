@@ -147,6 +147,7 @@ int		main(int ac, char **av, char **env)
 		}
 		ret = main_parse(line);
 		printf("\n");
+		free(line);
 		line = readline(ret, &his_list);
 		// fprintf(ttyfd, "------------->(%d) - (%s)\n", ret, line);
 	}
