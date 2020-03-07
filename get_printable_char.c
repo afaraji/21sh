@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-void	get_cmd(t_terminal *term, t_hist **his_head)
+void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 {
 	char	*tmp;
 
@@ -25,7 +25,7 @@ void	get_cmd(t_terminal *term, t_hist **his_head)
 		term->line->str = trim_cmd(term->line->str);
 		free(tmp);
 		if (ft_strcmp(term->line->str, "") != 0)
-			add_cmd_to_his_list(term->line->str, his_head);
+			add_cmd_to_his_list(term->line->str, his_head, mult_line);// added here to history
 		else
 			free(term->line->str);
 	}
@@ -39,7 +39,7 @@ void	printable_2(t_terminal *term)
 	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 }
 
-int		printable(t_terminal *term, t_hist **his_head)
+int		printable(t_terminal *term, t_hist **his_head, int mult_line)
 {
 	int	curs;
 
@@ -49,7 +49,7 @@ int		printable(t_terminal *term, t_hist **his_head)
 			printable_2(term);
 		else
 		{
-			get_cmd(term, his_head);
+			get_cmd(term, his_head, mult_line);
 			if (term->buff == ENTER)
 			{
 				curs = term->line->curs;

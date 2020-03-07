@@ -61,10 +61,11 @@ void	get_his_list(char *file_str, t_hist **head, int index)
 	}
 }
 
-void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
+void	add_cmd_to_his_list(char *cmd, t_hist **his_head, int mult_line)
 {
 	t_hist	*node;
 	int		i;
+	char	*tmp;
 
 	if (!(*his_head))
 	{
@@ -76,7 +77,15 @@ void	add_cmd_to_his_list(char *cmd, t_hist **his_head)
 		node = *his_head;
 		while (node->next)
 			node = node->next;
-		node->next = get_his_node(cmd, node, node->index + 1);
+		if (mult_line == 0 || mult_line == -1)
+			node->next = get_his_node(cmd, node, node->index + 1);
+		else
+		{
+			tmp = ft_strjoin(node->hist_str, "\n");
+			free(node->hist_str);
+			node->hist_str = ft_strjoin(tmp, cmd);
+			free(tmp);
+		}
 	}
 }
 

@@ -34,7 +34,7 @@ t_terminal	*initiate_unprint_var(void)
 	return (term);
 }
 
-char		*manage_line(char *prompt, t_hist **his_head)
+char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 {
 	t_terminal	*term;
 	static char	*to_past = NULL;
@@ -49,7 +49,7 @@ char		*manage_line(char *prompt, t_hist **his_head)
 	{
 		term->buff = 0;
 		read(0, &term->buff, 4);
-		if (printable(term, his_head))
+		if (printable(term, his_head, mult_line))
 			break ;
 		else if (!(ft_isprint(term->buff)))
 			unprintable(term, his_head, &to_past);
@@ -77,5 +77,5 @@ char		*readline(int prompt)
 		prmt = "\npipe> ";
 	else
 		prmt = "\n> ";
-	return (manage_line(prmt, &(g_var.history)));
+	return (manage_line(prmt, &(g_var.history), prompt));
 }
