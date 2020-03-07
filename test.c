@@ -44,15 +44,6 @@ char		*read_word(char *str)
 	return (ft_strsub(str, 0, i));	
 }
 
-t_redirect		*rediriction(t_list_token *tokens)
-{
-	if (!_OR(tokens->type, GRT, GRTGRT, SMLSML, SML, 0))
-		return (NULL);
-	return (NULL);
-}
-
-
-
 int main(int ac, char **av)
 {
 	//printf("++-->[%s]\n", read_number(av[1]));

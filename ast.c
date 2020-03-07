@@ -12,6 +12,7 @@
 
 #include "parse.h"
 #include "readline.h"
+#include "lexer.c"
 
 int		is_op(char *str, int i)
 {
@@ -119,6 +120,12 @@ char	*tokentoa(int token)
 		case -1:
 			return(" ");
 			break;
+		case -2:
+			return("'");
+			break;
+		case -3:
+			return("\"");
+			break;
 		case -4:
 			return(";");
 			break;
@@ -135,7 +142,7 @@ char	*tokentoa(int token)
 			return("&");
 			break;
 		case -12:
-			return("[\\]");
+			return("\\");
 			break;
 		case -20:
 			return(">");
@@ -243,12 +250,12 @@ t_list_token	*add_quote(int *index, char *str)
 	t_list_token	*node;
 	int i = *index;
 
-	if (!(node = (t_list_token *)malloc(sizeof(t_list_token))))	//need protection if malloc fails.
+	if (!(node = (t_list_token *)malloc(sizeof(t_list_token))))
 		return(NULL);
 	i++;
-	while (str[i] && str[i] != 39)
+	while (str[i] && str[i] != '\'')
 		i++;
-    (str[i] == 39) ? (node->is_ok = 1) : (node->is_ok = 0);
+    (str[i] == '\'') ? (node->is_ok = 1) : (node->is_ok = 0);
 	node->type = QUOTE;
 	node->data = ft_strsub(str, *index + 1, i - *index - 1); // i = 0; or i = *index ?
 	node->next = NULL;
@@ -262,11 +269,13 @@ t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeptio
 	t_list_token	*node;
 	int i = *index;
 
-	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));
+	if (!node)
+		return (NULL);
 	i++;
-	while (str[i] && str[i] != 34 && str[i - 1] != 92)		// need testing
+	while (str[i] && str[i] != '"' && str[i - 1] != '\\')		// need testing
 		i++;
-    (str[i] == 34) ? (node->is_ok = 1) : (node->is_ok = 0);
+    (str[i] == '"') ? (node->is_ok = 1) : (node->is_ok = 0);
 	node->type = DQUOTE;
 	node->data = ft_strsub(str, *index + 1, i - *index - 1);		// i = 0; or i = *index ?
 	node->next = NULL;
@@ -296,7 +305,9 @@ t_list_token	*add_escape(int *index, char *str) // need thinking and recoding
 {
 	t_list_token	*node;
 
-	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));
+	if (!node)
+		return (NULL);
 	node->type = ESCAPE;
 	// need to verifie if it s a reserved word
 	node->data = ft_strsub(str, *index + 1, 1);printf("---|%s|---\n", node->data);
@@ -310,13 +321,13 @@ t_list_token	*add_op(int *index, char *str, int op)
 {
 	t_list_token	*node;
 
-	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));
+	if (!node)
+		return (NULL);
 	if (op == ANDLG || op == ORLG || op == GRTGRT || op == SMLSML)
 		*index += 1;
-	if (op == SMLAND || op == GRTAND)//|| op == SMLGRT || op == CLOBBER)
+	if (op == SMLAND || op == GRTAND)
 		*index += 1;
-	// if (op == DSMLDASH)
-	// 	*index += 2;
 	*index += 1;
 	node->type = op;
 	node->data = NULL;
@@ -336,7 +347,9 @@ t_list_token	*add_word_int(int *index, char *str)
 	{
 		i++;
 	}
-	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));
+	if (!node)
+		return (NULL);
 	node->type = WORD;
 	node->data = ft_strsub(str, *index, i - *index); // i = 0; or i = *index ?
 	node->next = NULL;
@@ -537,7 +550,7 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 		*cmd = (*cmd)->next;
 		while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 			*cmd = (*cmd)->next;;
-		if (*cmd && (*cmd)->type == WORD)	// QOTE and DQOTE ??
+		if (*cmd && ((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))	// QOTE and DQOTE ??
 		{
 			if (is_valid_file((*cmd)->data, (*cmd)->next))
 			{
@@ -585,7 +598,7 @@ char		*io_here(t_list_token **cmd, t_list_token **end, int *r_type)
 		*cmd = (*cmd)->next;
 		while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 			*cmd = (*cmd)->next;
-		if (*cmd && (*cmd)->type == WORD)	// QOTE and DQOTE ??
+		if (*cmd && ((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))	// QOTE and DQOTE ??
 		{
 			if (is_valid_file((*cmd)->data, (*cmd)->next))
 			{
@@ -730,7 +743,7 @@ t_cmd_prefix	*cmd_prefix(t_list_token **cmd, t_list_token **end)
 	return (NULL);
 }
 
-char			*cmd_word(t_list_token **cmd, t_list_token **end) // need to apply rule 7b ?
+char			*cmd_word(t_list_token **cmd, t_list_token **end) // need to apply rule 7b ? and need to include qote and dqote(is_ok = ?)
 {
 	char	*word;
 
@@ -738,7 +751,7 @@ char			*cmd_word(t_list_token **cmd, t_list_token **end) // need to apply rule 7
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
-	if ((*cmd)->type == WORD)
+	if (((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))
 	{
 		word = ft_strdup((*cmd)->data);
 		*cmd = (*cmd)->next;
@@ -776,7 +789,7 @@ t_cmd_suffix	*cmd_suffix(t_list_token **cmd, t_list_token **end)
 	return (NULL);
 }
 
-char			*cmd_name(t_list_token	**cmd, t_list_token **end)	// need to apply rule 7a ?
+char			*cmd_name(t_list_token	**cmd, t_list_token **end)	// need to apply rule 7a ? and need to include qote and dqote(is_ok = ?)
 {
 	char	*name;
 
@@ -784,7 +797,7 @@ char			*cmd_name(t_list_token	**cmd, t_list_token **end)	// need to apply rule 7
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
-	if ((*cmd)->type == WORD)
+	if (((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))
 	{
 		name = ft_strdup((*cmd)->data);
 		*cmd = (*cmd)->next;
@@ -803,17 +816,17 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 	ret->prefix = cmd_prefix(&start, &end);
 	if (ret->prefix)
 	{
-		ret->word = cmd_word(&start, &end);
+		ret->word = cmd_word(&start, &end);					//	include " '
 		if (ret->word)
 		{
-			ret->suffix = cmd_suffix(&start, &end);
+			ret->suffix = cmd_suffix(&start, &end);			//	include " '
 			return (ret);
 		}
 		return (ret);
 	}
-	else if ((ret->name = cmd_name(&start, &end)))
+	else if ((ret->name = cmd_name(&start, &end)))			//	include " '
 	{
-		ret->suffix = cmd_suffix(&start, &end);
+		ret->suffix = cmd_suffix(&start, &end);				//	include " '
 		return (ret);
 	}
 	else
@@ -828,20 +841,6 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 		return(NULL);
 	}
 }
-
-// t_comp_cmd	*get_comp_cmd(t_list_token *start, t_list_token *end)
-// {
-// 	t_comp_cmd		*ret;
-
-// 	if(!start || g_var.errno)
-// 		return (NULL);
-// 	ret = (t_comp_cmd *)malloc(sizeof(t_comp_cmd));
-// 	ret->tokens = start;
-// 	ret->cmd_list = get_simple_cmd(start, end);
-// 	// fprintf(ttyfd, "*********** pipe_seq ************\n");
-// 	// print_simple_cmd(ret->cmd_list);
-// 	return (ret);
-// }
 
 t_pipe_seq	*ast(t_list_token *tokens)
 {
@@ -941,7 +940,7 @@ int		verify_tokens(t_list_token *token)
 
 	if (!token)
 		return (1);
-	if (_OR(token->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN))
+	if (_OR(token->type, SMCLN, ANDLG, ORLG, BGJOB, PIP))
 	{
 		ft_putstr_fd("\nsyntax error, unexpected token `", 2);
 		ft_putstr_fd(tokentoa(token->type), 2);
@@ -986,12 +985,14 @@ t_and_or	*get_andor_list(t_list_token *strt, int dep, t_list_token *end)
 
 	if (!strt)
 		return (NULL);
-	node = (t_and_or *)malloc(sizeof(t_and_or));
+	if (!(node = (t_and_or *)malloc(sizeof(t_and_or))))
+		return (NULL);
 	node->next = NULL;
 	tmp = list_sub(strt, end);
 	node->ast = ast(tmp);
 	// free(tmp);
-	// if (!ast) what sould do ?
+	if (!(node->ast))
+		return (NULL);
 	node->dependent = 0;
 	if (dep == ANDLG)
 		node->dependent = 1;
@@ -1090,22 +1091,68 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	return (list);
 }
 
+int		need_append(t_list_token *tokens)
+{
+	t_list_token	*node;
+	t_list_token	*ttt;
+	char			*toappend;
+	char			*tmp;
+	int				typ;
+
+	node = tokens;
+	while (node->next)
+		node = node->next;
+	while (node && node->type == SPACE)
+		node = node->prec;
+	typ = node->type;
+	if (typ == PIP || typ == ESCAPE || ((typ == QUOTE || typ == DQUOTE) && node->is_ok == 0))
+	{
+		if (typ == QUOTE || typ == DQUOTE)
+		{
+			toappend = ft_strjoin(node->data, "#");
+			toappend = ft_strjoin(toappend, readline(typ));
+			toappend = ft_strjoin(tokentoa(typ), toappend);
+			ttt = __tokenize(toappend);
+			if (ttt->next)
+				ttt->next->prec = node;
+			node->data = ttt->data;
+			node->type = ttt->type;
+			node->is_ok = ttt->is_ok;
+			node->next = ttt->next;
+		}
+		else
+		{
+			toappend = readline(typ);
+			node->next = __tokenize(toappend);
+		}
+		free(toappend);
+		if (lexer(&tokens) || verify_tokens(tokens))
+		{
+			return (100);
+		}
+		
+		return (need_append(tokens));
+	}
+	return (0);
+}
+
 int main_parse(char *line)
 {
 	t_list_token    *tokens;
 	t_cmdlist		*cmdlist = NULL;
 	t_cmdlist		*node;
 
-	// ttyfd = fopen("/dev/ttys003", "w");
 	fprintf(ttyfd, "\033[H\033[2J");
     tokens = __tokenize(line);
-	printf("\n");token_print(tokens);printf("\n");
+	// printf("\n");token_print(tokens);printf("\n");
 	
 	g_var.errno = 0;
-	if (verify_tokens(tokens))// || g_var.errno)
+	if (lexer(&tokens) || verify_tokens(tokens))
 	{
-		return (0);
+		return (100);
 	}
+	if (need_append(tokens))
+		return (100);
 	cmdlist = token_split_sep_op(tokens);
 	// free_tokens(tokens);	
 	int i = 0;
@@ -1125,22 +1172,9 @@ int main_parse(char *line)
 		fprintf(ttyfd, "-----------------------------------------------------\n");
 		node = node->next;
 	}
-	// if (g_var.errno)
-	// {
-	// 	ft_errno();
-	// }
-	// if (!(cmd = ast(tokens))) // should take tokens_tab from the split above AKA tokens_list
-	// {
-	// 	g_var.exit_status = g_var.errno;
-	// 	g_var.errno = 0;
-	// 	return (g_var.exit_status);
-	// }
-	// printf("\n---------------------\n");
-	// print_ast(cmd);
-	// printf("\n---------------------\n");
 	return (0);
 }
 
 // don't forget quote, dquote, expansions...
-// should remove t_comp_cmd, it have no meaning
 // correct error management with (g_var.[errno, err_str])
+// escape deep thinking and search

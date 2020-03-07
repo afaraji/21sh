@@ -12,6 +12,27 @@
 
 #include "parse.h"
 
+char	*ft_appendstr(char *s1, char *s2)
+{
+	char	*joined;
+	char	*tmp;
+
+	if (!s1 || !s2)
+	{
+		if (s1)
+			return (s1);
+		if (s2)
+			return (s2);
+		return(NULL);
+	}
+	tmp = ft_strjoin(s1, "\n");
+	joined = ft_strjoin(tmp, s2);
+	ft_strdel(&tmp);
+	ft_strdel(&s1);
+	ft_strdel(&s2);
+	return (joined);
+}
+
 char	*ft_strsub_delimit(char *s, char c)
 {
 	int i;
@@ -101,7 +122,7 @@ t_alias		*get_aliases(void)
 	node->next = (t_alias *)malloc(sizeof(t_alias));
 	node = node->next;
 	node->key = ft_strdup("lolo");
-	node->sub = ft_strdup("gggg khayba");
+	node->sub = ft_strdup("1gggg cccc4");
 	node->next = NULL;
 	return (aliases);
 }
@@ -131,7 +152,6 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 	t_list_token *node;
 
 	node = *cmd_token;
-	//give head to be treated.
 	while (node)
 	{
 		if(_OR(node->type, SMCLN, ANDLG, ORLG, PIP, BGJOB) || node == *cmd_token)
@@ -150,12 +170,14 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 				if (alias_sub(node, get_aliases()))
 				{
 					parse_and_replace(cmd_token, node);
-					keywords_alias_sub(cmd_token);
-					return (2); // should break or return ??? break == return unless there is code after while
+					if (keywords_alias_sub(cmd_token))
+						return (1);
+					return (0); // should break or return ??? break == return unless there is code after while
 				}
 			}
 		}
-		node = node->next;
+		if (node)
+			node = node->next;
 	}
 	return (0);
 }
@@ -241,7 +263,13 @@ int		dollar_sub(t_list_token **cmd_token)
 
 int		lexer(t_list_token **cmd_token)
 {
-	keywords_alias_sub(cmd_token);
+	if (!cmd_token || !(*cmd_token))
+		return (1);
+	if (keywords_alias_sub(cmd_token))
+	{
+		g_var.exit_status = 42;
+		return (42);
+	}
 //	4 - brace_expansion(cmd_token);  a{b,c} becomes ab ac
 //	5 - sub_?  Substitutes the user’s home directory ($HOME) for tilde if it is at the beginning of a word
 //	6 - sub_user_home(cmd_token); eg. ~USER

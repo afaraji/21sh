@@ -67,15 +67,15 @@ char		*readline(int prompt)
 		prmt = "$> ";
 	else if (prompt == -1)
 		prmt = "$> ";
-	else if (prompt == 1)
-		prmt = "quote> ";
-	else if (prompt == 2)
-		prmt = "dquote> ";
-	else if (prompt == 3)
-		prmt = "heredoc> ";
-	else if (prompt == 4)
-		prmt = "pipe> ";
+	else if (prompt == QUOTE)
+		prmt = "\nquote> ";
+	else if (prompt == DQUOTE)
+		prmt = "\ndquote> ";
+	else if (prompt == SMLSML)
+		prmt = "\nheredoc> ";
+	else if (prompt == PIP)
+		prmt = "\npipe> ";
 	else
-		prmt = "> ";
+		prmt = "\n> ";
 	return (manage_line(prmt, &(g_var.history)));
 }
