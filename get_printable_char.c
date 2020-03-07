@@ -23,9 +23,11 @@ void	get_cmd(t_terminal *term, t_hist **his_head)
 	{
 		tmp = term->line->str;
 		term->line->str = trim_cmd(term->line->str);
-		ft_strdel(&tmp);
+		free(tmp);
 		if (ft_strcmp(term->line->str, "") != 0)
 			add_cmd_to_his_list(term->line->str, his_head);
+		else
+			free(term->line->str);
 	}
 }
 

@@ -58,8 +58,16 @@ void	go_down_2(t_line *line, char **table)
 void	go_down(t_line *line)
 {
 	char	**table;
+	int		i;
 
 	table = ft_strsplit_2(line->str, '\n');
 	if (line->curs < (int)ft_strlen(line->str))
 		go_down_2(line, table);
+	i = 0;
+	while (table[i])
+	{
+		free(table[i]);
+		i++;
+	}
+	free(table);
 }

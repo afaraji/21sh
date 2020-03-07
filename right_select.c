@@ -43,7 +43,7 @@ void	right_select_2(t_terminal *term)
 	ft_putchar(term->line->str[term->line->curs]);
 	i = term->line->curs + 1;
 	ft_putstr("\e[45m");
-	while (i <= term->select->start)
+	while (term->line->str[i] != '\0' && i <= term->select->start)
 	{
 		ft_putchar(term->line->str[i]);
 		i++;

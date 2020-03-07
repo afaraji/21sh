@@ -37,16 +37,21 @@ char	*join_lines_to_past(t_line *line, char *to_past)
 	curs = line->curs;
 	tmp1 = ft_strsub(line->str, 0, curs);
 	tmp2 = ft_strjoin(tmp1, to_past);
+	ft_strdel(&tmp1);
 	str = ft_strjoin(tmp2, &line->str[curs]);
-	return (str);
+	ft_strdel(&tmp2);
+	return(str);
 }
 
 void	past(t_line *line, char **to_past)
 {
-	int i;
+	int 	i;
+	char	*tmp;
 
 	i = line->curs + (int)ft_strlen(*to_past);
+	tmp = line->str;
 	line->str = join_lines_to_past(line, *to_past);
+	ft_strdel(&tmp);
 	while (line->curs > 0)
 		go_left(line);
 	past_char(line);

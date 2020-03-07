@@ -40,7 +40,9 @@ void	ft_cut(t_terminal *term, char **to_past)
 
 	if (term->select->on == 1)
 	{
-		*to_past = ft_strdup(copy_char(term->line, term->select->start));
+		if (*to_past)
+			ft_strdel(to_past);
+		*to_past = copy_char(term->line, term->select->start);
 		tmp_s = ft_strdup(term->line->str);
 		curs = term->line->curs;
 		go_home(term->line);

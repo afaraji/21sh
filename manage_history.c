@@ -13,6 +13,22 @@
 #include "readline.h"
 #include "parse.h"
 
+// char	*tmp_strdup(char *str)
+// {
+// 	char	*s;
+// 	int		i;
+
+// 	s = ft_strdup(str);
+// 	i = 0;
+// 	while (s[i])
+// 	{
+// 		if (s[i] == '#')
+// 			s[i] = '\n';
+// 		i++;
+// 	}
+// 	return (s);
+// }
+
 t_hist	*get_his_node(char *file_str, t_hist *prec, int i)
 {
 	t_hist	*node;

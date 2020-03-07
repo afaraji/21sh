@@ -16,6 +16,7 @@ char	*trim_cmd(char *s)
 {
 	int		i;
 	int		len;
+	char	*str;
 
 	if (s == NULL)
 		return (NULL);

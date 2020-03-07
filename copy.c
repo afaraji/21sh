@@ -57,10 +57,9 @@ char	*copy_char(t_line *line, int curs)
 	char	*to_copy;
 
 	if (line->curs > curs)
-		to_copy = ft_strdup(copy_char_1(line, curs));
+		return (copy_char_1(line, curs));
 	else
-		to_copy = ft_strdup(copy_char_2(line, curs));
-	return (to_copy);
+		return (copy_char_2(line, curs));
 }
 
 void	ft_copy(t_terminal *term, char **to_past)
@@ -70,7 +69,9 @@ void	ft_copy(t_terminal *term, char **to_past)
 		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
 		display_line_from_begin(term->line);
 		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
-		*to_past = ft_strdup(copy_char(term->line, term->select->start));
+		if (*to_past)
+			ft_strdel(to_past);
+		*to_past = copy_char(term->line, term->select->start);
 		term->select->on = 0;
 	}
 }

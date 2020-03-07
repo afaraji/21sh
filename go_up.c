@@ -42,10 +42,16 @@ void	go_up_2(t_line *line, char **table)
 void	go_up(t_line *line)
 {
 	char	**table;
+	int		i;
 
 	table = ft_strsplit_2(line->str, '\n');
 	if (line->curs > 0)
-	{
 		go_up_2(line, table);
+	i = 0;
+	while (table[i])
+	{
+		free(table[i]);
+		i++;
 	}
+	free(table);
 }

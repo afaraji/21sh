@@ -37,7 +37,7 @@ void	left_select_2(t_terminal *term)
 	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
 	i = term->line->curs;
 	ft_putstr("\e[45m");
-	while (i <= term->select->start)
+	while (term->line->str[i] != '\0' && i <= term->select->start)
 	{
 		ft_putchar(term->line->str[i]);
 		i++;
@@ -60,6 +60,9 @@ void	left_select(t_terminal *term)
 		if (term->select->len >= 0)
 			left_select_1(term->line);
 		else
+		{
+			//fprintf(ttyfd, "here\n");
 			left_select_2(term);
+		}
 	}
 }
