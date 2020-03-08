@@ -40,12 +40,12 @@ char	*join_lines_to_past(t_line *line, char *to_past)
 	ft_strdel(&tmp1);
 	str = ft_strjoin(tmp2, &line->str[curs]);
 	ft_strdel(&tmp2);
-	return(str);
+	return (str);
 }
 
 void	past(t_line *line, char **to_past)
 {
-	int 	i;
+	int		i;
 	char	*tmp;
 
 	i = line->curs + (int)ft_strlen(*to_past);

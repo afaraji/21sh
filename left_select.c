@@ -60,9 +60,6 @@ void	left_select(t_terminal *term)
 		if (term->select->len >= 0)
 			left_select_1(term->line);
 		else
-		{
-			//fprintf(ttyfd, "here\n");
 			left_select_2(term);
-		}
 	}
 }

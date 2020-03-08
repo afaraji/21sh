@@ -12,6 +12,13 @@
 
 #include "readline.h"
 
+void	ft_get_index(char *str, int *i)
+{
+	*i = 0;
+	while (str[*i] != '\n' && str[*i] != '\0')
+		(*i)++;
+}
+
 int		get_next_line(const int fd, char **line)
 {
 	char			buff[BUFF_SIZE + 1];
@@ -21,8 +28,7 @@ int		get_next_line(const int fd, char **line)
 
 	if (fd < 0 || read(fd, buff, 0) < 0 || line == NULL)
 		return (-1);
-	if (str == NULL)
-		str = ft_strnew(1);
+	(str == NULL) ? (str = ft_strnew(1)) : 0;
 	while ((i = read(fd, buff, BUFF_SIZE)))
 	{
 		buff[i] = '\0';
@@ -34,9 +40,7 @@ int		get_next_line(const int fd, char **line)
 	}
 	if (ft_strlen(str) == 0 && i == 0)
 		return (0);
-	i = 0;
-	while (str[i] != '\n' && str[i] != '\0')
-		i++;
+	ft_get_index(str, &i);
 	*line = ft_strsub(str, 0, i);
 	tmp = ft_strdup(str + i + 1);
 	free(str);

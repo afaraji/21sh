@@ -13,9 +13,8 @@
 #include "readline.h"
 #include "parse.h"
 
-void	free_term(t_terminal **term)
+void		free_term(t_terminal **term)
 {
-	//free((*term)->line->str);
 	free((*term)->line);
 	free((*term)->select);
 	free(*term);

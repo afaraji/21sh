@@ -25,8 +25,8 @@ t_line	*init_line(char *prompt)
 	return (line);
 }
 
-void    free_line(t_line *line)
+void	free_line(t_line *line)
 {
-    free(line->str);
+	free(line->str);
 	free(line);
 }

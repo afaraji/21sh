@@ -135,7 +135,7 @@ int		main(int ac, char **av, char **env)
 	char	*line = NULL;
 	int		ret = 0;
 
-	ttyfd = fopen("/dev/ttys001", "w");
+	ttyfd = fopen("/dev/ttys000", "w");
 	if (init_shell(env))
 		return (1);
 	line = readline(-1);
@@ -145,7 +145,7 @@ int		main(int ac, char **av, char **env)
 		{
 			ft_exit(ft_atoi(&line[4]));
 		}
-		ret = main_parse(line);
+		//ret = main_parse(line);
 		printf("\n");
 		if (line)
 			ft_strdel(&line);
