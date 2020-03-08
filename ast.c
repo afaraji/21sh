@@ -57,59 +57,60 @@ int		is_op(char *str, int i)
 
 void	token_print(t_list_token *node)
 {
+	fprintf(ttyfd, "\n");
 	while (node)
 	{
 		if(node->type == WORD)
-			printf("[%s]", node->data);
+			fprintf(ttyfd, "[%s]", node->data);
 		else if(node->type == QUOTE || node->type == DQUOTE)
-			printf("{%d:%s}", node->is_ok, node->data);
+			fprintf(ttyfd, "{%d:%s}", node->is_ok, node->data);
 		else
 		{
-			//printf("(%d)", node->type);
+			//fprintf(ttyfd, "(%d)", node->type);
 			switch (node->type)
 			{
 			case -1:
-				printf("_");
+				fprintf(ttyfd, "_");
 				break;
 			case -4:
-				printf(";");
+				fprintf(ttyfd, ";");
 				break;
 			case -5:
-				printf("(&&)");
+				fprintf(ttyfd, "(&&)");
 				break;
 			case -6:
-				printf("||");
+				fprintf(ttyfd, "||");
 				break;
 			case -10:
-				printf("|");
+				fprintf(ttyfd, "|");
 				break;
 			case -11:
-				printf("&");
+				fprintf(ttyfd, "&");
 				break;
 			case -12:
-				printf("[%s]", node->data);
+				fprintf(ttyfd, "[%s]", node->data);
 				break;
 			case -20:
-				printf(">");
+				fprintf(ttyfd, ">");
 				break;
 			case -21:
-				printf(">>");
+				fprintf(ttyfd, ">>");
 				break;
 			case -22:
-				printf("<");
+				fprintf(ttyfd, "<");
 				break;
 			case -30:
-				printf("<<");
+				fprintf(ttyfd, "<<");
 				break;
 			
 			default:
-				printf("[%d]", node->type);
+				fprintf(ttyfd, "[%d]", node->type);
 				break;
 			}
 		}
 		node = node->next;
 	}
-	//printf("\n");
+	fprintf(ttyfd, "\n");
 }
 
 char	*tokentoa(int token)
@@ -273,7 +274,7 @@ t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeptio
 	if (!node)
 		return (NULL);
 	i++;
-	while (str[i] && str[i] != '"' && str[i - 1] != '\\')		// need testing
+	while (str[i] && (str[i] != '"' || str[i - 1] == '\\'))
 		i++;
     (str[i] == '"') ? (node->is_ok = 1) : (node->is_ok = 0);
 	node->type = DQUOTE;
@@ -281,7 +282,6 @@ t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeptio
 	node->next = NULL;
 	node->prec = NULL;
     (i + 1 < ft_strlen(str)) ? (*index = i + 1) : (*index = ft_strlen(str));
-	*index = i + 1;
 	return (node);
 }
 
@@ -351,7 +351,7 @@ t_list_token	*add_word_int(int *index, char *str)
 	if (!node)
 		return (NULL);
 	node->type = WORD;
-	node->data = ft_strsub(str, *index, i - *index); // i = 0; or i = *index ?
+	node->data = ft_strsub(str, *index, i - *index);
 	node->next = NULL;
 	node->prec = NULL;
 	*index = i;
@@ -363,7 +363,8 @@ t_list_token	*tokenize(char *str, int *i)
 	int op;
 	t_list_token	*tmp;
 
-	if ((op = is_op(str, *i)) < 0)
+	op = is_op(str, *i);
+	if (op < 0)
 	{
 		if (op == QUOTE)
 		{
@@ -933,6 +934,11 @@ void	print_andor(t_cmdlist *list)
 	
 }
 
+void	join_words(t_list_token *token)
+{
+	return;
+}
+
 int		verify_tokens(t_list_token *token)
 {
 	t_list_token	*node;
@@ -940,6 +946,7 @@ int		verify_tokens(t_list_token *token)
 
 	if (!token)
 		return (1);
+	join_words(token);
 	if (_OR(token->type, SMCLN, ANDLG, ORLG, BGJOB, PIP))
 	{
 		ft_putstr_fd("\nsyntax error, unexpected token `", 2);
@@ -1113,6 +1120,7 @@ int		need_append(t_list_token *tokens)
 			toappend = ft_strjoin(toappend, readline(typ));
 			toappend = ft_strjoin(tokentoa(typ), toappend);
 			ttt = __tokenize(toappend);
+			token_print(ttt);
 			if (ttt->next)
 				ttt->next->prec = node;
 			node->data = ttt->data;
