@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   display_line.c                                     :+:      :+:    :+:   */
+/*   manage_line.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,6 +11,14 @@
 /* ************************************************************************** */
 
 #include "readline.h"
+
+int		ft_intputchar(int c)
+{
+	char ch;
+
+	ch = c;
+	return (write(1, &ch, 1));
+}
 
 void	display_line(t_line *line)
 {
@@ -46,4 +54,25 @@ void	display_line_from_begin(t_line *line)
 		line->curs++;
 		curs--;
 	}
+}
+
+void	del_char(t_line *line)
+{
+	char	*tmp;
+
+	if (line->curs > 0)
+	{
+		go_left(line);
+		tmp = line->str;
+		line->str = trim_pos(line->str, line->curs);
+		ft_strdel(&tmp);
+		display_line(line);
+	}
+}
+
+void	del_line(t_line *line)
+{
+	go_end(line);
+	while (line->curs)
+		del_char(line);
 }

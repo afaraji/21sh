@@ -13,11 +13,24 @@
 #include "readline.h"
 #include "parse.h"
 
-void		free_term(t_terminal **term)
+void	ft_prompt(char *prompt)
 {
-	free((*term)->line);
-	free((*term)->select);
-	free(*term);
+	ft_putstr("\x1B[35m");
+	ft_putstr(prompt);
+	ft_putstr("\x1b[39m");
+}
+
+t_line	*init_line(char *prompt)
+{
+	t_line	*line;
+
+	if (!(line = (t_line *)malloc(sizeof(t_line))))
+		return (NULL);
+	line->curs = 0;
+	line->str = ft_strdup("");
+	line->pmt_s = ft_strlen(prompt) + 1;
+	line->col = tgetnum("co");
+	return (line);
 }
 
 t_terminal	*initiate_unprint_var(void)

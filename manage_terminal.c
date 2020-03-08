@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   initiat_term.c                                     :+:      :+:    :+:   */
+/*   manage_terminal.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-int	termtype(void)
+int		termtype(void)
 {
 	int		ret;
 	char	*term_type;
@@ -34,7 +34,7 @@ int	termtype(void)
 	return (1);
 }
 
-int	ft_set_attr(int index)
+int		ft_set_attr(int index)
 {
 	static struct termios	old_termios;
 	struct termios			s_termios;
@@ -57,4 +57,11 @@ int	ft_set_attr(int index)
 		return (1);
 	}
 	return (0);
+}
+
+void	free_term(t_terminal **term)
+{
+	free((*term)->line);
+	free((*term)->select);
+	free(*term);
 }

@@ -12,6 +12,26 @@
 
 #include "readline.h"
 
+t_hist	*get_node_index(t_hist **current, int index)
+{
+	t_hist	*node;
+
+	node = *current;
+	if (index == 0)
+	{
+		while (node->next)
+			node = node->next;
+		return (node);
+	}
+	while (node)
+	{
+		if (node->index == index)
+			return (node);
+		node = node->next;
+	}
+	return (NULL);
+}
+
 void	navigate_history(t_terminal *term, t_hist **current)
 {
 	static char *old_line = NULL;

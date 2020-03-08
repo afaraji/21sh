@@ -113,6 +113,6 @@ void				display_line_from_begin(t_line *line);
 void				left_select(t_terminal *term);
 void				right_select(t_terminal *term);
 char				*readline(int prompt);
-void    			free_line(t_line *line);
+void				free_term(t_terminal **term);
 
 #endif
