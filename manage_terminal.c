@@ -50,6 +50,8 @@ int		ft_set_attr(int index)
 			if (tcsetattr(0, 0, &s_termios) == -1)
 				return (1);
 		}
+		else
+			return (1);
 	}
 	else
 	{
