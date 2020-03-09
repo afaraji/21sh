@@ -757,9 +757,8 @@ t_variable		*ass_word(t_list_token **cmd, t_list_token **end)
 		var->key = ft_strsub((*cmd)->data, 0, i);
 		if (!is_valid_word(var->key))
 		{
-			// free(var->value);
-			// free(var->key);
-			// free(var);
+			free(var->key);
+			free(var);
 			return (NULL);
 		}
 		var->value = ft_strdup(&((*cmd)->data[i + 1]));

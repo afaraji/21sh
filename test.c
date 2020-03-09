@@ -10,43 +10,55 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
+// #include "parse.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-char		*read_number(char *str)
-{
-	int i;
+// char		*read_number(char *str)
+// {
+// 	int i;
 	
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (str[i] && ft_isdigit(str[i]))
-	{
-		i++;
-	}
-	if(i == 0)
-		return (NULL);
-	return (ft_strsub(str, 0, i));
-}
+// 	if (!str)
+// 		return (NULL);
+// 	i = 0;
+// 	while (str[i] && ft_isdigit(str[i]))
+// 	{
+// 		i++;
+// 	}
+// 	if(i == 0)
+// 		return (NULL);
+// 	return (ft_strsub(str, 0, i));
+// }
 
-char		*read_word(char *str)
+// char		*read_word(char *str)
+// {
+// 	int i;
+
+// 	if (!str)
+// 		return (NULL);
+// 	i = 0;
+// 	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+// 	{
+// 		i++;
+// 	}
+// 	if (i == 0)
+// 		return (NULL);
+// 	return (ft_strsub(str, 0, i));	
+// }
+
+void	function(char *str)
 {
-	int i;
-
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-	{
-		i++;
-	}
-	if (i == 0)
-		return (NULL);
-	return (ft_strsub(str, 0, i));	
+	free(str);
+	str = strdup("works fine");
 }
 
 int main(int ac, char **av)
 {
-	//printf("++-->[%s]\n", read_number(av[1]));
-	printf("++%s-->[%s]\n", av[1],read_word(av[1]));
+	char *str;
+
+	str = strdup("error");
+	function(str);
+	printf("---------|%s|--------\n", str);
 	return 0;
 }

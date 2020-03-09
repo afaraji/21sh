@@ -218,9 +218,91 @@ char	*fetch_variables(char *key, int typ)
 	return (NULL);
 }
 
-int		tilde_sub(t_list_token **cmd_token)
+int		tilde_sub2(char *str)
 {
-	char 			*tmp;
+	char 			*tmp = NULL;
+	char 			*tilde_prefix;
+	char 			*rest;
+	t_list_token	*node;
+	struct passwd	*pw;
+	int				i;
+
+	if (str[0] == '~')
+	{
+		i = 1;
+		while (str[i] && str[i] != '/')
+			i++;
+		(str[i] == '/') ? (rest = ft_strdup(&str[i])) : (rest = ft_strdup(""));
+		tilde_prefix = ft_strsub(str, 1, i - 1);
+		if (!ft_strcmp(tilde_prefix, ""))
+		{// $HOME
+			tmp = fetch_variables("HOME", 0);
+			if (tmp)
+			{
+				free(str);
+				str = ft_strjoin(tmp, rest);
+			}
+			else
+			{
+				pw = getpwuid(getuid());
+				free(str);
+				str = ft_strjoin(pw->pw_dir, rest);
+			}
+		}
+		else if(!ft_strcmp(tilde_prefix, "-"))
+		{// $OLDPWD | ~-
+			tmp = fetch_variables("OLDPWD", 0);
+			if(tmp)
+			{
+				free(str);
+				str = ft_strjoin(tmp, rest);
+			}				
+		}
+		else if (!ft_strcmp(tilde_prefix, "+"))
+		{// $PWD
+			tmp = fetch_variables("PWD", 0);
+			if(tmp)
+			{
+				free(str);
+				str = ft_strjoin(tmp, rest);
+			}
+		}
+		else
+		{
+			fprintf(ttyfd, "===========|%s|\n", tilde_prefix);
+			tmp = ft_strjoin("/Users/", tilde_prefix);
+			if (!access(tmp, F_OK))
+			{
+				fprintf(ttyfd, "===========|%s%s|____\n", tmp, rest);
+				free(str);
+				str = ft_strjoin(tmp, rest);
+			}
+		}
+		ft_strdel(&rest);
+		ft_strdel(&tilde_prefix);
+		ft_strdel(&tmp);
+	}
+	return (0);
+}
+
+int		is_assword(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i] && str[i] != '=')
+		i++;
+	if (str[i] == '=')
+	{
+		return(i + 1);
+	}
+	return (0)
+}
+
+int		tilde_sub(t_list_token **cmd_token)
+{// neeed to add ass_word
+	char 			*tmp = NULL;
+	char			*str;
 	char 			*tilde_prefix;
 	char 			*rest;
 	t_list_token	*node;
@@ -230,26 +312,30 @@ int		tilde_sub(t_list_token **cmd_token)
 	node = *cmd_token;
 	while (node)
 	{
-		if (node->type == WORD && node->data[0] == '~')
+		if (node->type == WORD && (i = is_assword(node->data)))
+			str = ft_strdup(&(node->data[i]))
+		else if (node->type == WORD)
+			str = ft_strdup(node->data);
+		if (str && str[0] == '~')
 		{
 			i = 1;
-			while (node->data[i] && node->data[i] != '/')
+			while (str[i] && str[i] != '/')
 				i++;
-			(node->data[i] == '/') ? (rest = ft_strdup(&(node->data[i]))) : (rest = ft_strdup(""));
-			tilde_prefix = ft_strsub(node->data, 1, i - 1);
+			(str[i] == '/') ? (rest = ft_strdup(&(str[i]))) : (rest = ft_strdup(""));
+			tilde_prefix = ft_strsub(str, 1, i - 1);
 			if (!ft_strcmp(tilde_prefix, ""))
 			{// $HOME
 				tmp = fetch_variables("HOME", 0);
 				if (tmp)
 				{
-					free(node->data);
-					node->data = ft_strjoin(tmp, rest);
+					free(str);
+					str = ft_strjoin(tmp, rest);
 				}
 				else
 				{
 					pw = getpwuid(getuid());
-					free(node->data);
-					node->data = ft_strjoin(pw->pw_dir, rest);
+					free(str);
+					str = ft_strjoin(pw->pw_dir, rest);
 				}
 			}
 			else if(!ft_strcmp(tilde_prefix, "-"))
@@ -257,8 +343,8 @@ int		tilde_sub(t_list_token **cmd_token)
 				tmp = fetch_variables("OLDPWD", 0);
 				if(tmp)
 				{
-					free(node->data);
-					node->data = ft_strjoin(tmp, rest);
+					free(str);
+					str = ft_strjoin(tmp, rest);
 				}				
 			}
 			else if (!ft_strcmp(tilde_prefix, "+"))
@@ -266,22 +352,38 @@ int		tilde_sub(t_list_token **cmd_token)
 				tmp = fetch_variables("PWD", 0);
 				if(tmp)
 				{
-					free(node->data);
-					node->data = ft_strjoin(tmp, rest);
+					free(str);
+					str = ft_strjoin(tmp, rest);
 				}
 			}
 			else if (node->next->type != QUOTE && node->next->type != DQUOTE)
 			{
+				fprintf(ttyfd, "===========|%s|\n", tilde_prefix);
 				tmp = ft_strjoin("/Users/", tilde_prefix);
 				if (!access(tmp, F_OK))
 				{
-					free(node->data);
-					node->data = ft_strjoin(tmp, rest);
+					fprintf(ttyfd, "===========|%s%s|____\n", tmp, rest);
+					free(str);
+					str = ft_strjoin(tmp, rest);
 				}
 			}
 			ft_strdel(&rest);
 			ft_strdel(&tilde_prefix);
-			ft_strdel(&tmp);
+			if (tmp)
+				ft_strdel(&tmp);
+			if ((i = is_assword(node->data)))
+			{
+				node->data[i] = '\0';
+				tmp = ft_strjoin(node->data, str);
+				free(node->data);
+				free(str);
+				node->data = tmp;
+			}
+			else
+			{
+				free(node->data);
+				node->data = str;
+			}
 		}
 		node = node->next;
 	}

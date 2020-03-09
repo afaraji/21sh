@@ -134,16 +134,6 @@ typedef struct				s_simple_cmd
 	t_list_token			*tokens;
 }							t_simple_cmd;
 
-// typedef struct				s_comp_cmd
-// { 
-// 	char					*outFile; 
-// 	char					*inFile; 
-// 	char					*errFile; 
-// 	int						background;
-// 	t_simple_cmd			*cmd_list;
-// 	t_list_token			*tokens;
-// }							t_comp_cmd;
-
 typedef struct				s_pipe_seq
 {
 	int						dependent;	//(0';&' not dependt, 1 exec if $? == 0 '&&', 2 exec if $? != 0 '||')
