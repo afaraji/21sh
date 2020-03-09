@@ -296,7 +296,7 @@ int		is_assword(char *str)
 	{
 		return(i + 1);
 	}
-	return (0)
+	return (0);
 }
 
 int		tilde_sub(t_list_token **cmd_token)
@@ -313,7 +313,7 @@ int		tilde_sub(t_list_token **cmd_token)
 	while (node)
 	{
 		if (node->type == WORD && (i = is_assword(node->data)))
-			str = ft_strdup(&(node->data[i]))
+			str = ft_strdup(&(node->data[i]));
 		else if (node->type == WORD)
 			str = ft_strdup(node->data);
 		if (str && str[0] == '~')
@@ -408,7 +408,7 @@ int		lexer(t_list_token **cmd_token)
 //	4 - brace_expansion(cmd_token);  a{b,c} becomes ab ac
 //	5 - sub_?  Substitutes the user’s home directory ($HOME) for tilde if it is at the beginning of a word
 //	6 - sub_user_home(cmd_token); eg. ~USER
-	tilde_sub(cmd_token);
+	// tilde_sub(cmd_token);
 //	7 - dollar_var_sub(cmd_token); eg. $HOME $PWD...		&	10 - split to tokens using isspace
 	dollar_sub(cmd_token);
 //	8 - Does command substitution for any expression of the form $(string).		&	10 - split to tokens using isspace
