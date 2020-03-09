@@ -113,6 +113,67 @@ void	token_print(t_list_token *node)
 	fprintf(ttyfd, "\n");
 }
 
+void	token_print_inverse(t_list_token *node)
+{
+	fprintf(ttyfd, "\n");
+	while (node->next)
+		node = node->next;
+	
+	while (node)
+	{
+		if(node->type == WORD)
+			fprintf(ttyfd, "[%s]", node->data);
+		else if(node->type == QUOTE || node->type == DQUOTE)
+			fprintf(ttyfd, "{%d:%s}", node->is_ok, node->data);
+		else
+		{
+			//fprintf(ttyfd, "(%d)", node->type);
+			switch (node->type)
+			{
+			case -1:
+				fprintf(ttyfd, "_");
+				break;
+			case -4:
+				fprintf(ttyfd, ";");
+				break;
+			case -5:
+				fprintf(ttyfd, "(&&)");
+				break;
+			case -6:
+				fprintf(ttyfd, "||");
+				break;
+			case -10:
+				fprintf(ttyfd, "|");
+				break;
+			case -11:
+				fprintf(ttyfd, "&");
+				break;
+			case -12:
+				fprintf(ttyfd, "[%s]", node->data);
+				break;
+			case -20:
+				fprintf(ttyfd, ">");
+				break;
+			case -21:
+				fprintf(ttyfd, ">>");
+				break;
+			case -22:
+				fprintf(ttyfd, "<");
+				break;
+			case -30:
+				fprintf(ttyfd, "<<");
+				break;
+			
+			default:
+				fprintf(ttyfd, "[%d]", node->type);
+				break;
+			}
+		}
+		node = node->prec;
+	}
+	fprintf(ttyfd, "\n");
+}
+
 char	*tokentoa(int token)
 {
 	
@@ -180,71 +241,63 @@ char	*tokentoa(int token)
 		
 }
 
-t_list_token	*remove_space(t_list_token *oldcmd) // not used
-{
-	t_list_token *node;
-	t_list_token *tmp;
-
-	node = oldcmd;
-	while (node)
-	{
-		if (node->type == SPACE)
-		{
-			tmp = node;
-			if (node->next)
-				node->prec->next = node->next;
-			else
-				node->prec->next = NULL;
-			if (node->prec)
-			{
-				node->next->prec = node->prec;
-				node = node->prec;
-			}
-			else
-			{
-				node->next->prec = NULL;
-				oldcmd = node->next;
-				node = oldcmd;
-				// free_node(tmp);
-				continue;
-			}
-			//free_node(tmp);
-		}
-		node = node->next;
-	}
-	return (oldcmd);
-}
-
-// void	ft_errno()
+// t_list_token	*remove_space(t_list_token *oldcmd) // not used
 // {
-// 	if (g_var.errno == 120)
+// 	t_list_token *node;
+// 	t_list_token *tmp;
+
+// 	node = oldcmd;
+// 	while (node)
 // 	{
-// 		ft_putstr_fd("", 2)
+// 		if (node->type == SPACE)
+// 		{
+// 			tmp = node;
+// 			if (node->next)
+// 				node->prec->next = node->next;
+// 			else
+// 				node->prec->next = NULL;
+// 			if (node->prec)
+// 			{
+// 				node->next->prec = node->prec;
+// 				node = node->prec;
+// 			}
+// 			else
+// 			{
+// 				node->next->prec = NULL;
+// 				oldcmd = node->next;
+// 				node = oldcmd;
+// 				// free_node(tmp);
+// 				continue;
+// 			}
+// 			//free_node(tmp);
+// 		}
+// 		node = node->next;
 // 	}
+// 	return (oldcmd);
 // }
 
-void	print_ast(t_pipe_seq *cmd)
-{
-	while(cmd)
-	{
-		printf("cmd[");
-		token_print(cmd->left->tokens);
+// void	print_ast(t_pipe_seq *cmd)
+// {
+// 	while(cmd)
+// 	{
+// 		printf("cmd[");
+// 		token_print(cmd->left->tokens);
 		
-		if (cmd->right)
-		{
-			printf("] --PIPE--> ");
-			printf("cmd[");
-			token_print(cmd->right->left->tokens);
-			printf("]\n");
-		}
-		else
-		{
-			printf("] ----> ");
-			printf("standard output");
-		}
-		cmd = cmd->right;
-	}
-}
+// 		if (cmd->right)
+// 		{
+// 			printf("] --PIPE--> ");
+// 			printf("cmd[");
+// 			token_print(cmd->right->left->tokens);
+// 			printf("]\n");
+// 		}
+// 		else
+// 		{
+// 			printf("] ----> ");
+// 			printf("standard output");
+// 		}
+// 		cmd = cmd->right;
+// 	}
+// }
 
 t_list_token	*add_quote(int *index, char *str)
 {
@@ -934,9 +987,49 @@ void	print_andor(t_cmdlist *list)
 	
 }
 
+void	free_token_node(t_list_token **todel)
+{
+	ft_strdel(&((*todel)->data));
+	free(*todel);
+	*todel = NULL;
+}
+
+void	join_nodes(t_list_token *dst, t_list_token *todel)
+{
+	t_list_token	*node;
+	char			*tmp;
+
+	tmp = ft_strjoin(dst->data, todel->data);
+	free(dst->data);
+	dst->data = tmp;
+	dst->type = WORD;
+	dst->next = todel->next;
+	if (todel->next)
+		todel->next->prec = dst;
+	free_token_node(&todel);
+}
+
 void	join_words(t_list_token *token)
 {
-	return;
+	t_list_token	*node;
+	t_list_token	*tmp;
+
+	node = token;
+	while (node->next)
+	{
+		if (node->type == WORD || node->type == QUOTE || node->type == DQUOTE)
+		{
+			tmp = node->next;
+			if (tmp->type == WORD || tmp->type == QUOTE || tmp->type == DQUOTE)
+			{
+				join_nodes(node, tmp);
+				node = token;
+			}
+		}
+		if (!(node->next))
+			break;
+		node = node->next;
+	}
 }
 
 int		verify_tokens(t_list_token *token)
@@ -946,7 +1039,6 @@ int		verify_tokens(t_list_token *token)
 
 	if (!token)
 		return (1);
-	join_words(token);
 	if (_OR(token->type, SMCLN, ANDLG, ORLG, BGJOB, PIP))
 	{
 		ft_putstr_fd("\nsyntax error, unexpected token `", 2);
@@ -1138,7 +1230,6 @@ int		need_append(t_list_token *tokens)
 		{
 			return (100);
 		}
-		
 		return (need_append(tokens));
 	}
 	return (0);
@@ -1161,6 +1252,7 @@ int main_parse(char *line)
 	}
 	if (need_append(tokens))
 		return (100);
+	join_words(tokens);
 	cmdlist = token_split_sep_op(tokens);
 	// free_tokens(tokens);	
 	int i = 0;
@@ -1183,6 +1275,21 @@ int main_parse(char *line)
 	return (0);
 }
 
-// don't forget quote, dquote, expansions...
 // correct error management with (g_var.[errno, err_str])
 // escape deep thinking and search
+// dollar_expans
+
+
+// tilde_sub	-	segfaults at ~USER === look behind ===
+// $> ~sazouakaSegmentation fault: 11
+// e1r5p4 [21sh]$ ./a.out
+// $> ~afarajiSegmentation fault: 11
+// e1r5p4 [21sh]$ ./a.out
+// $> ~alsdkamsdfklamsdklSegmentation fault: 11
+// e1r5p4 [21sh]$ ./a.out
+// $> ~/lol/ppwpwp
+// $> var=~/lol
+// $> echo ~/poooop
+// $> ~a.out(36682,0x7fffae76e3c0) malloc: *** error for object 0x7f8a32d00870: pointer being freed was not allocated
+// *** set a breakpoint in malloc_error_break to debug
+// Abort trap: 6

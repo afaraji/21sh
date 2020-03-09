@@ -84,18 +84,18 @@ t_variable	*get_setvar(void)
 	return (head);
 }
 
-void	print_set_with_typ(t_variable *list)
+void	print_set_with_typ(void)
 {
 	t_variable	*node;
 
-	node = list;
-	printf("\n++++++++++++++++++++++++\n");
+	node = g_var.var;
+	fprintf(ttyfd, "\n++++++++++++++++++++++++\n");
 	while (node)
 	{
-		printf("%d:%s=%s\n", node->env, node->key, node->value);
+		fprintf(ttyfd, "%d:%s=%s\n", node->env, node->key, node->value);
 		node = node->next;
 	}
-	printf("++++++++++++++++++++++++\n");
+	fprintf(ttyfd, "++++++++++++++++++++++++\n");
 		
 }
 
@@ -120,6 +120,8 @@ t_variable	*get_set(char **env)
 	return (head);	
 }
 
+void	get_aliases(void);
+
 int		init_shell(char **env)
 {
 	if (ft_set_attr(0))
@@ -127,6 +129,8 @@ int		init_shell(char **env)
 	g_var = (t_shell_var){0, 0, NULL, NULL};
 	g_var.var = get_set(env);
 	g_var.history = create_history();
+	get_aliases();// should be removed from here (no aliases at program start)
+	print_set_with_typ();
 	return (0);
 }
 
@@ -135,7 +139,7 @@ int		main(int ac, char **av, char **env)
 	char	*line = NULL;
 	int		ret = 0;
 
-	ttyfd = fopen("/dev/ttys000", "w");
+	ttyfd = fopen("/dev/ttys003", "w");
 	if (init_shell(env))
 		return (1);
 	line = readline(-1);
@@ -145,7 +149,7 @@ int		main(int ac, char **av, char **env)
 		{
 			ft_exit(ft_atoi(&line[4]));
 		}
-		//ret = main_parse(line);
+		ret = main_parse(line);
 		printf("\n");
 		if (line)
 			ft_strdel(&line);
@@ -156,27 +160,3 @@ int		main(int ac, char **av, char **env)
 	(void)av;
 	return (0);
 }
-
-// int main(int ac, char **av, char **env)
-// {
-// 	char	*line;
-// 	t_hist	*his_list = NULL;
-
-// 	ttyfd = fopen("/dev/ttys003", "w");
-// 	create_history(&his_list);
-// 	if (ft_set_attr(0))
-// 		return (0);
-// 	line = read_line("$> ", &his_list);
-// 	while (1)
-// 	{
-// 		if (ft_strncmp(line, "exit", 4) == 0)
-// 		{
-// 			ft_exit(his_list, ft_atoi(&line[4]));
-// 		}
-// 		line = read_line("\n$> ", &his_list);
-// 	}
-// 	(void)ac;
-// 	(void)av;
-// 	(void)env;
-// 	return (0);
-// }

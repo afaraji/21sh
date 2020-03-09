@@ -83,6 +83,7 @@ int		alias_sub(t_list_token *word, t_alias *aliases)
 			{
 				free(word->data);
 				word->data = ft_strdup(node->sub);
+				fprintf(ttyfd, "------|%s|-----\n", word->data);
 				return (1);
 			}
 		}
@@ -107,44 +108,65 @@ int		is_reserved(char *str)
 	return (0);
 }
 
-t_alias		*get_aliases(void)
+void		insert_alias(char *key, char *sub)
 {
-	t_alias		*aliases;
 	t_alias		*node;
 
-	aliases = (t_alias *)malloc(sizeof(t_alias));
-	aliases->key = ft_strdup("toto");
-	aliases->sub = ft_strdup("tata hahahahah");
-	aliases->next = (t_alias *)malloc(sizeof(t_alias));
-	node = aliases->next;
-	node->key = ft_strdup("tata");
-	node->sub = ft_strdup("lolo");
-	node->next = (t_alias *)malloc(sizeof(t_alias));
-	node = node->next;
-	node->key = ft_strdup("lolo");
-	node->sub = ft_strdup("1gggg cccc4");
-	node->next = NULL;
-	return (aliases);
+	if (g_var.aliases)
+	{
+		node = g_var.aliases;
+		while (node->next)
+			node = node->next;
+		node->next = (t_alias *)malloc(sizeof(t_alias));
+		node->next->next = NULL;
+		node->next->key = ft_strdup(key);
+		node->next->sub = ft_strdup(sub);		
+	}
+	else
+	{
+		g_var.aliases = (t_alias *)malloc(sizeof(t_alias));
+		g_var.aliases->next = NULL;
+		g_var.aliases->key = ft_strdup(key);
+		g_var.aliases->sub = ft_strdup(sub);
+	}
+	
+}
+
+void	get_aliases(void)
+{
+	insert_alias("toto", "lala qwerty");
+	insert_alias("lala", "yoyo");
+	insert_alias("yoyo", "test alias");
+	insert_alias("abc", "abce lol  123");
 }
 
 t_list_token	*__tokenize(char *str);
-void	token_print(t_list_token *node);
+void	token_print(t_list_token *node); 
 
 void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
 {
-	// parse node->data and insert it and replace wit it node.
-	t_list_token *prec = node->prec;
-	t_list_token *next = node->next;
-	t_list_token *to_insert;
+	t_list_token	*toinsert;
+	t_list_token	*tmp;
 
-	to_insert = __tokenize(node->data);
-	prec->next = to_insert;
-	to_insert->prec = prec;
-	while(to_insert->next)
-		to_insert = to_insert->next;
-	to_insert->next = next;
-	next->prec = to_insert;
-	// should free node;
+	toinsert = __tokenize(node->data);
+	tmp = toinsert;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = node->next;
+	if (node->next)
+		node->next->prec = tmp;
+	if (node->prec)
+	{
+		tmp = node->prec;
+		toinsert->prec = tmp;
+		tmp->next = toinsert;
+	}
+	else
+	{
+		*cmd_token = toinsert;
+	}
+	free(node->data);
+	free(node);	
 }
 
 int		keywords_alias_sub(t_list_token **cmd_token)
@@ -162,12 +184,12 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 				node = node->next;
 			if (node && node->type == WORD && is_reserved(node->data))
 			{
-				printf("found '%s' - not implimented yet\n", node->data);
+				printf("\nfound '%s' - not implimented yet", node->data);
 				return (1);
 			}
 			else if (node && node->type == WORD)
 			{
-				if (alias_sub(node, get_aliases()))
+				if (alias_sub(node, g_var.aliases))
 				{
 					parse_and_replace(cmd_token, node);
 					if (keywords_alias_sub(cmd_token))
@@ -182,13 +204,28 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 	return (0);
 }
 
+char	*fetch_variables(char *key, int typ)
+{
+	t_variable	*node;
+
+	node = g_var.var;
+	while (node)
+	{
+		if (node->env == typ && !ft_strcmp(key, node->key))
+			return (node->value);
+		node = node->next;
+	}
+	return (NULL);
+}
+
 int		tilde_sub(t_list_token **cmd_token)
 {
-	char *tmp;
-	char *tilde_prefix;
-	char *rest;
+	char 			*tmp;
+	char 			*tilde_prefix;
+	char 			*rest;
 	t_list_token	*node;
-	int i;
+	struct passwd	*pw;
+	int				i;
 
 	node = *cmd_token;
 	while (node)
@@ -202,15 +239,14 @@ int		tilde_sub(t_list_token **cmd_token)
 			tilde_prefix = ft_strsub(node->data, 1, i - 1);
 			if (!ft_strcmp(tilde_prefix, ""))
 			{// $HOME
-				char *home = NULL;
-				if (home)
+				tmp = fetch_variables("HOME", 0);
+				if (tmp)
 				{
 					free(node->data);
-					node->data = ft_strjoin(home, rest);
+					node->data = ft_strjoin(tmp, rest);
 				}
-				else if (1)
+				else
 				{
-					struct passwd	*pw;
 					pw = getpwuid(getuid());
 					free(node->data);
 					node->data = ft_strjoin(pw->pw_dir, rest);
@@ -218,22 +254,20 @@ int		tilde_sub(t_list_token **cmd_token)
 			}
 			else if(!ft_strcmp(tilde_prefix, "-"))
 			{// $OLDPWD | ~-
-				char *oldpwd = "/Users/afaraji/Desktop";
-				if(oldpwd)
+				tmp = fetch_variables("OLDPWD", 0);
+				if(tmp)
 				{
 					free(node->data);
-					node->data = ft_strjoin(oldpwd, rest);
-				}
+					node->data = ft_strjoin(tmp, rest);
+				}				
 			}
 			else if (!ft_strcmp(tilde_prefix, "+"))
 			{// $PWD
-				char *pwd = NULL;
-				if(!pwd)
-					pwd = getcwd(NULL, 0);
-				if(pwd)
+				tmp = fetch_variables("PWD", 0);
+				if(tmp)
 				{
 					free(node->data);
-					node->data = ft_strjoin(pwd, rest);
+					node->data = ft_strjoin(tmp, rest);
 				}
 			}
 			else if (node->next->type != QUOTE && node->next->type != DQUOTE)
@@ -243,13 +277,12 @@ int		tilde_sub(t_list_token **cmd_token)
 				{
 					free(node->data);
 					node->data = ft_strjoin(tmp, rest);
-					free(tmp);
-					free(tilde_prefix);
 				}
 			}
+			ft_strdel(&rest);
+			ft_strdel(&tilde_prefix);
+			ft_strdel(&tmp);
 		}
-		//	freeeeeesss (rest, tilde_prefix, tmp)
-		//	reduce var num 
 		node = node->next;
 	}
 	return (0);
