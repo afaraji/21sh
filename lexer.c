@@ -211,84 +211,19 @@ char	*fetch_variables(char *key, int typ)
 	node = g_var.var;
 	while (node)
 	{
-		if (node->env == typ && !ft_strcmp(key, node->key))
-			return (node->value);
+		if ((node->env == typ || typ < 0) && !ft_strcmp(key, node->key))
+			return (ft_strdup(node->value));
 		node = node->next;
 	}
 	return (NULL);
-}
-
-int		tilde_sub2(char *str)
-{
-	char 			*tmp = NULL;
-	char 			*tilde_prefix;
-	char 			*rest;
-	t_list_token	*node;
-	struct passwd	*pw;
-	int				i;
-
-	if (str[0] == '~')
-	{
-		i = 1;
-		while (str[i] && str[i] != '/')
-			i++;
-		(str[i] == '/') ? (rest = ft_strdup(&str[i])) : (rest = ft_strdup(""));
-		tilde_prefix = ft_strsub(str, 1, i - 1);
-		if (!ft_strcmp(tilde_prefix, ""))
-		{// $HOME
-			tmp = fetch_variables("HOME", 0);
-			if (tmp)
-			{
-				free(str);
-				str = ft_strjoin(tmp, rest);
-			}
-			else
-			{
-				pw = getpwuid(getuid());
-				free(str);
-				str = ft_strjoin(pw->pw_dir, rest);
-			}
-		}
-		else if(!ft_strcmp(tilde_prefix, "-"))
-		{// $OLDPWD | ~-
-			tmp = fetch_variables("OLDPWD", 0);
-			if(tmp)
-			{
-				free(str);
-				str = ft_strjoin(tmp, rest);
-			}				
-		}
-		else if (!ft_strcmp(tilde_prefix, "+"))
-		{// $PWD
-			tmp = fetch_variables("PWD", 0);
-			if(tmp)
-			{
-				free(str);
-				str = ft_strjoin(tmp, rest);
-			}
-		}
-		else
-		{
-			fprintf(ttyfd, "===========|%s|\n", tilde_prefix);
-			tmp = ft_strjoin("/Users/", tilde_prefix);
-			if (!access(tmp, F_OK))
-			{
-				fprintf(ttyfd, "===========|%s%s|____\n", tmp, rest);
-				free(str);
-				str = ft_strjoin(tmp, rest);
-			}
-		}
-		ft_strdel(&rest);
-		ft_strdel(&tilde_prefix);
-		ft_strdel(&tmp);
-	}
-	return (0);
 }
 
 int		is_assword(char *str)
 {
 	int i;
 
+	if (!str)
+		return (0);
 	i = 0;
 	while (str[i] && str[i] != '=')
 		i++;
@@ -312,9 +247,14 @@ int		tilde_sub(t_list_token **cmd_token)
 	node = *cmd_token;
 	while (node)
 	{
-		if (node->type == WORD && (i = is_assword(node->data)))
+		if (node->type != WORD || (node->next && (node->next->type == QUOTE || node->next->type == DQUOTE)))
+		{
+			node = node->next;
+			continue;
+		}
+		if ((i = is_assword(node->data)))
 			str = ft_strdup(&(node->data[i]));
-		else if (node->type == WORD)
+		else
 			str = ft_strdup(node->data);
 		if (str && str[0] == '~')
 		{
@@ -325,7 +265,7 @@ int		tilde_sub(t_list_token **cmd_token)
 			tilde_prefix = ft_strsub(str, 1, i - 1);
 			if (!ft_strcmp(tilde_prefix, ""))
 			{// $HOME
-				tmp = fetch_variables("HOME", 0);
+				tmp = fetch_variables("HOME", -1);
 				if (tmp)
 				{
 					free(str);
@@ -340,7 +280,7 @@ int		tilde_sub(t_list_token **cmd_token)
 			}
 			else if(!ft_strcmp(tilde_prefix, "-"))
 			{// $OLDPWD | ~-
-				tmp = fetch_variables("OLDPWD", 0);
+				tmp = fetch_variables("OLDPWD", -1);
 				if(tmp)
 				{
 					free(str);
@@ -349,20 +289,18 @@ int		tilde_sub(t_list_token **cmd_token)
 			}
 			else if (!ft_strcmp(tilde_prefix, "+"))
 			{// $PWD
-				tmp = fetch_variables("PWD", 0);
+				tmp = fetch_variables("PWD", -1);
 				if(tmp)
 				{
 					free(str);
 					str = ft_strjoin(tmp, rest);
 				}
 			}
-			else if (node->next->type != QUOTE && node->next->type != DQUOTE)
+			else
 			{
-				fprintf(ttyfd, "===========|%s|\n", tilde_prefix);
 				tmp = ft_strjoin("/Users/", tilde_prefix);
 				if (!access(tmp, F_OK))
 				{
-					fprintf(ttyfd, "===========|%s%s|____\n", tmp, rest);
 					free(str);
 					str = ft_strjoin(tmp, rest);
 				}
@@ -390,8 +328,87 @@ int		tilde_sub(t_list_token **cmd_token)
 	return (0);
 }
 
+int		is_dollar(char *s)
+{
+	int i;
+
+	if (!s)
+		return (-42);
+	i = 0;
+	while(s[i] && s[i] != '$')
+		i++;
+	if (s[i] == '$')
+		return (i);
+	return (-42);
+}
+
+int		end_dollar_word(char *s, int start)
+{
+	int i;
+
+	i = start + 1;
+	if (s[i] == '!' || s[i] == '#' || s[i] == '$' || s[i] == '?')
+		return(i + 1);
+	if (s[i] != '_' && !ft_isalpha(s[i]))
+		return (i);
+	while (s[i] && (s[i] == '_' || ft_isalnum(s[i])))
+		i++;
+	return (i);
+}
+
+char	*get_dollar_var(char *s, int start, int end)
+{
+	char	*tmp;
+	char	*var;
+
+	if (start == end - 1)
+		return (ft_strdup("$"));
+	tmp = ft_strsub(s, start + 1, end - start - 1);
+	var = fetch_variables(tmp, -1);
+	if (!var)
+		return(ft_strdup(""));
+	return (var);
+}
+
+int		str_dollar_sub(t_list_token	*node)
+{
+	int		start;
+	int		end;
+	char	*prefix;
+	char	*suffix;
+	char	*var;
+
+	start = is_dollar(node->data);
+	if (start < 0)
+		return (-1);
+	end = end_dollar_word(node->data, start);
+	prefix = ft_strsub(node->data, 0, start);
+	var = get_dollar_var(node->data, start, end);
+	suffix = ft_strjoin(var, &(node->data[end]));
+	free(node->data);
+	node->data = ft_strjoin(prefix, suffix);
+	free(prefix);
+	free(var);
+	free(suffix);
+	if (is_dollar(node->data) >= 0 && (end - start) > 1)
+		str_dollar_sub(node);
+	return (0);
+}
+
 int		dollar_sub(t_list_token **cmd_token)
 {
+	t_list_token	*node;
+
+	node = *cmd_token;
+	while (node)
+	{
+		if (node->type == WORD && is_dollar(node->data) >= 0)
+		{
+			str_dollar_sub(node);
+		}
+		node = node->next;
+	}
+	
 	
 	return (0);
 }
@@ -408,7 +425,7 @@ int		lexer(t_list_token **cmd_token)
 //	4 - brace_expansion(cmd_token);  a{b,c} becomes ab ac
 //	5 - sub_?  Substitutes the user’s home directory ($HOME) for tilde if it is at the beginning of a word
 //	6 - sub_user_home(cmd_token); eg. ~USER
-	// tilde_sub(cmd_token);
+	tilde_sub(cmd_token);
 //	7 - dollar_var_sub(cmd_token); eg. $HOME $PWD...		&	10 - split to tokens using isspace
 	dollar_sub(cmd_token);
 //	8 - Does command substitution for any expression of the form $(string).		&	10 - split to tokens using isspace

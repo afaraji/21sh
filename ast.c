@@ -241,63 +241,6 @@ char	*tokentoa(int token)
 		
 }
 
-// t_list_token	*remove_space(t_list_token *oldcmd) // not used
-// {
-// 	t_list_token *node;
-// 	t_list_token *tmp;
-
-// 	node = oldcmd;
-// 	while (node)
-// 	{
-// 		if (node->type == SPACE)
-// 		{
-// 			tmp = node;
-// 			if (node->next)
-// 				node->prec->next = node->next;
-// 			else
-// 				node->prec->next = NULL;
-// 			if (node->prec)
-// 			{
-// 				node->next->prec = node->prec;
-// 				node = node->prec;
-// 			}
-// 			else
-// 			{
-// 				node->next->prec = NULL;
-// 				oldcmd = node->next;
-// 				node = oldcmd;
-// 				// free_node(tmp);
-// 				continue;
-// 			}
-// 			//free_node(tmp);
-// 		}
-// 		node = node->next;
-// 	}
-// 	return (oldcmd);
-// }
-
-// void	print_ast(t_pipe_seq *cmd)
-// {
-// 	while(cmd)
-// 	{
-// 		printf("cmd[");
-// 		token_print(cmd->left->tokens);
-		
-// 		if (cmd->right)
-// 		{
-// 			printf("] --PIPE--> ");
-// 			printf("cmd[");
-// 			token_print(cmd->right->left->tokens);
-// 			printf("]\n");
-// 		}
-// 		else
-// 		{
-// 			printf("] ----> ");
-// 			printf("standard output");
-// 		}
-// 		cmd = cmd->right;
-// 	}
-// }
 
 t_list_token	*add_quote(int *index, char *str)
 {
@@ -331,7 +274,9 @@ t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeptio
 		i++;
     (str[i] == '"') ? (node->is_ok = 1) : (node->is_ok = 0);
 	node->type = DQUOTE;
-	node->data = ft_strsub(str, *index + 1, i - *index - 1);		// i = 0; or i = *index ?
+	node->data = (ft_strsub(str, *index + 1, i - *index - 1));		// i = 0; or i = *index ?
+	if (is_dollar(node->data) >= 0)
+		str_dollar_sub(node);
 	node->next = NULL;
 	node->prec = NULL;
     (i + 1 < ft_strlen(str)) ? (*index = i + 1) : (*index = ft_strlen(str));
