@@ -37,9 +37,7 @@ void	go_right(t_line *line)
 	if (line->curs < (int)ft_strlen(line->str))
 	{
 		if (is_multline(line->str))
-		{
 			go_right_2(line);
-		}
 		else
 		{
 			if ((line->curs + line->pmt_s) % line->col == 0)

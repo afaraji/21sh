@@ -146,11 +146,8 @@ int		main(int ac, char **av, char **env)
 	line = readline(-1);
 	while (1)
 	{
-		print_env(0);
 		if (ft_strncmp(line, "exit", 4) == 0)
-		{
 			ft_exit(ft_atoi(&line[4]));
-		}
 		ret = main_parse(line);
 		printf("\n");
 		if (line)

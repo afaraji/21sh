@@ -12,6 +12,20 @@
 
 #include "readline.h"
 
+int		check_termcap(void)
+{
+	if (!(tgetstr("nd", NULL)) || !(tgetstr("sc", NULL))
+	|| !(tgetstr("rc", NULL)) || !(tgetstr("cd", NULL))
+	|| !(tgetstr("up", NULL)) || !(tgetstr("ch", NULL))
+	|| !(tgetstr("le", NULL)) || !(tgetstr("do", NULL)))
+	{
+		ft_putstr("NULL TERMCAP\n");
+		return (0);
+	}
+	else
+		return (1);
+}
+
 int		termtype(void)
 {
 	int		ret;
@@ -42,7 +56,7 @@ int		ft_set_attr(int index)
 	if (index == 0)
 	{
 		tcgetattr(0, &old_termios);
-		if (termtype())
+		if (termtype() && check_termcap())
 		{
 			if (tcgetattr(0, &s_termios) == -1)
 				return (1);
