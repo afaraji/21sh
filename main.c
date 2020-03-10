@@ -12,6 +12,7 @@
 
 #include "readline.h"
 #include "parse.h"
+#include "minishell.h"
 
 // void	print_list(t_hist *his_head)
 // {
@@ -145,6 +146,7 @@ int		main(int ac, char **av, char **env)
 	line = readline(-1);
 	while (1)
 	{
+		print_env(0);
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
 			ft_exit(ft_atoi(&line[4]));

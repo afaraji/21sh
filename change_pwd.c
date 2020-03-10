@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_change_d.c                                      :+:      :+:    :+:   */
+/*   change_pwd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sazouaka <sazouaka@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,32 +11,33 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "parse.h"
 
-int	ft_change_d(t_lst *head, char *str1, char *str2)
+int	change_pwd(char *str1, char *str2)
 {
-	t_lst	*node;
+	t_variable	*node;
 
-	if (!head)
+	if (!g_var.var)
 		return (1);
-	node = head;
+	node = g_var.var;
 	while (node)
 	{
-		if (ft_strcmp(node->name, str1) == 0)
+		if (ft_strcmp(node->key, str1) == 0)
 		{
-			free(node->content);
-			node->content = ft_strdup(str2);
+			free(node->value);
+			node->value = ft_strdup(str2);
 			return (0);
 		}
 		node = node->next;
 	}
-	node = head;
+	node = g_var.var;
 	while (node->next)
 		node = node->next;
-	if (!(node->next = (t_lst *)malloc(sizeof(t_lst))))
+	if (!(node->next = (t_variable *)malloc(sizeof(t_variable))))
 		return (1);
 	node = node->next;
-	node->name = ft_strdup(str1);
-	node->content = ft_strdup(str2);
+	node->key = ft_strdup(str1);
+	node->value = ft_strdup(str2);
 	node->next = NULL;
 	return (0);
 }
