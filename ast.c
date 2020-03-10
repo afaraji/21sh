@@ -1221,19 +1221,3 @@ int main_parse(char *line)
 
 // correct error management with (g_var.[errno, err_str])
 // escape deep thinking and search
-// dollar_expans
-
-
-// tilde_sub	-	segfaults at ~USER === look behind ===
-// $> ~sazouakaSegmentation fault: 11
-// e1r5p4 [21sh]$ ./a.out
-// $> ~afarajiSegmentation fault: 11
-// e1r5p4 [21sh]$ ./a.out
-// $> ~alsdkamsdfklamsdklSegmentation fault: 11
-// e1r5p4 [21sh]$ ./a.out
-// $> ~/lol/ppwpwp
-// $> var=~/lol
-// $> echo ~/poooop
-// $> ~a.out(36682,0x7fffae76e3c0) malloc: *** error for object 0x7f8a32d00870: pointer being freed was not allocated
-// *** set a breakpoint in malloc_error_break to debug
-// Abort trap: 6
