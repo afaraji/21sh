@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   builtins.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef BUILTINS_H
+# define BUILTINS_H
 # include "libft/libft.h"
 # include <stdio.h>
 # include <fcntl.h>
@@ -67,5 +67,7 @@ void				get_str(char *buff, char *str, t_point *ps);
 void				ft_len(int *i, int *len);
 void    			print_env(int type);
 int					ft_setenv(char **flag);
+void			    ft_export_2(char *key, char *value);
+int     			get_key_value(char *key, char *value, char *flag);
 
 #endif

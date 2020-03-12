@@ -12,7 +12,7 @@
 
 #include "readline.h"
 #include "parse.h"
-#include "minishell.h"
+#include "builtins.h"
 
 int		ft_set_alnum(char **flag)
 {

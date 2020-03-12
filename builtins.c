@@ -12,7 +12,30 @@
 
 #include "readline.h"
 #include "parse.h"
-#include "minishell.h"
+#include "builtins.h"
+
+int     ft_export(char **flag)
+{
+    int     i;
+    char    *key;
+    char    *value;
+
+    i = 1;
+    value = NULL;
+    while (flag[i])
+    {
+        if (flag[1] == NULL)
+        {
+			print_env(0);
+            return (0);
+        }
+        if (get_key_value(key, value, flag[i]))
+            return (1);
+        ft_export_2(key, value);
+        i++;
+    }
+    return (0);
+}
 
 void    print_env(int type)
 {
@@ -68,5 +91,7 @@ int     builtins(char *cmd, char **av)
         return (ft_setenv(av));
     else if (ft_strcmp(cmd, "unsetenv") == 0)
         return (ft_unsetenv(av));
+    else if (ft_strcmp(cmd, "export") == 0)
+        return (ft_export(av));
     return (1);
 }

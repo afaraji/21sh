@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "builtins.h"
 #include "parse.h"
 
 int	change_pwd(char *str1, char *str2)
