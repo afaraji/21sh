@@ -136,7 +136,7 @@ typedef struct				s_simple_cmd
 
 typedef struct				s_pipe_seq
 {
-	int						dependent;	//(0';&' not dependt, 1 exec if $? == 0 '&&', 2 exec if $? != 0 '||')
+	int						dependent;	// did i use it ?
 	t_simple_cmd			*left;
 	struct s_pipe_seq		*right;
 }							t_pipe_seq;

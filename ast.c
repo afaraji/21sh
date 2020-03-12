@@ -13,6 +13,7 @@
 #include "parse.h"
 #include "readline.h"
 #include "lexer.c"
+#include "exec.c"
 
 int		is_op(char *str, int i)
 {
@@ -1212,6 +1213,7 @@ int main_parse(char *line)
 		fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d) ++++++++++\n", i, node->bg);
 		i++;
 		print_andor(node);
+		execute(node->and_or, node->bg);
 		// print_tokenlist(node->and_or->ast);
 		fprintf(ttyfd, "-----------------------------------------------------\n");
 		node = node->next;
