@@ -155,7 +155,21 @@ typedef struct				s_cmdlist
 	struct s_cmdlist		*next;
 }							t_cmdlist;
 
+/*  ------- may change dep on the format needed for exec ------	*/
+
+typedef struct				s_io_list
+{
+	t_io_redirect			*node;
+	struct s_io_list		*next;
+}							t_io_list;
+
+/*	-----------------------------------------------------------	*/
+
 int 	main_parse(char *line);
+char	**env_to_tab(void);
+char	*fetch_variables(char *key, int typ);
+char	**paths_from_env(void);
+int		run_cmd(char **cmd);
 
 // ***************************************
 

@@ -11,12 +11,57 @@
 /* ************************************************************************** */
 
 #include "parse.h"
+#include "run_cmd.c"
 
 FILE	*ttt;
 
-char	**simplecmd_to_tab(t_simple_cmd *cmd)
-{
+static int child = 0;
 
+void	ft_close(int fd)
+{
+	if (close(fd) == -1)
+	{
+		fprintf(stderr, "close: error closing fd: %d\n", fd);
+	}
+}
+
+void	report_error_and_exit(const char* msg)
+{
+	perror(msg);
+	(child ? _exit : exit)(EXIT_FAILURE);
+}
+
+void	redirect(int oldfd, int newfd)
+{
+	if (oldfd != newfd)
+	{
+		if (dup2(oldfd, newfd) != -1)
+			ft_close(oldfd); /* successfully redirected */
+		else
+			report_error_and_exit("dup2");
+	}
+}
+
+char	**paths_from_env(void)
+{
+	char	**paths;
+	char	*tmp;
+	int i;
+
+	tmp = fetch_variables("PATH", -1);
+	paths = ft_strsplit(tmp, ':');
+	free(tmp);
+	i = 0;
+	if (!paths)
+		return (NULL);
+	while (paths[i])
+	{
+		tmp = ft_strjoin(paths[i], "/");
+		free(paths[i]);
+		paths[i] = tmp;
+		i++;
+	}
+	return (paths);
 }
 
 int		env_tab_count(void)
@@ -64,38 +109,200 @@ char	**env_to_tab(void)
 	return (argv);
 }
 
+t_io_list	*get_io_redirect(t_cmd_prefix *prefix, t_cmd_suffix *suffix)
+{
+	t_io_list	*head = NULL;
+	t_io_list	*node;
+
+	while (prefix)
+	{
+		if (prefix->io_redirect)
+		{
+			if (!head)
+			{
+				node = (t_io_list *)malloc(sizeof(t_io_list));
+				node->node = prefix->io_redirect;
+				node->next = NULL;
+				head = node;
+			}
+			else
+			{
+				node->next = (t_io_list *)malloc(sizeof(t_io_list));
+				node = node->next;
+				node->node = prefix->io_redirect;
+				node->next = NULL;
+			}
+		}
+		prefix = prefix->prefix;
+	}
+	while (suffix)
+	{
+		if (suffix->io_redirect)
+		{
+			if (!head)
+			{
+				node = (t_io_list *)malloc(sizeof(t_io_list));
+				node->node = prefix->io_redirect;
+				node->next = NULL;
+				head = node;
+			}
+			else
+			{
+				node->next = (t_io_list *)malloc(sizeof(t_io_list));
+				node = node->next;
+				node->node = prefix->io_redirect;
+				node->next = NULL;
+			}
+		}
+		suffix = suffix->suffix;
+	}
+	return (head);
+}
+
+t_variable	*get_ass_word(t_cmd_prefix *prefix)//not sure if it works without malloc
+{
+	t_variable	*head = NULL;
+	t_variable	*node;
+
+	while (prefix)
+	{
+		if (prefix->ass_word)
+		{
+			if (!head)
+			{
+				node = prefix->ass_word;
+				head = node;
+			}
+			else
+			{
+				node->next = prefix->ass_word;
+				node = node->next;
+			}
+		}
+		prefix = prefix->prefix;
+	}
+	return (head);
+}
+
+char	**get_argv(char *cmd, t_cmd_suffix *suffix)
+{
+	char			**args;
+	t_cmd_suffix	*node;
+	int				i;
+
+	if (!cmd)
+		return (NULL);
+	node = suffix;
+	i = 0;
+	while (node)
+	{
+		if (node->word)
+			i++;
+		node = node->suffix;
+	}
+	args = (char **)malloc(sizeof(char *) * (i + 2));
+	args[0] = ft_strdup(cmd);
+	i = 1;
+	while (suffix)
+	{
+		if (suffix->word)
+		{
+			args[i] = ft_strdup(suffix->word);
+			i++;
+		}
+		suffix = suffix->suffix;
+	}
+	return (args);
+}
+
 int		exec_simple_cmd(t_simple_cmd *cmd)
 {
+	t_io_list		*io;
+	t_variable		*var_list;
+	char			**argv;
+	int				ret;
 
 	if (cmd->prefix)
 	{
 		// get all (io_redirects from: prefix[i]->io_redirect && suffix[i]->io_redirect) and/or (ass_words: prefix->assword)
 		// get cmd_path from cmd->word
 		// get cmd_args from suffix[i]->word
+		io = get_io_redirect(cmd->prefix, cmd->suffix);
+		var_list = get_ass_word(cmd->prefix);
+		argv = get_argv(cmd->word, cmd->suffix);
 	}
 	else if (cmd->name)
 	{
 		// get all (io_redirects from: suffix[i]->io_redirect)
 		// get cmd_path from cmd->name
 		// get cmd_args from suffix[i]->word
+		io = get_io_redirect(NULL, cmd->suffix);
+		var_list = NULL;
+		argv = get_argv(cmd->name, cmd->suffix);
 	}
-	return (0);
+	else
+	{
+		// error !! setup errno
+		return (80);
+	}
+	//setup io redirections
+	ret = run_cmd(argv);
+	if (!ret && var_list)
+	{
+		//insert variable with env = 1
+		return (0);
+	}
+	return (ret);
 }
 
-int		exec_ast(t_pipe_seq *cmd)
+int		exec_ast(t_pipe_seq *cmd, int in_fd)
 {
 	int		s_in;
 	int		s_out;
 	int		s_err;
+	int		fd[2];
+	int		ch_pid;
 
 	s_in = dup(0);
 	s_out = dup(1);
 	s_err = dup(2);
-
+	if (!cmd->right)
+	{// last cmd
+		redirect(in_fd, STDIN_FILENO);
+		//exec ?
+	}
+	else
+	{
+		if (pipe(fd) == -1)
+		{
+			return (-1);//should set errno
+		}
+		if ((ch_pid = fork()) == -1)
+			return (-1);//should set errno
+		if (ch_pid == 0)
+		{
+			// child
+			child = 1;
+			ft_close(fd[0]);
+			redirect(in_fd, STDIN);  /* read from in_fd */
+			redirect(fd[1], STDOUT); /* write to fd[1] */
+			exec_simple_cmd(cmd->left);
+			return (-1); // should set errno
+		}
+		else
+		{
+			// parent
+			ft_close(fd[1]);
+			ft_close(in_fd);
+			exec_ast(cmd->right, fd[0]);
+		}
+		
+	}
+	
 	// current cmd setup
 	exec_simple_cmd(cmd->left);
 	// some next cmd setup
-	exec_ast(cmd->right);
+	exec_ast(cmd->right, 0);
 
 	return (0);
 }
@@ -104,206 +311,30 @@ int		execute(t_and_or *cmd, int bg)
 {
 	ttt = fopen("/dev/ttys004", "w");
 	int dp;
-	int ret;
-	int child;
+	int ret = 0;
+	int child_pid;
 
 	// need to fork here
-	dp = cmd->dependent;
-	while (cmd)
+	if ((child_pid = fork()) == -1)
+		return (10);	// should set g_var.errno
+	if (child_pid == 0)
 	{
-		if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
+		dp = cmd->dependent;
+		while (cmd)
 		{
-			fprintf (ttt, "++++++++++++ andor_cmd [bg:%d]+++++++++++", bg);
-			
-			ret = exec_ast(cmd->ast);
-			g_var.exit_status = ret;
+			if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
+			{
+				fprintf (ttt, "++++++++++++ andor_cmd [bg:%d]+++++++++++", bg);
+				
+				ret = exec_ast(cmd->ast, STDIN);
+				g_var.exit_status = ret;
+			}
+			cmd = cmd->next;
 		}
-		cmd = cmd->next;
 	}
-	if (!bg)
+	if (child_pid && !bg)
 	{
-		waitpid(child, NULL, 0);
+		waitpid(child_pid, NULL, 0); // should it be &ret instead of NULL to get exitstatus of child ?
 	}
 	return (ret);
 }
-
-//****************** test ***************************
-void	execute_test(t_cmdlist *node)
-{
-	//*******************
-	char *infile;
-	char *outfile;
-	int  numsimplecommands;
-	int  background;
-
-	//**********************
-	//save in/out
-	int tmpin=dup(0);
-	int tmpout=dup(1);
-
-	//set the initial input 
-	int fdin;
-	if (infile)
-	{
-		fdin = open(infile,O_RDONLY); 
-	}
-	else 
-	{
-		// Use default input
-		fdin=dup(tmpin);
-	}
-
-	int ret;
-	int fdout;
-	for(int i=0;i<numsimplecommands; i++)
-	{
-		//redirect input
-		dup2(fdin, 0);
-		close(fdin);
-		//setup output
-		if (i == numsimplecommands - 1)
-		{
-			// Last simple command 
-			if(outfile)
-			{
-				fdout=open(outfile,O_WRONLY);
-			}
-			else
-			{
-			// Use default output
-				fdout=dup(tmpout);
-			}
-		}
-		else
-		{
-			// Not last 
-			//simple command
-			//create pipe
-			int fdpipe[2];
-			pipe(fdpipe);
-			fdout=fdpipe[1];
-			fdin=fdpipe[0];
-		}// if/else
-
-		// Redirect output
-		dup2(fdout,1);
-		close(fdout);
-
-		// Create child process
-		ret=fork(); 
-		if(ret==0) 
-		{
-			execvp(scmd[i].args[0], scmd[i].args);
-			perror("execvp---->error:");
-			_exit(1);
-		}
-	} //  for
-
-	//restore in/out defaults
-	dup2(tmpin,0);
-	dup2(tmpout,1);
-	close(tmpin);
-	close(tmpout);
-
-	if (!background) 
-	{
-		// Wait for last command
-		waitpid(ret, NULL, WUNTRACED | WCONTINUED);
-	}
-} 
-
-/*
-int		runcmd(char *path, char **argv, char **env_tab)
-{
-	pid_t	child_pid;
-	int		child_status;
-	pid_t	tpid;
-
-	if (access(path, X_OK) != 0 || verify_type(path) != 2)
-	{
-		ft_putstr(argv[0]);
-		ft_putstr(": Permission denied.\n");
-		return (-1);
-	}
-	child_pid = fork();
-	if (child_pid == 0)
-	{
-		execve(path, argv, env_tab);
-		return (0);
-	}
-	else
-	{
-		tpid = wait(&child_status);
-		while (tpid != child_pid)
-		{
-			tpid = wait(&child_status);
-		}
-		return (child_status);
-	}
-}
-
-char	*valid_cmd_2(char **cmd, char **paths)
-{
-	int		i;
-	char	*path;
-
-	i = 0;
-	while (paths[i])
-	{
-		path = ft_strjoin(paths[i], cmd[0]);
-		if (access(path, F_OK) == 0)
-		{
-			free_tab(paths);
-			return (path);
-		}
-		free(path);
-		i++;
-	}
-	free_tab(paths);
-	return (NULL);
-}
-
-char	*valid_cmd(char **cmd, t_env *head)
-{
-	char	**paths;
-
-	if (access(cmd[0], F_OK) == 0 && verify_type(cmd[0]) == 2 && ispth(cmd[0]))
-		return (ft_strdup(cmd[0]));
-	paths = paths_from_env(head);
-	if (paths == NULL || verify_type(cmd[0]) == 1 || ispth(cmd[0]))
-	{
-		free_tab(paths);
-		return (NULL);
-	}
-	return (valid_cmd_2(cmd, paths));
-}
-
-int		run_cmd(char **cmd, t_env *head)
-{
-	char *path;
-	char **env_tab;
-
-	path = valid_cmd(cmd, head);
-	if (path != NULL)
-	{
-		env_tab = list_to_tab(head);
-		runcmd(path, cmd, env_tab);
-		free_tab(env_tab);
-		free(path);
-		return (0);
-	}
-	else
-	{
-		if (!access(cmd[0], F_OK) && verify_type(cmd[0]) != 2 && ispth(cmd[0]))
-		{
-			ft_putstr(cmd[0]);
-			ft_putstr(": Permission denied.\n");
-			return (-2);
-		}
-		ft_putstr("minishell: command not found: ");
-		ft_putstr(cmd[0]);
-		ft_putstr("\n");
-		return (-1);
-	}
-}
-*/

@@ -1185,6 +1185,7 @@ int main_parse(char *line)
 	t_list_token    *tokens;
 	t_cmdlist		*cmdlist = NULL;
 	t_cmdlist		*node;
+	int				ret;
 
 	fprintf(ttyfd, "\033[H\033[2J");
     tokens = __tokenize(line);
@@ -1213,7 +1214,7 @@ int main_parse(char *line)
 		fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d) ++++++++++\n", i, node->bg);
 		i++;
 		print_andor(node);
-		execute(node->and_or, node->bg);
+		ret = execute(node->and_or, node->bg);
 		// print_tokenlist(node->and_or->ast);
 		fprintf(ttyfd, "-----------------------------------------------------\n");
 		node = node->next;
