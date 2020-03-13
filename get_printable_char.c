@@ -11,7 +11,66 @@
 /* ************************************************************************** */
 
 #include "readline.h"
+#include "parse.h"
 
+int				is_all_digits(char *s); // put it in parse.h
+
+char	*history_search_num(int index)
+{
+	t_hist	*node;
+
+	node = g_var.history;
+	while (node->next)
+		node = node->next;//get the max value
+	if (index < 0)
+		index = node->index + index + 1;
+	if (index < 1 || index > node->index)
+		return (NULL);
+	node = g_var.history;
+	while (node)
+	{
+		if (node->index == index)
+			return (ft_strdup(node->hist_str));
+		node = node->next;
+	}
+	return (NULL);	
+}
+
+char	*history_search_word(char *str)
+{
+	int len;
+	t_hist	*node;
+
+	if (!str || !*str)
+		return (NULL);
+	node = g_var.history;
+	len = ft_strlen(str);
+	while (node->next)
+		node = node->next;
+	while (node)
+	{
+		if (!(ft_strncmp(str, node->hist_str, len)))
+			return (ft_strdup(node->hist_str));
+		node = node->prec;
+	}
+	return (NULL);	
+}
+
+char	*history_search(char *str)
+{
+	char	*cmd;
+	char	*tmp;
+
+	if (!str)
+		return (NULL);
+	if (ft_strcmp(str, "!") == 0)
+		cmd = history_search_num(-1);
+	else if ((is_all_digits(str) || (str[0] == '-' && is_all_digits(str + 1))))
+		cmd = history_search_num(atoi(str));
+	else
+		cmd = history_search_word(str);
+	return (cmd);
+}
 void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 {
 	char	*tmp;
@@ -24,6 +83,21 @@ void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 		tmp = term->line->str;
 		term->line->str = trim_cmd(term->line->str);
 		free(tmp);
+		if (term->line->str[0] == '!' && term->line->str[1])
+		{
+			tmp = history_search(term->line->str + 1);
+			if (tmp)
+			{
+				free(term->line->str);
+				term->line->str = ft_strdup(tmp);
+				free(tmp);
+			}
+			else
+			{
+				ft_putstr_fd("\n21sh: no such event.", STDERR);
+				return;
+			}
+		}
 		if (ft_strcmp(term->line->str, "") != 0)
 			add_cmd_to_his_list(term->line->str, his_head, mult_line);
 		else
