@@ -314,11 +314,13 @@ int		execute(t_and_or *cmd, int bg)
 	int ret = 0;
 	int child_pid;
 
+	fprintf (ttt, "------------ execute ------------------\n");
 	// need to fork here
 	if ((child_pid = fork()) == -1)
 		return (10);	// should set g_var.errno
 	if (child_pid == 0)
 	{
+		fprintf (ttt, "------------ execute (child) -------------\n");
 		dp = cmd->dependent;
 		while (cmd)
 		{
@@ -334,6 +336,7 @@ int		execute(t_and_or *cmd, int bg)
 	}
 	if (child_pid && !bg)
 	{
+		fprintf (ttt, "------------ execute (parent) -------------\n");
 		waitpid(child_pid, NULL, 0); // should it be &ret instead of NULL to get exitstatus of child ?
 	}
 	return (ret);
