@@ -12,8 +12,6 @@
 
 #include "../parse.h"
 #include "../readline.h"
-// #include "covid_lexer.c"
-// #include "exec.c"
 
 char	*fetch_variables(char *key, int typ)
 {

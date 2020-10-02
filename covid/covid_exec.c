@@ -19,6 +19,43 @@ int		ft_exit(int status)
 	exit(status);
 }
 
+int		exec(t_pipe_seq *cmd)
+{
+	int fd[2];
+	pid_t	pid_l;
+	pid_t	pid_r;
+
+	if(pipe(fd) != 0)
+		return (-1);
+	if ((pid_l = fork()) == -1)
+		return (-1);//should set errno
+	if ((pid_r = fork()) == -1)
+		return (-1);//should set errno
+	if (pid_l == 0)
+	{
+		//left child
+	}
+	if (pid_r == 0)
+	{
+		//right child
+	}
+	if (pid_l > 0 && pid_r > 0)
+	{
+		//parent
+	}
+	
+}
+
+int		execute(t_and_or *cmd)
+{
+	while(cmd)
+	{
+	//	if cmd->dependent is OK continue if not return 1
+		exec(cmd->ast);
+		cmd = cmd->next;
+	}
+	return (0);
+}
 
 int		main(int ac, char **av, char **env)
 {
@@ -46,7 +83,12 @@ int		main(int ac, char **av, char **env)
 		print_andor(node);
 		node = node->next;
 	}
-	
+	node = cmd;
+	while (node)
+	{
+		execute(node->and_or);
+		node = node->next;
+	}
 	
 	return (0);
 }
