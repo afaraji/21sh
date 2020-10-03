@@ -25,6 +25,7 @@ int		exec(t_pipe_seq *cmd)
 	pid_t	pid_l;
 	pid_t	pid_r;
 
+
 	if(pipe(fd) != 0)
 		return (-1);
 	if ((pid_l = fork()) == -1)
@@ -34,16 +35,32 @@ int		exec(t_pipe_seq *cmd)
 	if (pid_l == 0)
 	{
 		//left child
+		if(cmd->left == NULL)//could be NULL ? or it s never NULL;
+			return (0);
+		close(fd[1]);
+		dup2(3,1);
+		close(3);
+		exit(exec_ve(cmd->left));
 	}
 	if (pid_r == 0)
 	{
 		//right child
+		if(cmd->right == NULL)//what should do if no more elemnts
+			return (0);
+		close(fd[0]);
+		dup2(4,0);
+		close(4);
+		exit(exec(cmd->right));
 	}
 	if (pid_l > 0 && pid_r > 0)
 	{
 		//parent
+		close(fd[0]);
+		close(fd[1]);
+		waitpid(pid_l);
+		waitpid(pid_r);
 	}
-	
+	return (0);	
 }
 
 int		execute(t_and_or *cmd)
@@ -51,7 +68,8 @@ int		execute(t_and_or *cmd)
 	while(cmd)
 	{
 	//	if cmd->dependent is OK continue if not return 1
-		exec(cmd->ast);
+		if(cmd->ast)
+			exec(cmd->ast);
 		cmd = cmd->next;
 	}
 	return (0);
@@ -90,5 +108,5 @@ int		main(int ac, char **av, char **env)
 		node = node->next;
 	}
 	
-	return (0);
+	return (0);;
 }
