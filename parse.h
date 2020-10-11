@@ -163,6 +163,12 @@ typedef struct				s_io_list
 	struct s_io_list		*next;
 }							t_io_list;
 
+typedef struct					s_simple_lst
+{
+	char						*data;
+	struct s_simple_lst				*next;
+}                               t_simple_lst;
+
 /*	-----------------------------------------------------------	*/
 
 int 	main_parse(char *line);

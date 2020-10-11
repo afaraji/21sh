@@ -1068,7 +1068,7 @@ void	free_token_node(t_list_token **todel)
 // 		ft_putstr_fd("\nsyntax error, unexpected token `", 2);
 // 		ft_putstr_fd(tokentoa(token->type), 2);
 // 		ft_putstr_fd("'", 2);
-// 		g_var.errno = 130;
+// 		g_var.errno_ = 130;
 // 		return (2);
 // 	}
 // 	node = token;
@@ -1084,7 +1084,7 @@ void	free_token_node(t_list_token **todel)
 // 				ft_putstr_fd("\nsyntax error after `", 2);
 // 				ft_putstr_fd(tokentoa(node->type), 2);
 // 				ft_putstr_fd("'", 2);
-// 				g_var.errno = 131;
+// 				g_var.errno_ = 131;
 // 				return (3);
 // 			}
 // 			if (tmp && (_OR(tmp->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN)))
@@ -1092,7 +1092,7 @@ void	free_token_node(t_list_token **todel)
 // 				ft_putstr_fd("\nsyntax error, unexpected token `", 2);
 // 				ft_putstr_fd(tokentoa(tmp->type), 2);
 // 				ft_putstr_fd("'", 2);
-// 				g_var.errno = 132;
+// 				g_var.errno_ = 132;
 // 				return (4);
 // 			}
 // 		}

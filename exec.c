@@ -11,35 +11,122 @@
 /* ************************************************************************** */
 
 #include "parse.h"
-#include "run_cmd.c"
 
 FILE	*ttt;
 
-static int child = 0;
+int		do_redirect(t_io_redirect *io)
+{ // no error handling yet !!!
+	int tmpfd;
+	int filefd;
+	int	fd_io;
+	//io->filename(when to test if fd)
 
-void	ft_close(int fd)
-{
-	if (close(fd) == -1)
+	// printf("-----[%s|%d|%d]\n", io->filename, io->io_num, io->redirect_type);
+	if (io->redirect_type == GRT)
 	{
-		fprintf(stderr, "close: error closing fd: %d\n", fd);
+		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
+		tmpfd = dup(fd_io);		//??
+		filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+		if (filefd < 0)
+		{
+			ft_putstr_fd("error at open file [fd<0]\n", 2);
+			return (-1);
+		}
+		dup2(filefd, fd_io);
+		close(filefd);
 	}
+	if (io->redirect_type == GRTGRT)
+	{
+		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
+		tmpfd = dup(fd_io);
+		filefd = open(io->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		if (filefd < 0)
+		{
+			ft_putstr_fd("error at open file [fd<0]\n", 2);
+			return (-1);
+		}
+		dup2(filefd, fd_io);
+		close(filefd);
+	}
+	if (io->redirect_type == GRTAND)// ???
+	{
+		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
+		// if (!ft_strcmp(io->filename, "-"))
+		tmpfd = dup(fd_io);		//??
+		filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+		if (filefd < 0)
+		{
+			ft_putstr_fd("error at open file [fd<0]\n", 2);
+			return (-1);
+		}
+		dup2(filefd, fd_io);
+		close(filefd);
+	}
+	if (io->redirect_type == SML)
+	{
+		(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
+		tmpfd = dup(fd_io);		//??
+		filefd = open(io->filename, O_RDONLY);
+		if (filefd < 0)
+		{
+			ft_putstr_fd("error at open file [fd<0]\n", 2);
+			return (-1);
+		}
+		dup2(filefd, fd_io);
+		close(filefd);
+	}
+	if (io->redirect_type == SMLSML)//special use case
+	{
+		return 1;
+	}
+	if (io->redirect_type == SMLAND)
+	{
+		(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
+		if (!ft_strcmp(io->filename, "-"))
+		{
+			if (close(fd_io))
+				ft_putstr_fd("error closing fd [bad fd]\n", STDERR);
+			return (0);
+		}
+		tmpfd = dup(fd_io);		//??
+		filefd = open(io->filename, O_RDONLY);
+		if (filefd < 0)
+		{
+			ft_putstr_fd("error at open file [fd<0]\n", STDERR);
+			return (-1);
+		}
+		dup2(filefd, fd_io);
+		close(filefd);
+		return 1;
+	}
+	return (0);
 }
 
-void	report_error_and_exit(const char* msg)
+int		do_ass_word(t_variable *var)
 {
-	perror(msg);
-	(child ? _exit : exit)(EXIT_FAILURE);
+	return 0;
 }
 
-void	redirect(int oldfd, int newfd)
+int		do_prefix(t_cmd_prefix *prefix)
 {
-	if (oldfd != newfd)
+	t_cmd_prefix	*node;
+	int				ret;
+
+	node = prefix;
+	while (node)
 	{
-		if (dup2(oldfd, newfd) != -1)
-			ft_close(oldfd); /* successfully redirected */
-		else
-			report_error_and_exit("dup2");
+		if (prefix->ass_word)
+		{
+			ret = do_ass_word(prefix->ass_word);
+		}
+		else if (prefix->io_redirect)
+		{
+			ret = do_redirect(prefix->io_redirect);
+		}
+
+		node = node->prefix;
 	}
+	return (ret);
 }
 
 char	**paths_from_env(void)
@@ -62,6 +149,29 @@ char	**paths_from_env(void)
 		i++;
 	}
 	return (paths);
+}
+
+char	*get_cmdpath(char *str)
+{
+	char	**paths;
+	int		i;
+	char	*tmp;
+
+	if (!access(str, X_OK))
+	{
+		return (ft_strdup(str));
+	}
+	paths = paths_from_env();
+	while (paths[i])
+	{
+		tmp = ft_strjoin(paths[i], str);
+		if (!access(tmp, X_OK))
+		{
+			return (tmp);
+		}
+		free(tmp);
+	}
+	return(NULL);
 }
 
 int		env_tab_count(void)
@@ -109,201 +219,210 @@ char	**env_to_tab(void)
 	return (argv);
 }
 
-t_io_list	*get_io_redirect(t_cmd_prefix *prefix, t_cmd_suffix *suffix)
+int		do_suffix(t_cmd_suffix *suffix)
 {
-	t_io_list	*head = NULL;
-	t_io_list	*node;
-
-	while (prefix)
-	{
-		if (prefix->io_redirect)
-		{
-			if (!head)
-			{
-				node = (t_io_list *)malloc(sizeof(t_io_list));
-				node->node = prefix->io_redirect;
-				node->next = NULL;
-				head = node;
-			}
-			else
-			{
-				node->next = (t_io_list *)malloc(sizeof(t_io_list));
-				node = node->next;
-				node->node = prefix->io_redirect;
-				node->next = NULL;
-			}
-		}
-		prefix = prefix->prefix;
-	}
-	while (suffix)
-	{
-		if (suffix->io_redirect)
-		{
-			if (!head)
-			{
-				node = (t_io_list *)malloc(sizeof(t_io_list));
-				node->node = prefix->io_redirect;
-				node->next = NULL;
-				head = node;
-			}
-			else
-			{
-				node->next = (t_io_list *)malloc(sizeof(t_io_list));
-				node = node->next;
-				node->node = prefix->io_redirect;
-				node->next = NULL;
-			}
-		}
-		suffix = suffix->suffix;
-	}
-	return (head);
-}
-
-t_variable	*get_ass_word(t_cmd_prefix *prefix)//not sure if it works without malloc
-{
-	t_variable	*head = NULL;
-	t_variable	*node;
-
-	while (prefix)
-	{
-		if (prefix->ass_word)
-		{
-			if (!head)
-			{
-				node = prefix->ass_word;
-				head = node;
-			}
-			else
-			{
-				node->next = prefix->ass_word;
-				node = node->next;
-			}
-		}
-		prefix = prefix->prefix;
-	}
-	return (head);
-}
-
-char	**get_argv(char *cmd, t_cmd_suffix *suffix)
-{
-	char			**args;
 	t_cmd_suffix	*node;
-	int				i;
+	t_simple_lst	*args;
+	t_simple_lst	*tmp;
 
-	if (!cmd)
-		return (NULL);
 	node = suffix;
-	i = 0;
 	while (node)
 	{
-		if (node->word)
-			i++;
+		if (node->io_redirect)
+		{
+			do_redirect(node->io_redirect);
+		}
 		node = node->suffix;
 	}
-	args = (char **)malloc(sizeof(char *) * (i + 2));
-	args[0] = ft_strdup(cmd);
-	i = 1;
-	while (suffix)
-	{
-		if (suffix->word)
-		{
-			args[i] = ft_strdup(suffix->word);
-			i++;
-		}
-		suffix = suffix->suffix;
-	}
-	return (args);
+	return (0);
 }
 
-int		exec_simple_cmd(t_simple_cmd *cmd)
+int		do_simpleCmd(t_simple_cmd *cmd)
 {
-	t_io_list		*io;
-	t_variable		*var_list;
-	char			**argv;
-	int				ret;
+	int		ret;
+	char	*command;
 
 	if (cmd->prefix)
 	{
-		// get all (io_redirects from: prefix[i]->io_redirect && suffix[i]->io_redirect) and/or (ass_words: prefix->assword)
-		// get cmd_path from cmd->word
-		// get cmd_args from suffix[i]->word
-		io = get_io_redirect(cmd->prefix, cmd->suffix);
-		var_list = get_ass_word(cmd->prefix);
-		argv = get_argv(cmd->word, cmd->suffix);
+		ret = do_prefix(cmd->prefix);
 	}
-	else if (cmd->name)
+	else if (cmd->name && cmd->suffix)
 	{
-		// get all (io_redirects from: suffix[i]->io_redirect)
-		// get cmd_path from cmd->name
-		// get cmd_args from suffix[i]->word
-		io = get_io_redirect(NULL, cmd->suffix);
-		var_list = NULL;
-		argv = get_argv(cmd->name, cmd->suffix);
-	}
-	else
-	{
-		// error !! setup errno
-		return (80);
-	}
-	//setup io redirections
-	ret = run_cmd(argv);
-	if (!ret && var_list)
-	{
-		//insert variable with env = 1
-		return (0);
+		ret = do_suffix(cmd->suffix);
 	}
 	return (ret);
 }
 
-int		exec_ast(t_pipe_seq *cmd, int in_fd)
+char	**list_to_tab(t_simple_lst *list)
 {
-	int		s_in;
-	int		s_out;
-	int		s_err;
-	int		fd[2];
-	int		ch_pid;
+	t_simple_lst	*node;
+	int		i;
+	char	**args;
 
-	s_in = dup(0);
-	s_out = dup(1);
-	s_err = dup(2);
-	if (!cmd->right)
-	{// last cmd
-		redirect(in_fd, STDIN_FILENO);
-		//exec ?
-	}
-	else
+	node = list;
+	i = 0;
+	while (node)
 	{
-		if (pipe(fd) == -1)
+		i++;
+		node = node->next;
+	}
+	args = (char **)malloc(sizeof(char *) * (i + 1));
+	node = list;
+	i = 0;
+	while(node)
+	{
+		args[i] = ft_strdup(node->data);
+		i++;
+		node = node->next;
+	}
+	args[i] = NULL;
+	//free_list(list);
+	return (args);
+}
+
+char	**get_args(t_simple_cmd	*cmd)
+{
+	t_simple_lst			*head;
+	t_simple_lst			*node;
+	t_cmd_suffix	*tmp;
+
+	if (!(cmd->name) && !(cmd->word))
+		return (NULL);
+	head = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+	if (cmd->name)
+		head->data = ft_strdup(cmd->name);
+	else
+		head->data = ft_strdup(cmd->word);
+	head->next = NULL;
+	node = head;
+	if (cmd->suffix)
+	{
+		tmp = cmd->suffix;
+		while (tmp)
 		{
-			return (-1);//should set errno
-		}
-		if ((ch_pid = fork()) == -1)
-			return (-1);//should set errno
-		if (ch_pid == 0)
+			if (tmp->word)
+			{
+				node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+				node->next->data = ft_strdup(tmp->word);
+				node->next->next = NULL;
+				node = node->next;
+			}
+			tmp = tmp->suffix;
+		}	
+	}
+	return (list_to_tab(head));
+}
+
+int		is_builtin(char *str)
+{
+	char	*b_in_list[] = {"echo","cd", "alias", "unalias", "setenv", "unsetenv", "exit", "env", NULL};
+	int		i;
+
+	i = 0;
+	while (b_in_list[i])
+	{
+		if (!ft_strcmp(b_in_list[i], str))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int		exec_simple_cmd(t_simple_cmd *cmd)
+{
+	char	**args;
+	char	**env;
+	char	*cmd_path;
+	t_simple_lst	*args_list;
+	t_variable	*vars;
+	
+	if (!cmd)
+		return (42);
+	do_simpleCmd(cmd);
+	printf("================[11]===============\n");
+	args = get_args(cmd);
+	if (!args)
+	{
+		//do word assignement perma
+		return (0);
+	}
+	// if builtin exec builtin
+	printf("================[12]===============\n");
+	if (is_builtin(args[0]))
+	{
+		//do builtin
+		return (0);
+	}
+	printf("================[13]===============\n");
+	cmd_path = get_cmdpath(args[0]);
+	env = env_to_tab();
+	printf("================[14]===============\n");
+	if (execve(cmd_path, args, env) == -1)//error handling
+		printf("%s:ErRoR exxecve\n",cmd_path);
+	perror("PERROR");
+	return (1);
+}
+
+int		exec_ast(t_pipe_seq *cmd)
+{
+	int		pfd[2];
+	int		status, status2;
+	pid_t	pid_l;
+	pid_t	pid_r;
+
+
+	if (cmd->right == NULL)
+	{
+		printf("================[1]===============\n");
+		exec_simple_cmd(cmd->left);
+		return (0);
+		// exit(return_value) ?? should exit or not ?
+	}
+	if(pipe(pfd) != 0)
+		return (1);
+
+	if ((pid_r = fork()) == -1)
+		return (2);//should set errno
+	if (pid_r == 0)
+	{
+		printf("================[2]===============\n");
+		close(pfd[1]);
+		dup2(pfd[0],STDIN);
+		if (cmd->right->right)
 		{
-			// child
-			child = 1;
-			ft_close(fd[0]);
-			redirect(in_fd, STDIN);  /* read from in_fd */
-			redirect(fd[1], STDOUT); /* write to fd[1] */
-			exec_simple_cmd(cmd->left);
-			return (-1); // should set errno
+			exec_ast(cmd->right);
 		}
 		else
 		{
-			// parent
-			ft_close(fd[1]);
-			ft_close(in_fd);
-			exec_ast(cmd->right, fd[0]);
+			exit(exec_simple_cmd(cmd->right->left));
+			printf("ERROR executing [%s]\n", cmd->right->left->name);
 		}
+	}
+	else
+	{
+		if ((pid_l = fork()) == -1)
+			return (2);//should set errno
+		if (pid_l == 0)
+		{
+			printf("================[3]===============\n");
+			//left child
+			close(pfd[0]);
+			dup2(pfd[1],STDOUT);
+			exit(exec_simple_cmd(cmd->left));
+			printf("ERROR executing [%s]\n", cmd->left->name);
+		}
+		close(pfd[0]);
+		close(pfd[1]);
+		printf("================[4]===============\n");
+		int tmp;
+		waitpid(pid_l, &status, 0);
+		// tmp = WTERMSIG(status);
+		// printf("pid_l: %d - %d\n", status, tmp);
+		waitpid(pid_r, &status2, 0);
+		// tmp = WTERMSIG(status2);
+		// printf("pid_r: %d - %d\n", status2, tmp);
 		
 	}
-	
-	// current cmd setup
-	exec_simple_cmd(cmd->left);
-	// some next cmd setup
-	exec_ast(cmd->right, 0);
-
 	return (0);
 }
 
@@ -326,9 +445,8 @@ int		execute(t_and_or *cmd, int bg)
 		{
 			if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
 			{
-				fprintf (ttt, "++++++++++++ andor_cmd [bg:%d]+++++++++++", bg);
-				
-				ret = exec_ast(cmd->ast, STDIN);
+				fprintf (ttt, "++++++++++++ andor_cmd [bg:%d]+++++++++++\n", bg);
+				ret = exec_ast(cmd->ast);// here should go exec_pipe();
 				g_var.exit_status = ret;
 			}
 			cmd = cmd->next;
