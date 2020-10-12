@@ -83,7 +83,6 @@ int		alias_sub(t_list_token *word, t_alias *aliases)
 			{
 				free(word->data);
 				word->data = ft_strdup(node->sub);
-				fprintf(ttyfd, "------|%s|-----\n", word->data);
 				return (1);
 			}
 		}

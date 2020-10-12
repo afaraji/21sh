@@ -1211,12 +1211,12 @@ int main_parse(char *line)
 		// (more important) and parser.c (most of it alredy implimented)
 		*/
 
-		fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d) ++++++++++\n", i, node->bg);
+		// fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d) ++++++++++\n", i, node->bg);
 		i++;
-		print_andor(node);
+		// print_andor(node);
 		ret = execute(node->and_or, node->bg);
 		// print_tokenlist(node->and_or->ast);
-		fprintf(ttyfd, "-----------------------------------------------------\n");
+		// fprintf(ttyfd, "-----------------------------------------------------\n");
 		node = node->next;
 	}
 	return (0);
