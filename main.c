@@ -148,8 +148,8 @@ int		main(int ac, char **av, char **env)
 	{
 		if (ft_strncmp(line, "exit", 4) == 0)
 			ft_exit(ft_atoi(&line[4]));
-		ret = main_parse(line);
 		printf("\n");
+		ret = main_parse(line);
 		if (line)
 			ft_strdel(&line);
 		line = readline(0);

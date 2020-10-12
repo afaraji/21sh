@@ -148,6 +148,7 @@ char	**paths_from_env(void)
 		paths[i] = tmp;
 		i++;
 	}
+	paths[i] = NULL;
 	return (paths);
 }
 
@@ -162,6 +163,7 @@ char	*get_cmdpath(char *str)
 		return (ft_strdup(str));
 	}
 	paths = paths_from_env();
+	i = 0;
 	while (paths[i])
 	{
 		tmp = ft_strjoin(paths[i], str);
@@ -170,6 +172,7 @@ char	*get_cmdpath(char *str)
 			return (tmp);
 		}
 		free(tmp);
+		i++;
 	}
 	return(NULL);
 }
@@ -339,7 +342,6 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	if (!cmd)
 		return (42);
 	do_simpleCmd(cmd);
-	printf("================[11]===============\n");
 	args = get_args(cmd);
 	if (!args)
 	{
@@ -347,16 +349,13 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 		return (0);
 	}
 	// if builtin exec builtin
-	printf("================[12]===============\n");
 	if (is_builtin(args[0]))
 	{
 		//do builtin
 		return (0);
 	}
-	printf("================[13]===============\n");
 	cmd_path = get_cmdpath(args[0]);
 	env = env_to_tab();
-	printf("================[14]===============\n");
 	if (execve(cmd_path, args, env) == -1)//error handling
 		printf("%s:ErRoR exxecve\n",cmd_path);
 	perror("PERROR");
@@ -373,7 +372,6 @@ int		exec_ast(t_pipe_seq *cmd)
 
 	if (cmd->right == NULL)
 	{
-		printf("================[1]===============\n");
 		exec_simple_cmd(cmd->left);
 		return (0);
 		// exit(return_value) ?? should exit or not ?
@@ -385,7 +383,6 @@ int		exec_ast(t_pipe_seq *cmd)
 		return (2);//should set errno
 	if (pid_r == 0)
 	{
-		printf("================[2]===============\n");
 		close(pfd[1]);
 		dup2(pfd[0],STDIN);
 		if (cmd->right->right)
@@ -404,7 +401,6 @@ int		exec_ast(t_pipe_seq *cmd)
 			return (2);//should set errno
 		if (pid_l == 0)
 		{
-			printf("================[3]===============\n");
 			//left child
 			close(pfd[0]);
 			dup2(pfd[1],STDOUT);
@@ -413,7 +409,6 @@ int		exec_ast(t_pipe_seq *cmd)
 		}
 		close(pfd[0]);
 		close(pfd[1]);
-		printf("================[4]===============\n");
 		int tmp;
 		waitpid(pid_l, &status, 0);
 		// tmp = WTERMSIG(status);
@@ -439,6 +434,7 @@ int		execute(t_and_or *cmd, int bg)
 		return (10);	// should set g_var.errno
 	if (child_pid == 0)
 	{
+		// sleep(5);
 		fprintf (ttt, "------------ execute (child) -------------\n");
 		dp = cmd->dependent;
 		while (cmd)
@@ -451,6 +447,7 @@ int		execute(t_and_or *cmd, int bg)
 			}
 			cmd = cmd->next;
 		}
+		exit(ret);
 	}
 	if (child_pid && !bg)
 	{
