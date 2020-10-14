@@ -432,6 +432,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 		if (!ft_strcmp(cmd->left->name, "cd") || !ft_strcmp(cmd->left->word, "cd"))
 		{
 			av = get_args(cmd->left);
+		
 			cd_builtin(av);
 		}
 	}
