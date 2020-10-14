@@ -56,12 +56,12 @@ char	*history_search_word(char *str)
 	return (NULL);	
 }
 
-char	*history_search(char *str)
+char	*history_search(char *str, t_hist **his_head)
 {
 	char	*cmd;
 	char	*tmp;
 
-	if (!str)
+	if (!str || !(*his_head))
 		return (NULL);
 	if (ft_strcmp(str, "!") == 0)
 		cmd = history_search_num(-1);
@@ -85,7 +85,7 @@ void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 		free(tmp);
 		if (term->line->str[0] == '!' && term->line->str[1])
 		{
-			tmp = history_search(term->line->str + 1);
+			tmp = history_search(term->line->str + 1, his_head);
 			if (tmp)
 			{
 				free(term->line->str);
@@ -94,7 +94,9 @@ void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 			}
 			else
 			{
-				ft_putstr_fd("\n21sh: no such event.", STDERR);
+				ft_putstr_fd("\n21sh: ", STDERR);
+				ft_putstr_fd(term->line->str, STDERR);
+				ft_putstr_fd(": event not found\n", STDERR);
 				return;
 			}
 		}

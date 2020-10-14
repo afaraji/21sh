@@ -13,7 +13,6 @@
 #ifndef _READLINE_H
 # define _READLINE_H
 # include "21sh.h"
-
 # define LFTARROW 0x445B1B
 # define RTARROW 0x435B1B
 # define UPARROW 0x415B1B
@@ -27,11 +26,12 @@
 # define LFTWORD 0xA5C3
 # define UPLINE 0x9188E2
 # define DWNLINE 0x9FC3
-# define DWNLINE 0x9FC3
 # define SELECT 0x10
 # define COPY 0xA7C3
 # define CUT 0x8889E2
 # define PAST 0x9A88E2
+# define TAB 0x9
+
 
 typedef	struct		s_line
 {
@@ -88,6 +88,7 @@ void				del_line(t_line *line);
 char				*join_line(char *str, char c, int curs);
 char				*trim_pos(char *str, int curs);
 void				display_line(t_line *line);
+void				move_curs_right(t_line *line);
 int					get_next_line(const int fd, char **line);
 t_hist				*get_his_node(char *file_str, t_hist *prec, int index);
 void				get_his_list(char *file_str, t_hist **head, int index);
@@ -114,5 +115,6 @@ void				left_select(t_terminal *term);
 void				right_select(t_terminal *term);
 char				*readline(int prompt);
 void				free_term(t_terminal **term);
+void				auto_completion(t_line *line);
 
 #endif
