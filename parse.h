@@ -180,7 +180,7 @@ int			builtins(char *cmd, char **av);
 int			cd_builtin(char **av);
 t_variable	*get_env(char *s, int typ);
 
-// ****************************************
+// ******************************************
 
 
 /*
