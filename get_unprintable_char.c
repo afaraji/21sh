@@ -28,13 +28,13 @@ int		unprintable_2(t_terminal *term)
 		go_right(term->line);
 		return (1);
 	}
-	// else if (term->buff == TAB)
-	// {
-	// 	// if (term->select->on)
-	// 	// 	right_select(term);
-	// 	auto_completion(term->line);
-	// 	return (1);
-	// }
+	else if (term->buff == TAB)
+	{
+		// if (term->select->on)
+		// 	right_select(term);
+		auto_completion(term->line);
+		return (1);
+	}
 	return (0);
 }
 
