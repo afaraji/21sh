@@ -171,12 +171,13 @@ typedef struct					s_simple_lst
 
 /*	-----------------------------------------------------------	*/
 
-int 	main_parse(char *line);
-char	**env_to_tab(void);
-char	*fetch_variables(char *key, int typ);
-char	**paths_from_env(void);
-int		run_cmd(char **cmd);
-int     builtins(char *cmd, char **av);
+int 		main_parse(char *line);
+char		**env_to_tab(void);
+char		*fetch_variables(char *key, int typ);
+char		**paths_from_env(void);
+int			run_cmd(char **cmd);
+int			builtins(char *cmd, char **av);
+t_variable	*get_env(char *s, int typ);
 
 // ***************************************
 

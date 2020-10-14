@@ -423,6 +423,164 @@ int		exec_ast(t_pipe_seq *cmd)
 	return (0);
 }
 
+t_variable	*var_dup(t_variable *var)
+{
+	t_variable	*node;
+
+	node = (t_variable *)malloc(sizeof(t_variable));
+	node->env = var->env;
+	node->key = ft_strdup(var->key);
+	node->value = ft_strdup(var->value);
+	node->next = NULL;
+	return (node);
+}
+
+int		do_assignement(t_cmd_prefix *pref, t_variable *head)
+{
+	t_cmd_prefix	*node;
+	t_variable		*tmp;
+	int				state;
+
+	node = pref;
+	while (node)
+	{
+		if (node->ass_word)
+		{
+			tmp = head;
+			state = 0;
+			while (tmp)
+			{
+				if (!ft_strcmp(tmp->key, node->ass_word->key))
+				{
+					tmp->env = node->ass_word->env;
+					free(tmp->value);
+					tmp->value = ft_strdup(node->ass_word->value);
+					state = 1;
+					break;
+				}
+				tmp = tmp->next;
+			}
+			if (!state)
+			tmp = head;
+			while (tmp->next)
+				tmp = tmp->next;
+			tmp->next = var_dup(node->ass_word);
+		}
+		node = node->prefix;
+	}
+	return (0);
+}
+
+t_variable	*var_list_dup(t_variable *src)
+{
+	t_variable	*node;
+	t_variable	*tmp;
+	t_variable	*head;
+
+	head = var_dup(src);
+	node = src;
+	tmp = head;
+	while (node->next)
+	{
+		tmp->next = var_dup(node->next);
+		node = node->next;
+	}
+	return (head);
+}
+
+int		do_left(t_simple_cmd *cmd, int in,int out, int bg)
+{
+	char	**av;
+	char	**env;
+	pid_t	child;
+	int		status;
+
+	if (cmd->prefix)
+	{
+		if (cmd->word == NULL)
+		{
+			do_assignement(cmd->prefix, g_var.var);
+		}
+		else
+		{
+			// ass only for cmd->word
+			// is builtin ??
+			//fork? and do_simpleCmd then execve
+			t_variable *tmp;
+			tmp = var_list_dup(g_var.var);
+			do_assignement(cmd->prefix, tmp);
+			av = get_args(cmd);
+			ft_set_attr(1);
+			env = env_to_tab();
+			if (is_builtin(cmd->name))
+			{
+				builtins(av[0], av);	
+			}
+			else
+			{
+				child = fork();
+				if (child == 0)
+				{
+					execve(get_cmdpath(av[0]), av, env);
+					perror("error in [1]:");
+				}
+				else if (!bg)
+				{
+					waitpid(child, &status, 0);
+				}
+			}
+		}
+	}
+	else if (cmd->name)
+	{
+		if (cmd->suffix)
+		{
+			do_suffix(cmd->suffix);
+		}
+		av = get_args(cmd);
+		ft_set_attr(1);
+		env = env_to_tab();
+		if (is_builtin(cmd->name))
+		{
+			builtins(av[0], av);	
+		}
+		else
+		{
+			child = fork();
+			if (child == 0)
+			{
+				execve(get_cmdpath(av[0]), av, env);
+				perror("error in [1]:");
+			}
+			else if (!bg)
+			{
+				waitpid(child, &status, 0);
+			}
+		}
+	}
+	return (0);
+}
+
+int		exec_pipe(t_pipe_seq *cmd, int bg)
+{
+	int		pfd[2];
+	t_pipe_seq *node;
+
+	node = cmd;
+	while (node->right)
+	{
+		if(!pipe(pfd))
+			return (1);
+		do_left(node->left, STDIN,pfd[1], bg);
+		do_right(node->right, pfd[0], STDOUT, bg);
+		close(pfd[0]);
+		close(pfd[1]);
+		node = node->right;
+	}
+	
+
+}
+
 int		execute(t_and_or *cmd, int bg)
 {
 	ttt = fopen("/dev/ttys004", "w");
@@ -430,29 +588,16 @@ int		execute(t_and_or *cmd, int bg)
 	int ret = 0;
 	int child_pid;
 
-	// need to fork here
-	if ((child_pid = fork()) == -1)
-		return (10);	// should set g_var.errno
-	if (child_pid == 0)
+	while (cmd)
 	{
-		// sleep(5);
-		dp = cmd->dependent;
-		while (cmd)
+		dp = cmd->dependent; // or should be dp = cmd->next->dependent;
+		if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
 		{
-			if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
-			{
-				ret = exec_ast(cmd->ast);// here should go exec_pipe();
-				g_var.exit_status = ret;
-			}
-			cmd = cmd->next;
+			// ret = exec_ast(cmd->ast);// here should go exec_pipe();
+			ret = exec_pipe(cmd->ast, bg);
+			g_var.exit_status = ret;
 		}
-		exit(0);
-	}
-	if (child_pid && !bg)
-	{
-		int status;
-		waitpid(child_pid, &status, 0); // should it be &ret instead of NULL to get exitstatus of child ?
-		g_var.exit_status = status;
+		cmd = cmd->next;
 	}
 	return (ret);
 }
