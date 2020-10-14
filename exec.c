@@ -375,7 +375,7 @@ int		exec_pipe(t_pipe_seq *cmd)
 	if (cmd->right == NULL)
 	{
 		exec_simple_cmd(cmd->left);
-		return (0);
+		exit(0);
 		// exit(return_value) ?? should exit or not ?
 	}
 	if(pipe(pfd) != 0)
@@ -416,8 +416,11 @@ int		exec_pipe(t_pipe_seq *cmd)
 		// tmp = WTERMSIG(status);
 		// printf("pid_l: %d - %d\n", status, tmp);
 		waitpid(pid_r, &status2, 0);
+		fprintf(ttt,"child_l:[%d] exit(%d)\n", pid_l, status);
+		fprintf(ttt,"child_r:[%d] exit(%d)\n", pid_r, status2);
 		// tmp = WTERMSIG(status2);
 		// printf("pid_r: %d - %d\n", status2, tmp);
+		exit(0);
 		
 	}
 	return (0);
@@ -426,14 +429,27 @@ int		exec_pipe(t_pipe_seq *cmd)
 int		exec_ast(t_pipe_seq *cmd, int bg)
 {
 	char	**av;
+	int		child;
+	int status;
 
-	if (cmd->right == NULL)
+	// if (cmd->right == NULL)
+	// {
+	// 	if (!ft_strcmp(cmd->left->name, "cd") || !ft_strcmp(cmd->left->word, "cd"))
+	// 	{
+	// 		av = get_args(cmd->left);//
+	// 		cd_builtin(av);
+	// 	}
+	// }
+
+	child = fork();
+	if (child == 0)
 	{
-		if (!ft_strcmp(cmd->left->name, "cd") || !ft_strcmp(cmd->left->word, "cd"))
-		{
-			av = get_args(cmd->left);//
-			cd_builtin(av);
-		}
+		exec_pipe(cmd);
+	}
+	else
+	{
+		waitpid(child, &status, 0);
+		fprintf(ttt,"P_child:[%d] exit(%d)\n", child, status);
 	}
 	return (0);
 }
@@ -456,9 +472,7 @@ int		execute(t_and_or *cmd, int bg)
 			g_var.exit_status = ret;
 		}
 		cmd = cmd->next;
-	}
-	exit(0);
-	
+	}	
 	return (ret);
 }
 
