@@ -30,7 +30,7 @@ t_line	*init_line(char *prompt)
 	line->str = ft_strdup("");
 	line->pmt_s = ft_strlen(prompt) + 1;
 	line->col = tgetnum("co");
-	//line->nline = tgetnum("li");
+	line->nline = tgetnum("li");
 	return (line);
 }
 
