@@ -139,7 +139,7 @@ int		main(int ac, char **av, char **env)
 	char	*line = NULL;
 	int		ret = 0;
 
-	ttyfd = fopen("/dev/ttys003", "w");
+	ttyfd = fopen("/dev/ttys000", "w");
 	if (init_shell(env))
 		return (1);
 	line = readline(-1);

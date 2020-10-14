@@ -8,7 +8,11 @@ void	print_tab(char **tabl)
 	i = 0;
 	while (tabl[i])
 	{
-		printf("%d : %s\n", (i + 1), tabl[i]);
+		fprintf(ttyfd, "%s\n", tabl[i]);
+		if (i == 20)
+			break;
+		//ft_putchar('\n');
+		//ft_putstr(tabl[i]);
 		i++;
 	}
 }
@@ -392,30 +396,64 @@ char	*completed_line(char *line, char *str)
 
 void	print_result(char **t)
 {
-	int	i;
-	int nline;
+	int i;
+	int mod;
+	int test;
+	int	space;
+	int nlines;
 	int column;
-	int	nbr_words;
+	int	total_words;
 	int str_max_len;
 	int word_per_line;
 	int	lines_to_print;
+	int	words_to_print;
 
 	column = tgetnum("co");
-	nline = tgetnum("li");
-	i = 0;
-	while (t[i])
+	nlines = tgetnum("li");
+	total_words = 0;
+	while (t[total_words])
 	{
-		if (i > 0 && (ft_strlen(t[i]) > ft_strlen(t[i - 1])))
-			str_max_len = ft_strlen(t[i] + 2);
-		i++;
+		if (total_words - 1 > 0 && (ft_strlen(t[total_words]) >= ft_strlen(t[total_words - 1])))
+			str_max_len = ft_strlen(t[total_words]) + 2;
+		total_words++;
 	}
 	word_per_line = column/str_max_len;
-	lines_to_print = i/word_per_line;
-	nbr_words = lines_to_print * word_per_line;
-	while (lines_to_print > nline)
+	lines_to_print = total_words/word_per_line;
+	words_to_print = nlines * word_per_line;
+	//fprintf(ttyfd, "column : %d, nlines : %d, total_words : %d, word_per_line : %d\n",column,  nlines, total_words, word_per_line);
+	fprintf(ttyfd, "lines_to_print : %d, words_to_print : %d\n", lines_to_print, words_to_print);
+	if (lines_to_print < nlines)
 	{
-		if (i % column == column - 1)
-			
+		i = 0;
+		while (words_to_print && t[i])
+		{
+			if (total_words % column == column - 1)
+				ft_putchar('\n');
+			ft_putstr(t[i]);
+			words_to_print--;
+			i++;
+		}
+	}
+	else
+	{
+		i = 0;
+		while (words_to_print && t[i])
+		{
+			fprintf(ttyfd, "words_to_print : %d\n", words_to_print);
+			ft_putstr(t[i]);
+			space = str_max_len - ft_strlen(t[i]);
+			fprintf(ttyfd, "str_max_len : %d, ft_strlen(t[i]) : %zu,space : %d\n", str_max_len, ft_strlen(t[i]) ,space);
+			// while (space)
+			// {
+			// 	fprintf(ttyfd, "space : %d\n", space);
+			// 	ft_putchar(' ');
+			// 	space--;
+			// }
+			words_to_print--;
+			if ((words_to_print%word_per_line == 0))
+				ft_putchar('\n');
+			i++;
+		}
 	}
 	// max ft_strlen(t[i]) ==> + 2 space
 	// word / ligne
@@ -463,7 +501,7 @@ void    auto_completion(t_line *line)
 	{
 		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
 		ft_putchar('\n');
-		// print_tab(result);
+	//	print_tab(result);
 		print_result(result);
 		//display_line(line);
 		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
