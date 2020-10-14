@@ -136,7 +136,7 @@ typedef struct				s_simple_cmd
 
 typedef struct				s_pipe_seq
 {
-	int						dependent;	// did i use it ?
+	int						dependent;	// did i use it ? uselss
 	t_simple_cmd			*left;
 	struct s_pipe_seq		*right;
 }							t_pipe_seq;
@@ -177,6 +177,7 @@ char		*fetch_variables(char *key, int typ);
 char		**paths_from_env(void);
 int			run_cmd(char **cmd);
 int			builtins(char *cmd, char **av);
+int			cd_builtin(char **av);
 t_variable	*get_env(char *s, int typ);
 
 // ***************************************

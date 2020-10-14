@@ -364,7 +364,7 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	return (1);
 }
 
-int		exec_ast(t_pipe_seq *cmd)
+int		exec_pipe(t_pipe_seq *cmd)
 {
 	int		pfd[2];
 	int		status, status2;
@@ -389,7 +389,7 @@ int		exec_ast(t_pipe_seq *cmd)
 		dup2(pfd[0],STDIN);
 		if (cmd->right->right)
 		{
-			exec_ast(cmd->right);
+			exec_pipe(cmd->right);
 		}
 		else
 		{
@@ -423,6 +423,21 @@ int		exec_ast(t_pipe_seq *cmd)
 	return (0);
 }
 
+int		exec_ast(t_pipe_seq *cmd, int bg)
+{
+	char	**av;
+
+	if (cmd->right == NULL)
+	{
+		if (!ft_strcmp(cmd->left->name, "cd") || !ft_strcmp(cmd->left->word, "cd"))
+		{
+			av = get_args(cmd->left);
+			cd_builtin(av);
+		}
+	}
+	return (0);
+}
+
 int		execute(t_and_or *cmd, int bg)
 {
 	ttt = fopen("/dev/ttys004", "w");
@@ -430,29 +445,53 @@ int		execute(t_and_or *cmd, int bg)
 	int ret = 0;
 	int child_pid;
 
-	// need to fork here
-	if ((child_pid = fork()) == -1)
-		return (10);	// should set g_var.errno
-	if (child_pid == 0)
-	{
+	// exec cmdA1 | cmdA2 && cmdB1 | cmdB2 || cmdC
 		// sleep(5);
-		dp = cmd->dependent;
-		while (cmd)
-		{
-			if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
-			{
-				ret = exec_ast(cmd->ast);// here should go exec_pipe();
-				g_var.exit_status = ret;
-			}
-			cmd = cmd->next;
-		}
-		exit(0);
-	}
-	if (child_pid && !bg)
+	while (cmd)
 	{
-		int status;
-		waitpid(child_pid, &status, 0); // should it be &ret instead of NULL to get exitstatus of child ?
-		g_var.exit_status = status;
+		dp = cmd->dependent;
+		if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
+		{
+			ret = exec_ast(cmd->ast, bg);// cmd1 | cmd2 | cmd3
+			g_var.exit_status = ret;
+		}
+		cmd = cmd->next;
 	}
+	exit(0);
+	
 	return (ret);
 }
+
+// int		execute(t_and_or *cmd, int bg)
+// {
+// 	ttt = fopen("/dev/ttys004", "w");
+// 	int dp;
+// 	int ret = 0;
+// 	int child_pid;
+
+// 	// need to fork here
+// 	if ((child_pid = fork()) == -1)
+// 		return (10);	// should set g_var.errno
+// 	if (child_pid == 0)
+// 	{// exec cmd | cmd && cmd | cmd || cmd
+// 		// sleep(5);
+// 		while (cmd)
+// 		{
+// 			dp = cmd->dependent;
+// 			if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
+// 			{
+// 				ret = exec_ast(cmd->ast);// here should go exec_pipe();
+// 				g_var.exit_status = ret;
+// 			}
+// 			cmd = cmd->next;
+// 		}
+// 		exit(0);
+// 	}
+// 	if (child_pid && !bg)
+// 	{
+// 		int status;
+// 		waitpid(child_pid, &status, 0); // should it be &ret instead of NULL to get exitstatus of child ?
+// 		g_var.exit_status = status;
+// 	}
+// 	return (ret);
+// }
