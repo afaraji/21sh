@@ -117,7 +117,6 @@ t_variable	*get_set(char **env)
 		node = node->next;
 		i++;
 	}
-	//print_set_with_typ(head);
 	return (head);	
 }
 
@@ -131,7 +130,7 @@ int		init_shell(char **env)
 	g_var.var = get_set(env);
 	g_var.history = create_history();
 	get_aliases();// should be removed from here (no aliases at program start)
-	print_set_with_typ();
+	// print_set_with_typ();
 	return (0);
 }
 
@@ -152,6 +151,8 @@ int		main(int ac, char **av, char **env)
 		ret = main_parse(line);
 		if (line)
 			ft_strdel(&line);
+		if (ft_set_attr(0))
+			return (1);
 		line = readline(0);
 		// fprintf(ttyfd, "------------->(%d) - (%s)\n", ret, line);
 	}

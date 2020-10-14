@@ -15,7 +15,7 @@
 #include "builtins.h"
 
 int     ft_export(char **flag)
-{
+{fprintf(ttyfd, "-------[export]-------\n");
     int     i;
     char    *key;
     char    *value;
@@ -42,6 +42,7 @@ void    print_env(int type)
     t_variable	*node;
 
     node = g_var.var;
+    fprintf(ttyfd, "+++++++++env[%d,%s=%s]\n",type, node->key, node->value);
     while (node)
     {
         if (type || (type == 0 && node->env == 0))
@@ -57,6 +58,7 @@ void    print_env(int type)
 
 int     cd_builtin(char **av)
 {
+    fprintf(ttyfd, "-**-[cd]--**--\n");
     if (av[2] == NULL)
         return (ft_cd_home());
     else
@@ -78,12 +80,14 @@ int     cd_builtin(char **av)
 
 int     builtins(char *cmd, char **av)
 {
+    fprintf(ttyfd, "+-+-+->[%s]-------\n", cmd);
     if (ft_strcmp(cmd, "echo") == 0)
         return (ft_echo(av));
-    else if (ft_strcmp(av[1], "cd") == 0)
+    else if (ft_strcmp(cmd, "cd") == 0)
         return (cd_builtin(av));
     if (ft_strcmp(cmd, "env") == 0)
     {
+        fprintf(ttyfd, "-------[1]-------\n");
         print_env(0);
         return (0);
     }

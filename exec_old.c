@@ -423,54 +423,6 @@ int		exec_ast(t_pipe_seq *cmd)
 	return (0);
 }
 
-int		do_left(t_simple_cmd *cmd, int out)
-{
-	int		in_fd;
-	int		out_fd;
-
-	if (cmd->prefix)
-	{
-		if (cmd->word == NULL)
-		{
-			do_ass_for_all(cmd);
-		}
-		else
-		{
-			// is builtin ??
-			//fork? and do_simpleCmd then execve
-		}
-	}
-	else if (cmd->name)
-	{
-		if (cmd->suffix)
-			do_suffix(cmd->suffix);
-	}
-
-}
-
-int		exec_pipe(t_pipe_seq *cmd, int bg)
-{
-	int		pfd[2];
-	int		status, status2;
-	pid_t	pid_l;
-	pid_t	pid_r;
-	t_pipe_seq *node;
-
-	node = cmd;
-	while (node->right)
-	{
-		if(!pipe(pfd))
-			return (1);
-		do_left(node->left, pfd[1]);
-		do_right(node->right, pfd[0]);
-		close(pfd[0]);
-		close(pfd[1]);
-		node = node->right;
-	}
-	
-
-}
-
 int		execute(t_and_or *cmd, int bg)
 {
 	ttt = fopen("/dev/ttys004", "w");
@@ -478,16 +430,29 @@ int		execute(t_and_or *cmd, int bg)
 	int ret = 0;
 	int child_pid;
 
-	while (cmd)
+	// need to fork here
+	if ((child_pid = fork()) == -1)
+		return (10);	// should set g_var.errno
+	if (child_pid == 0)
 	{
-		dp = cmd->dependent; // or should be dp = cmd->next->dependent;
-		if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
+		// sleep(5);
+		dp = cmd->dependent;
+		while (cmd)
 		{
-			// ret = exec_ast(cmd->ast);// here should go exec_pipe();
-			ret = exec_pipe(cmd->ast, bg);
-			g_var.exit_status = ret;
+			if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
+			{
+				ret = exec_ast(cmd->ast);// here should go exec_pipe();
+				g_var.exit_status = ret;
+			}
+			cmd = cmd->next;
 		}
-		cmd = cmd->next;
+		exit(0);
+	}
+	if (child_pid && !bg)
+	{
+		int status;
+		waitpid(child_pid, &status, 0); // should it be &ret instead of NULL to get exitstatus of child ?
+		g_var.exit_status = status;
 	}
 	return (ret);
 }

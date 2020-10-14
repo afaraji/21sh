@@ -67,6 +67,7 @@ void				get_str(char *buff, char *str, t_point *ps);
 void				ft_len(int *i, int *len);
 void    			print_env(int type);
 int					ft_setenv(char **flag);
+int					ft_export(char **flag);
 void			    ft_export_2(char *key, char *value);
 int     			get_key_value(char *key, char *value, char *flag);
 

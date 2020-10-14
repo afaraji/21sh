@@ -76,7 +76,7 @@ void	ft_set_lastnode(char **flag)
 }
 
 int		ft_setenv(char **flag)
-{
+{fprintf(ttyfd, "-------[setenv]-------\n");
 	if (flag[1] != NULL && flag[2] != NULL && flag[3] != NULL)
 	{
 		ft_putstr("setenv: Too many arguments.\n");

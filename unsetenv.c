@@ -36,7 +36,7 @@ void	ft_unsetenv_1(char *flag)
 }
 
 int		ft_unsetenv(char **flag)
-{
+{fprintf(ttyfd, "-------[unsetenv]-------\n");
 	int i;
 	t_variable *node;
 

@@ -176,6 +176,7 @@ char	**env_to_tab(void);
 char	*fetch_variables(char *key, int typ);
 char	**paths_from_env(void);
 int		run_cmd(char **cmd);
+int     builtins(char *cmd, char **av);
 
 // ***************************************
 
