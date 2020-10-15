@@ -45,9 +45,9 @@ char    *get_path(char *str)
 			break;
 		i--;
 	}
-	if (i == -1)
+	if (i == -1 && !ft_strcmp(str, ""))
 		return (ft_strdup("."));
-	else
+	else if (i != -1)
 	{
 		tmp1 = ft_strsub(str, 0, i + 1);
 		if (tmp1[0] == '/' || (tmp1[0] == '.' && tmp1[1] == '/'))
@@ -59,6 +59,7 @@ char    *get_path(char *str)
 			return (tmp2);
 		}
 	}
+	return (str);
 }
 
 char    *get_to_cmp(char *str)
@@ -209,12 +210,16 @@ char	**files_dirs_search(char *str)
 	t_simple_lst   *files_dirs_list;
 	char    **dir_tab;
 
+
 	path = get_path(str);
 	to_cmp = get_to_cmp(str);
 	files_dirs_list = NULL;
+	fprintf(ttyfd, "path : %s\n", path);
 	d = opendir(path);
-	if (d)
+	if (d != NULL)
 	{
+		
+		fprintf(ttyfd, "--------[555]--------\n");
 		while ((dir = readdir(d)))
 		{
 			if (!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp)))
@@ -224,8 +229,16 @@ char	**files_dirs_search(char *str)
 			}
 		}
 	}
-	closedir(d);
-	dir_tab = tab_from_list(sort_list(files_dirs_list));
+	if (d == NULL)
+	{
+		dir_tab = (char **)malloc(sizeof(char *) * 1);
+		dir_tab[0] = NULL;
+	}
+	else
+	{
+		closedir(d);
+		dir_tab = tab_from_list(sort_list(files_dirs_list));
+	}
 	ft_free_list(files_dirs_list);
 	return(dir_tab);
 }
@@ -320,7 +333,13 @@ char	**cmd_search(char *str)
 		}
 		i++;
 	}
-	cmd_tab = tab_from_list((cmd_list));
+	if (d == NULL)
+	{
+		cmd_tab = (char **)malloc(sizeof(char *) * 1);
+		cmd_tab[0] = NULL;
+	}
+	else
+		cmd_tab = tab_from_list((cmd_list));
 	free(cmd_list);
 	return(cmd_tab);
 }
@@ -330,6 +349,7 @@ int is_path(char *str)
 	int i;
 
 	i = 0;
+
 	while (str[i])
 	{
 		if (str[i] == '/')
@@ -410,17 +430,15 @@ void	print_result(char **t, t_line *line)
 	{
 		if (ft_strlen(t[total_words]) > str_max_len)
 		{
-			str_max_len = ft_strlen(t[total_words]) + 2;
+			str_max_len = ft_strlen(t[total_words]) + 1;
 			total_words++;
 		}
 		else
 			total_words++;
-		fprintf(ttyfd, "max_len : %d\n", str_max_len);
 	}
 	word_per_line = line->col /str_max_len;
 	lines_to_print = total_words/word_per_line;
 	words_to_print = (line->nline - 3) * word_per_line;
-	fprintf(ttyfd, "line->nline : %d\n", line->nline);
 	if (lines_to_print < line->nline)
 	{
 		i = 0;
@@ -442,7 +460,7 @@ void	print_result(char **t, t_line *line)
 	else
 	{
 		i = 0;
-		while (words_to_print && t[i])
+		while (words_to_print)
 		{
 			ft_putstr(t[i]);
 			space = str_max_len - ft_strlen(t[i]);
@@ -490,8 +508,13 @@ void    auto_completion(t_line *line)
 	{
 		result = cmd_search(splited_line[0]);
 	}
+	if (result[0] == NULL)
+	{
+		fprintf(ttyfd, "result[0] :|%s|--\n", result[0]);
+		return;
+	}
 	j = 0;
-	while (result[j + 1])
+	while (result && result[j + 1])
 		j++;
 	if (j == 0)
 	{
