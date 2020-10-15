@@ -150,7 +150,7 @@ typedef struct				s_and_or
 
 typedef struct				s_cmdlist
 {
-	int						bg;
+	int						bg;			// 0 = forground, 1 = background
 	t_and_or				*and_or;
 	struct s_cmdlist		*next;
 }							t_cmdlist;
@@ -172,11 +172,11 @@ typedef struct					s_simple_lst
 /*	-----------------------------------------------------------	*/
 
 int 		main_parse(char *line);
-char		**env_to_tab(void);
+char		**env_to_tab(t_variable *var);
 char		*fetch_variables(char *key, int typ);
 char		**paths_from_env(void);
 int			run_cmd(char **cmd);
-int			builtins(char *cmd, char **av);
+int			builtins(char *cmd, char **av, char **env);
 int			cd_builtin(char **av);
 t_variable	*get_env(char *s, int typ);
 

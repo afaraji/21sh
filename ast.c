@@ -1187,7 +1187,6 @@ int main_parse(char *line)
 	t_cmdlist		*node;
 	int				ret;
 
-	fprintf(ttyfd, "\033[H\033[2J");
     tokens = __tokenize(line);
 	// printf("\n");token_print(tokens);printf("\n");
 	

@@ -59,28 +59,28 @@ void    print_env(int type)
 int     cd_builtin(char **av)
 {
     fprintf(ttyfd, "-**-[cd]--**--\n");
-    if (av[2] == NULL)
+    if (av[1] == NULL)
         return (ft_cd_home());
     else
     {
-        if (av[2][0] == '-' )
+        if (av[1][0] == '-' )
         {
-            if (av[2][1] == '\0')
+            if (av[1][1] == '\0')
                 return (ft_cd_old());
-            else if (av[2][1] == 'P')
-                return (ft_cd_1(av[3]));
-            else if (av[2][1] == 'L')
-                return (ft_cd(av[3]));
+            else if (av[1][1] == 'P')
+                return (ft_cd_1(av[2]));
+            else if (av[1][1] == 'L')
+                return (ft_cd(av[2]));
         }
         else
-            return (ft_cd(av[2]));
+            return (ft_cd(av[1]));
     }
     return (1);
 }
 
-int     builtins(char *cmd, char **av)
-{
-    fprintf(ttyfd, "+-+-+->[%s]-------\n", cmd);
+int     builtins(char *cmd, char **av, char **env)
+{// need verification !! n oublie pas return value
+    fprintf(ttyfd, "+-+-+->[%s]=>[%s|%s]-------\n", cmd, av[0], av[1]);
     if (ft_strcmp(cmd, "echo") == 0)
         return (ft_echo(av));
     else if (ft_strcmp(cmd, "cd") == 0)
@@ -97,5 +97,5 @@ int     builtins(char *cmd, char **av)
         return (ft_unsetenv(av));
     else if (ft_strcmp(cmd, "export") == 0)
         return (ft_export(av));
-    return (1);
+    return (42);
 }

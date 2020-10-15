@@ -14,6 +14,24 @@
 
 FILE	*ttt;
 
+void	exit_status(int status)
+{
+	t_variable *tmp;
+
+	g_var.exit_status = WEXITSTATUS(status);
+	tmp = g_var.var;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, "?"))
+		{
+			free(tmp->value);
+			tmp->value = ft_itoa(WEXITSTATUS(status));
+			break;
+		}
+		tmp = tmp->next;
+	}
+}
+
 int		do_redirect(t_io_redirect *io)
 { // no error handling yet !!!
 	int tmpfd;
@@ -102,24 +120,69 @@ int		do_redirect(t_io_redirect *io)
 	return (0);
 }
 
-int		do_ass_word(t_variable *var)
+int		do_ass_word(t_variable *var, t_variable *head)
 {
 	return 0;
 }
 
-int		do_prefix(t_cmd_prefix *prefix)
+t_variable	*var_dup(t_variable *var)
+{
+	t_variable	*node;
+
+	node = (t_variable *)malloc(sizeof(t_variable));
+	node->env = var->env;
+	node->key = ft_strdup(var->key);
+	node->value = ft_strdup(var->value);
+	node->next = NULL;
+	return (node);
+}
+
+int		do_assignement(t_cmd_prefix *pref, t_variable *head)
+{
+	t_cmd_prefix	*node;
+	t_variable		*tmp;
+	int				state;
+
+	node = pref;
+	while (node)
+	{
+		if (node->ass_word)
+		{
+			tmp = head;
+			state = 0;
+			while (tmp)
+			{
+				if (!ft_strcmp(tmp->key, node->ass_word->key))
+				{
+					tmp->env = node->ass_word->env;
+					free(tmp->value);
+					tmp->value = ft_strdup(node->ass_word->value);
+					state = 1;
+					break;
+				}
+				tmp = tmp->next;
+			}
+			if (!state)
+			tmp = head;
+			while (tmp->next)
+				tmp = tmp->next;
+			tmp->next = var_dup(node->ass_word);
+		}
+		node = node->prefix;
+	}
+	return (0);
+}
+
+int		do_prefix(t_cmd_prefix *prefix, t_variable *var)
 {
 	t_cmd_prefix	*node;
 	int				ret;
 
+	do_assignement(prefix, var);
 	node = prefix;
 	while (node)
 	{
-		if (prefix->ass_word)
-		{
-			ret = do_ass_word(prefix->ass_word);
-		}
-		else if (prefix->io_redirect)
+		if (prefix->io_redirect)
 		{
 			ret = do_redirect(prefix->io_redirect);
 		}
@@ -158,7 +221,7 @@ char	*get_cmdpath(char *str)
 	int		i;
 	char	*tmp;
 
-	if (!access(str, X_OK))
+	if (!access(str, F_OK))
 	{
 		return (ft_strdup(str));
 	}
@@ -167,7 +230,7 @@ char	*get_cmdpath(char *str)
 	while (paths[i])
 	{
 		tmp = ft_strjoin(paths[i], str);
-		if (!access(tmp, X_OK))
+		if (!access(tmp, F_OK))
 		{
 			return (tmp);
 		}
@@ -193,14 +256,14 @@ int		env_tab_count(void)
 	return (count);
 }
 
-char	**env_to_tab(void)
+char	**env_to_tab(t_variable *var)
 {
 	t_variable	*node;
 	char		**argv;
 	char		*tmp;
 	int			i;
 	
-	node = g_var.var;
+	node = var;
 	i = env_tab_count();	
 	if (!(argv = (char **)malloc(sizeof(char *) * (i + 1))))
 		return (NULL);
@@ -247,7 +310,7 @@ int		do_simpleCmd(t_simple_cmd *cmd)
 
 	if (cmd->prefix)
 	{
-		ret = do_prefix(cmd->prefix);
+		ret = do_prefix(cmd->prefix, g_var.var);
 	}
 	else if (cmd->name && cmd->suffix)
 	{
@@ -306,7 +369,7 @@ char	**get_args(t_simple_cmd	*cmd)
 			if (tmp->word)
 			{
 				node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
-				node->next->data = ft_strdup(tmp->word);
+				node->next->data = ft_strdup(tmp->word);fprintf(ttt, "******>[%s]\n", tmp->word);
 				node->next->next = NULL;
 				node = node->next;
 			}
@@ -341,41 +404,41 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	t_variable	*vars;
 	
 	if (!cmd)
-		return (42);
-	do_simpleCmd(cmd);//does prefix and suffix
+		return (404);
+	//does prefix and suffix
 	args = get_args(cmd);
+	do_simpleCmd(cmd);
 	if (!args)
-	{
-		//do word assignement perma
-		return (0);
-	}
+		exit (0);
+	env = env_to_tab(g_var.var);
 	// if builtin exec builtin
 	if (is_builtin(args[0]))
 	{
 		//do builtin
-		return (builtins(args[0], args));
+		return (builtins(args[0], args, env));
 	}
-	cmd_path = get_cmdpath(args[0]);
-	env = env_to_tab();
+	if (!(cmd_path = get_cmdpath(args[0])))
+	{
+		printf("shell: command not found: %s\n",args[0]);
+		return (127);
+	}
 	ft_set_attr(1);
-	if (execve(cmd_path, args, env) == -1)//error handling
-		printf("%s:ErRoR exxecve\n",cmd_path);
-	perror("PERROR");
-	return (1);
+	execve(cmd_path, args, env);//error handling
+	printf("shell: permission denied: %s\n", args[0]);
+	return (126);
 }
 
 int		exec_pipe(t_pipe_seq *cmd)
 {
 	int		pfd[2];
-	int		status, status2;
+	int		status;
 	pid_t	pid_l;
 	pid_t	pid_r;
 
 
 	if (cmd->right == NULL)
 	{
-		exec_simple_cmd(cmd->left);
-		exit(0);
+		exit(exec_simple_cmd(cmd->left));
 		// exit(return_value) ?? should exit or not ?
 	}
 	if(pipe(pfd) != 0)
@@ -394,7 +457,6 @@ int		exec_pipe(t_pipe_seq *cmd)
 		else
 		{
 			exit(exec_simple_cmd(cmd->right->left));
-			printf("ERROR executing [%s]\n", cmd->right->left->name);
 		}
 	}
 	else
@@ -407,59 +469,86 @@ int		exec_pipe(t_pipe_seq *cmd)
 			close(pfd[0]);
 			dup2(pfd[1],STDOUT);
 			exit(exec_simple_cmd(cmd->left));
-			printf("ERROR executing [%s]\n", cmd->left->name);
 		}
 		close(pfd[0]);
 		close(pfd[1]);
-		int tmp;
-		waitpid(pid_l, &status, 0);
-		// tmp = WTERMSIG(status);
-		// printf("pid_l: %d - %d\n", status, tmp);
-		waitpid(pid_r, &status2, 0);
-		fprintf(ttt,"child_l:[%d] exit(%d)\n", pid_l, status);
-		fprintf(ttt,"child_r:[%d] exit(%d)\n", pid_r, status2);
-		// tmp = WTERMSIG(status2);
-		// printf("pid_r: %d - %d\n", status2, tmp);
-		exit(0);
-		
+		int tmp;// to be deleted after testing
+		waitpid(pid_l, &tmp, 0);
+		waitpid(pid_r, &status, 0);
+		fprintf(ttt,"child_l:[%d] exit(%d)\n", pid_l, tmp);
+		fprintf(ttt,"child_r:[%d] exit(%d)\n", pid_r, status);
+		exit(WEXITSTATUS(status));
 	}
 	return (0);
 }
 
+t_variable	*var_list_dup(t_variable *src)
+{
+	t_variable	*node;
+	t_variable	*tmp;
+	t_variable	*head;
+
+	head = var_dup(src);
+	node = src;
+	tmp = head;
+	while (node->next)
+	{
+		tmp->next = var_dup(node->next);
+		tmp = tmp->next;
+		node = node->next;
+	}
+	return (head);
+}
+
 int		exec_ast(t_pipe_seq *cmd, int bg)
 {
-	char	**av;
-	int		child;
-	int status;
+	char		**av;
+	char		**env;
+	int			child;
+	t_variable	*tmp;
+	int			status;
 
-	// if (cmd->right == NULL)
-	// {
-	// 	if (!ft_strcmp(cmd->left->name, "cd") || !ft_strcmp(cmd->left->word, "cd"))
-	// 	{
-	// 		av = get_args(cmd->left);//
-	// 		cd_builtin(av);
-	// 	}
-	// }
-
+	if (cmd->right == NULL && !bg)
+	{
+		av = get_args(cmd->left);
+		if (is_builtin(av[0]))
+		{
+			//	cd need fixing (symbolic links management and printing getcwd)
+			tmp = var_list_dup(g_var.var);
+			do_prefix(cmd->left->prefix, tmp);
+			do_suffix(cmd->left->suffix);
+			do_assignement(cmd->left->prefix, tmp);
+			fprintf(ttt, "---->%s=%s\n", g_var.var->key, g_var.var->value);
+			fprintf(ttt, "++++>%s=%s\n", tmp->key, tmp->value);
+			env = env_to_tab(tmp);
+			// for (int i = 0; env[i];i++)
+			// 	fprintf(ttt, "%s\n", env[i]);
+			//free(tmp);
+			//free(av);
+			return (builtins(av[0], av, env));
+		}
+		if (!(cmd->left->name) && !(cmd->left->word))
+			do_assignement(cmd->left->prefix, g_var.var);
+	}
 	child = fork();
 	if (child == 0)
 	{
 		exec_pipe(cmd);
 	}
-	else
+	else if (!bg)
 	{
 		waitpid(child, &status, 0);
-		fprintf(ttt,"P_child:[%d] exit(%d)\n", child, status);
+		exit_status(status);
+		fprintf(ttt,"P_child:[%d] exit(%d) - (%d)\n", child, WEXITSTATUS(status) , g_var.exit_status);
 	}
-	return (0);
+	return (status);
 }
 
 int		execute(t_and_or *cmd, int bg)
 {
-	ttt = fopen("/dev/ttys004", "w");
+	ttt = fopen("/dev/ttys005", "w");
 	int dp;
 	int ret = 0;
-	int child_pid;
 
 	// exec cmdA1 | cmdA2 && cmdB1 | cmdB2 || cmdC
 		// sleep(5);
@@ -468,13 +557,13 @@ int		execute(t_and_or *cmd, int bg)
 		dp = cmd->dependent;
 		if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
 		{
-			ret = exec_ast(cmd->ast, bg);// cmd1 | cmd2 | cmd3
-			g_var.exit_status = ret;
+			exit_status(exec_ast(cmd->ast, bg));
+			fprintf(ttt, "===exit stats[%d]===\n", g_var.exit_status);
 		}
 		cmd = cmd->next;
 	}	
 	return (ret);
-}
+}//lexer.c line 366
 
 // int		execute(t_and_or *cmd, int bg)
 // {
