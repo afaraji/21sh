@@ -26,7 +26,7 @@ void	print_list(t_simple_lst *head)
 	i = 1;
 	while (node)
 	{
-		printf("%d : %s\n", i , node->data);
+		fprintf(ttyfd, "%d : %s\n", i , node->data);
 		i++;
 		node = node->next;
 	}
@@ -193,12 +193,35 @@ char	**var_search(char *str)
 	while (var)
 	{
 		if (!ft_strncmp(str, var->key, ft_strlen(str)))
+		{
+			//fprintf(ttyfd, "|%s|--|%s|\n", str, var->key);
 			var_list = names_list(var->key, var_list);
+		}
 		var = var->next;
 	}
 	var_tab = tab_from_list(var_list);
 	ft_free_list(var_list);
 	return(var_tab);
+}
+t_simple_lst   *matched_files_dirs(char *str, t_simple_lst *head)
+{
+	DIR     *d;
+	struct  dirent *dir;
+	t_simple_lst   *files_dirs_list;
+
+	files_dirs_list = NULL;
+	d = opendir(".");
+	fprintf(ttyfd, "str : |%s|\n", str);
+	if (d != NULL)
+	{
+		while ((dir = readdir(d)))
+		{
+			if (!ft_strcmp("", str) || !ft_strncmp(dir->d_name, str, ft_strlen(str)))
+				files_dirs_list = names_list(dir->d_name, files_dirs_list);
+		}
+	}
+	closedir(d);
+	return(files_dirs_list);
 }
 
 char	**files_dirs_search(char *str)
@@ -210,29 +233,25 @@ char	**files_dirs_search(char *str)
 	t_simple_lst   *files_dirs_list;
 	char    **dir_tab;
 
-
 	path = get_path(str);
 	to_cmp = get_to_cmp(str);
 	files_dirs_list = NULL;
-	fprintf(ttyfd, "path : %s\n", path);
 	d = opendir(path);
+	fprintf(ttyfd, "herrrrre\n");
 	if (d != NULL)
 	{
-		
-		fprintf(ttyfd, "--------[555]--------\n");
 		while ((dir = readdir(d)))
 		{
-			if (!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp)))
-			{
-				if (ft_strcmp(dir->d_name, ".") && ft_strcmp(dir->d_name, ".."))
-					files_dirs_list = names_list(dir->d_name, files_dirs_list);
-			}
+			if ((!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))) && dir->d_name[0] != '.')
+				files_dirs_list = names_list(dir->d_name, files_dirs_list);
 		}
 	}
 	if (d == NULL)
 	{
-		dir_tab = (char **)malloc(sizeof(char *) * 1);
-		dir_tab[0] = NULL;
+		files_dirs_list = matched_files_dirs(str, files_dirs_list);
+		dir_tab = tab_from_list(sort_list(files_dirs_list));
+	//	dir_tab = (char **)malloc(sizeof(char *) * 1);
+	//	dir_tab[0] = NULL;
 	}
 	else
 	{
@@ -430,7 +449,7 @@ void	print_result(char **t, t_line *line)
 	{
 		if (ft_strlen(t[total_words]) > str_max_len)
 		{
-			str_max_len = ft_strlen(t[total_words]) + 1;
+			str_max_len = ft_strlen(t[total_words]) + 2;
 			total_words++;
 		}
 		else
@@ -510,7 +529,6 @@ void    auto_completion(t_line *line)
 	}
 	if (result[0] == NULL)
 	{
-		fprintf(ttyfd, "result[0] :|%s|--\n", result[0]);
 		return;
 	}
 	j = 0;
