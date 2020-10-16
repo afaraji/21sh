@@ -346,7 +346,7 @@ char	**list_to_tab(t_simple_lst *list)
 	return (args);
 }
 
-char	**get_args(t_simple_cmd	*cmd)
+t_simple_lst	*get_args(t_simple_cmd	*cmd)
 {
 	t_simple_lst			*head;
 	t_simple_lst			*node;
@@ -369,14 +369,14 @@ char	**get_args(t_simple_cmd	*cmd)
 			if (tmp->word)
 			{
 				node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
-				node->next->data = ft_strdup(tmp->word);fprintf(ttt, "******>[%s]\n", tmp->word);
+				node->next->data = ft_strdup(tmp->word);
 				node->next->next = NULL;
 				node = node->next;
 			}
 			tmp = tmp->suffix;
 		}	
 	}
-	return (list_to_tab(head));
+	return (head);
 }
 
 int		is_builtin(char *str)
@@ -394,6 +394,50 @@ int		is_builtin(char *str)
 	return (0);
 }
 
+t_simple_lst	*var_sub(t_simple_lst *head)
+{
+	t_simple_lst	*node;
+	t_simple_lst	*next_node;
+	char			*tmp;
+	char			**t;
+	int				i;
+
+	next_node = head->next;
+	tmp = str_dollar_sub(head->data); // node->data is freed.
+	t = ft_strsplit(tmp, ' ');
+	free(tmp);
+	i = 1;
+	head->data = ft_strdup(t[0]);
+	node = head;
+	while (t[i])
+	{
+		node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+		node->next->data = ft_strdup(t[i]);
+		node->next->next = NULL;
+		node = node->next;
+		i++;
+	}
+	node->next = next_node;
+	return (head);
+}
+
+char	**get_arg_var_sub(t_simple_cmd *cmd)
+{
+	t_simple_lst	*list;
+	t_simple_lst	*node;
+
+	list = get_args(cmd);
+	node = list;
+	while (node)
+	{
+		if (is_dollar(node->data) > -1)
+		{
+			node = var_sub(node);
+		}
+		node = node->next;
+	}
+	return (list_to_tab(list));
+}
 
 int		exec_simple_cmd(t_simple_cmd *cmd)
 {
@@ -406,7 +450,7 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	if (!cmd)
 		return (404);
 	//does prefix and suffix
-	args = get_args(cmd);
+	args = get_arg_var_sub(cmd);
 	do_simpleCmd(cmd);
 	if (!args)
 		exit (0);
@@ -510,7 +554,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 
 	if (cmd->right == NULL && !bg)
 	{
-		av = get_args(cmd->left);
+		av = get_arg_var_sub(cmd->left);
 		if (is_builtin(av[0]))
 		{
 			//	cd need fixing (symbolic links management and printing getcwd)
@@ -518,8 +562,6 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			do_prefix(cmd->left->prefix, tmp);
 			do_suffix(cmd->left->suffix);
 			do_assignement(cmd->left->prefix, tmp);
-			fprintf(ttt, "---->%s=%s\n", g_var.var->key, g_var.var->value);
-			fprintf(ttt, "++++>%s=%s\n", tmp->key, tmp->value);
 			env = env_to_tab(tmp);
 			// for (int i = 0; env[i];i++)
 			// 	fprintf(ttt, "%s\n", env[i]);
@@ -546,7 +588,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 
 int		execute(t_and_or *cmd, int bg)
 {
-	ttt = fopen("/dev/ttys005", "w");
+	ttt = fopen("/dev/ttys003", "w");
 	int dp;
 	int ret = 0;
 

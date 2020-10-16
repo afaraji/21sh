@@ -277,7 +277,7 @@ t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeptio
 	node->type = DQUOTE;
 	node->data = (ft_strsub(str, *index + 1, i - *index - 1));		// i = 0; or i = *index ?
 	if (is_dollar(node->data) >= 0)
-		str_dollar_sub(node);
+		node->data = str_dollar_sub(node->data);
 	node->next = NULL;
 	node->prec = NULL;
     (i + 1 < ft_strlen(str)) ? (*index = i + 1) : (*index = ft_strlen(str));

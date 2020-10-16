@@ -330,7 +330,6 @@ int		tilde_sub(t_list_token **cmd_token)
 int		is_dollar(char *s)
 {
 	int i;
-
 	if (!s)
 		return (-42);
 	i = 0;
@@ -369,7 +368,7 @@ char	*get_dollar_var(char *s, int start, int end)
 	return (var);
 }
 
-int		str_dollar_sub(t_list_token	*node)
+char		*str_dollar_sub(char *str)
 {
 	int		start;
 	int		end;
@@ -377,21 +376,21 @@ int		str_dollar_sub(t_list_token	*node)
 	char	*suffix;
 	char	*var;
 
-	start = is_dollar(node->data);
+	start = is_dollar(str);
 	if (start < 0)
-		return (-1);
-	end = end_dollar_word(node->data, start);
-	prefix = ft_strsub(node->data, 0, start);
-	var = get_dollar_var(node->data, start, end);
-	suffix = ft_strjoin(var, &(node->data[end]));
-	free(node->data);
-	node->data = ft_strjoin(prefix, suffix);
+		return (str);
+	end = end_dollar_word(str, start);
+	prefix = ft_strsub(str, 0, start);
+	var = get_dollar_var(str, start, end);
+	suffix = ft_strjoin(var, &(str[end]));
+	free(str);
+	str = ft_strjoin(prefix, suffix);
 	free(prefix);
 	free(var);
 	free(suffix);
-	if (is_dollar(node->data) >= 0 && (end - start) > 1)
-		str_dollar_sub(node);
-	return (0);
+	if (is_dollar(str) >= 0 && (end - start) > 1)// why ?
+		str = str_dollar_sub(str);
+	return (str);
 }
 
 int		dollar_sub(t_list_token **cmd_token)
@@ -403,12 +402,10 @@ int		dollar_sub(t_list_token **cmd_token)
 	{
 		if (node->type == WORD && is_dollar(node->data) >= 0)
 		{
-			str_dollar_sub(node);
+			node->data = str_dollar_sub(node->data);
 		}
 		node = node->next;
 	}
-	
-	
 	return (0);
 }
 
@@ -426,7 +423,7 @@ int		lexer(t_list_token **cmd_token)
 //	6 - sub_user_home(cmd_token); eg. ~USER
 	tilde_sub(cmd_token);
 //	7 - dollar_var_sub(cmd_token); eg. $HOME $PWD...		&	10 - split to tokens using isspace
-	dollar_sub(cmd_token);
+	// dollar_sub(cmd_token);
 //	8 - Does command substitution for any expression of the form $(string).		&	10 - split to tokens using isspace
 //	9 - Evaluates arithmetic expressions of the form $((string)).		&	10 - split to tokens using isspace
 //	11 - wilde_card_sub(cmd_token);

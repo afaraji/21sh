@@ -131,7 +131,6 @@ typedef struct				s_simple_cmd
 	char					*name;
 	t_cmd_prefix			*prefix;
 	t_cmd_suffix			*suffix;
-	t_list_token			*tokens;
 }							t_simple_cmd;
 
 typedef struct				s_pipe_seq
@@ -172,6 +171,8 @@ typedef struct					s_simple_lst
 /*	-----------------------------------------------------------	*/
 
 int 		main_parse(char *line);
+int			is_dollar(char *str);
+char		*str_dollar_sub(char *str);
 char		**env_to_tab(t_variable *var);
 char		*fetch_variables(char *key, int typ);
 char		**paths_from_env(void);
@@ -179,6 +180,7 @@ int			run_cmd(char **cmd);
 int			builtins(char *cmd, char **av, char **env);
 int			cd_builtin(char **av);
 t_variable	*get_env(char *s, int typ);
+int			dollar_sub(t_list_token **cmd_token);
 
 // ******************************************
 
