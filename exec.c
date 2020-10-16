@@ -325,6 +325,8 @@ char	**list_to_tab(t_simple_lst *list)
 	int		i;
 	char	**args;
 
+	if (!list)
+		return (NULL);
 	node = list;
 	i = 0;
 	while (node)
@@ -407,6 +409,11 @@ t_simple_lst	*var_sub(t_simple_lst *head)
 	t = ft_strsplit(tmp, ' ');
 	free(tmp);
 	i = 1;
+	if (!t || !t[0])
+	{
+		head->data = ft_strdup("");
+		return (head);
+	}
 	head->data = ft_strdup(t[0]);
 	node = head;
 	while (t[i])
@@ -555,7 +562,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 	if (cmd->right == NULL && !bg)
 	{
 		av = get_arg_var_sub(cmd->left);
-		if (is_builtin(av[0]))
+		if (av && is_builtin(av[0]))
 		{
 			//	cd need fixing (symbolic links management and printing getcwd)
 			tmp = var_list_dup(g_var.var);

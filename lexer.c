@@ -369,25 +369,26 @@ char	*get_dollar_var(char *s, int start, int end)
 }
 
 char		*str_dollar_sub(char *str)
-{
+{	fprintf(ttyfd, "++++++++++1+++++++++\n");
 	int		start;
 	int		end;
 	char	*prefix;
 	char	*suffix;
 	char	*var;
-
+	fprintf(ttyfd, "++++++++++1+++++++++\n");
 	start = is_dollar(str);
 	if (start < 0)
 		return (str);
-	end = end_dollar_word(str, start);
-	prefix = ft_strsub(str, 0, start);
-	var = get_dollar_var(str, start, end);
-	suffix = ft_strjoin(var, &(str[end]));
+	end = end_dollar_word(str, start);fprintf(ttyfd, "++++++++++2+++++++++\n");
+	prefix = ft_strsub(str, 0, start);fprintf(ttyfd, "++++++++++3+++++++++\n");
+	var = get_dollar_var(str, start, end);fprintf(ttyfd, "++++++++4+++++++++++\n");
+	suffix = ft_strjoin(var, &(str[end]));fprintf(ttyfd, "+++++++++5++++++++++\n");
 	free(str);
-	str = ft_strjoin(prefix, suffix);
+	str = ft_strjoin(prefix, suffix);fprintf(ttyfd, "++++++++++++6+++++++\n");
 	free(prefix);
 	free(var);
 	free(suffix);
+	fprintf(ttyfd, "asdasdsa[%s]sadasdasd\n",str);
 	if (is_dollar(str) >= 0 && (end - start) > 1)// why ?
 		str = str_dollar_sub(str);
 	return (str);

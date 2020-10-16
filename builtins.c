@@ -87,7 +87,6 @@ int     builtins(char *cmd, char **av, char **env)
         return (cd_builtin(av));
     if (ft_strcmp(cmd, "env") == 0)
     {
-        fprintf(ttyfd, "-------[1]-------\n");
         print_env(0);
         return (0);
     }
