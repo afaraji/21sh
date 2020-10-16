@@ -101,6 +101,32 @@ t_simple_lst   *names_list(char *str, t_simple_lst *head)
 	return (head);
 }
 
+t_simple_lst   *get_var_list(char *str, t_simple_lst *head)
+{
+	t_simple_lst	*node;
+	char			*tmp;
+
+	if (!head)
+	{
+		head = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+		tmp = ft_strdup(str);
+		head->data = ft_strjoin("$", tmp);
+		free(tmp);
+		head->next = NULL;
+		return(head);
+	}
+	node = head;
+	while (node->next)
+		node = node->next;
+	node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+	node = node->next;
+	tmp = ft_strdup(str);
+	node->data = ft_strjoin("$", tmp);
+	free(tmp);
+	node->next = NULL;
+	return (head);
+}
+
 int	get_node_sum(t_simple_lst *head)
 {
 	int		sum;
@@ -193,16 +219,14 @@ char	**var_search(char *str)
 	while (var)
 	{
 		if (!ft_strncmp(str, var->key, ft_strlen(str)))
-		{
-			//fprintf(ttyfd, "|%s|--|%s|\n", str, var->key);
-			var_list = names_list(var->key, var_list);
-		}
+			var_list = get_var_list(var->key, var_list);
 		var = var->next;
 	}
 	var_tab = tab_from_list(var_list);
 	ft_free_list(var_list);
 	return(var_tab);
 }
+
 t_simple_lst   *matched_files_dirs(char *str, t_simple_lst *head)
 {
 	DIR     *d;
@@ -211,7 +235,6 @@ t_simple_lst   *matched_files_dirs(char *str, t_simple_lst *head)
 
 	files_dirs_list = NULL;
 	d = opendir(".");
-	fprintf(ttyfd, "str : |%s|\n", str);
 	if (d != NULL)
 	{
 		while ((dir = readdir(d)))
@@ -237,28 +260,36 @@ char	**files_dirs_search(char *str)
 	to_cmp = get_to_cmp(str);
 	files_dirs_list = NULL;
 	d = opendir(path);
-	fprintf(ttyfd, "herrrrre\n");
 	if (d != NULL)
 	{
 		while ((dir = readdir(d)))
 		{
+			fprintf(ttyfd, "to_cmp : |%s|, path : |%s|\n", to_cmp, path);
 			if ((!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))) && dir->d_name[0] != '.')
 				files_dirs_list = names_list(dir->d_name, files_dirs_list);
 		}
+		closedir(d);
+		if (files_dirs_list)
+			dir_tab = tab_from_list(sort_list(files_dirs_list));
+		else
+		{
+			dir_tab = (char **)malloc(sizeof(char *) * 1);
+			dir_tab[0] = NULL;
+		}
 	}
-	if (d == NULL)
+	else if (d == NULL)
 	{
 		files_dirs_list = matched_files_dirs(str, files_dirs_list);
-		dir_tab = tab_from_list(sort_list(files_dirs_list));
-	//	dir_tab = (char **)malloc(sizeof(char *) * 1);
-	//	dir_tab[0] = NULL;
+		if (files_dirs_list)
+			dir_tab = tab_from_list(sort_list(files_dirs_list));
+		else
+		{
+			dir_tab = (char **)malloc(sizeof(char *) * 1);
+			dir_tab[0] = NULL;
+		}
 	}
-	else
-	{
-		closedir(d);
-		dir_tab = tab_from_list(sort_list(files_dirs_list));
-	}
-	ft_free_list(files_dirs_list);
+	if (files_dirs_list)
+		ft_free_list(files_dirs_list);
 	return(dir_tab);
 }
 
@@ -528,9 +559,7 @@ void    auto_completion(t_line *line)
 		result = cmd_search(splited_line[0]);
 	}
 	if (result[0] == NULL)
-	{
 		return;
-	}
 	j = 0;
 	while (result && result[j + 1])
 		j++;
@@ -544,9 +573,7 @@ void    auto_completion(t_line *line)
 	{
 		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
 		ft_putchar('\n');
-	//	print_tab(result);
 		print_result(result, line);
-		//display_line(line);
 		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 	}
 }
