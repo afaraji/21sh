@@ -20,49 +20,84 @@ int		ft_pdenied(char *flag)
 	dir = opendir(flag);
 	if (dir == NULL || access(flag, X_OK) != 0)
 	{
-		ft_putstr("cd: permission denied: ");
-		ft_putstr(flag);
-		ft_putchar('\n');
+		ft_putstr_fd("cd: permission denied: ", STDERR);
+		ft_putstr_fd(flag, STDERR);
+		ft_putchar_fd('\n', STDERR);
 		return (1);
 	}
 	closedir(dir);
 	return (0);
 }
 
-int 	ft_cd_home(void)
+char	*get_var_from_tab(char **env, char *str)
 {
-	t_variable	*node;
+	int		i;
+	char	*s;
+	int		len;
 
-	node = g_var.var;
-	while (node)
+	i = 0;
+	while (env[i])
 	{
-		if (ft_strcmp(node->key, "HOME") == 0)
+		len = 0;
+		while (env[i][len])
 		{
-			if (getcwd(NULL, 0))
-				change_pwd("OLDPWD", getcwd(NULL, 0));
-			chdir(node->value);
-			change_pwd("PWD", getcwd(NULL, 0));
-			return (0);
+			if(env[i][len] == '=')
+				break;
+			len++;
 		}
-		node = node->next;
+		if (len >= ft_strlen(env[i]))
+			return (NULL);
+		s = ft_strsub(env[i], 0, len);
+		if(!ft_strcmp(s, str))
+		{
+			free(s);
+			return (ft_strdup(&env[i][len + 1]));
+		}
+		i++;
 	}
-	ft_putstr("cd: no home directory.\n");
-    return (1);
+	return (NULL);
+}
+
+int 	ft_cd_home(char **env)
+{
+	int		i;
+	char	*path;
+
+	
+	path = get_var_from_tab(env, "HOME");
+	if (!path)
+		return (1);		
+	if (getcwd(NULL, 0))
+		change_pwd("OLDPWD", getcwd(NULL, 0));
+	if (chdir(path))
+	{
+		ft_putstr("cd: ");
+		ft_putstr(path);
+		ft_putstr(": no such file or DIR.\n");
+		free(path);
+    	return (1);
+	}
+	free(path);
+	if (getcwd(NULL, 0))
+	{
+		change_pwd("PWD", getcwd(NULL, 0));
+		ft_putstr(getcwd(NULL, 0));
+		ft_putchar('\n');
+	}
+	return (0);
 }
 
 int	    ft_cd_1(char *flag)
 {
-	char	*buff;
-
 	if (ft_pdenied(flag))
 		return (1);
-	if (!(buff = (char *)malloc(sizeof(char) * 1000)))
-		return (0);
 	if (getcwd(NULL, 0))
 		change_pwd("OLDPWD", getcwd(NULL, 0));
-	chdir(flag);
+	if (chdir(flag))
+		return (1);
 	change_pwd("PWD", getcwd(NULL, 0));
-	free(buff);
+	ft_putstr(getcwd(NULL, 0));
+	ft_putchar('\n');
     return (0);
 }
 
@@ -93,7 +128,9 @@ char	*ft_get_ld(char *cwd, char *flag)
 	while (j >= 0 && flag[j] != '/')
 		j--;
 	tmp = ft_strsub (cwd,0, i + 1);
+	// free(cwd); // free if getcwd allocate mem
 	cwd = ft_strjoin(tmp, &flag[j + 1]);
+	free(tmp);
 	return (cwd);
 }
 
@@ -105,7 +142,10 @@ int	ft_cd_3(char *flag)
 		return (1) ;
 	if (getcwd(NULL, 0))
 		change_pwd("OLDPWD", getcwd(NULL, 0));
-	chdir(flag);
+	if (chdir(flag))
+		return (1);
+	ft_putstr(getcwd(NULL, 0));
+	ft_putchar('\n');
 	cwd = getcwd(NULL, 0);
 	cwd = ft_get_ld(cwd, flag);
 	change_pwd("PWD", cwd);

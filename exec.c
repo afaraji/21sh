@@ -148,6 +148,7 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head)
 	{
 		if (node->ass_word)
 		{
+			fprintf(ttt, "%s=%s\n", node->ass_word->key, node->ass_word->value);
 			tmp = head;
 			state = 0;
 			while (tmp)
@@ -570,8 +571,9 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			do_suffix(cmd->left->suffix);
 			do_assignement(cmd->left->prefix, tmp);
 			env = env_to_tab(tmp);
-			// for (int i = 0; env[i];i++)
-			// 	fprintf(ttt, "%s\n", env[i]);
+			fprintf(ttt, "-+--+-+-+-+-+-+-+-+-+-+-+-\n");
+			for (int i = 0; env[i];i++)
+				fprintf(ttt, "%s\n", env[i]);
 			//free(tmp);
 			//free(av);
 			return (builtins(av[0], av, env));

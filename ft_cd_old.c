@@ -13,28 +13,29 @@
 #include "builtins.h"
 #include "parse.h"
 
-int	ft_cd_old(void)
+int	ft_cd_old(char **env)
 {
-	char	*old_d;
 	char	*cwd;
-	t_variable	*node;
+	char	*tmp;
 
-	node = g_var.var;
+	tmp = get_var_from_tab(env, "OLDPWD");
+	if (!tmp)
+		return(1);
 	cwd = NULL;
-	while (node)
+	cwd = getcwd(NULL, 0);
+	if (cwd)
+		change_pwd("OLDPWD", cwd);
+	if (!chdir(tmp))
 	{
-		if (ft_strcmp(node->key, "OLDPWD") == 0)
-		{
-			old_d = node->value;
-			cwd = getcwd(NULL, 0);
-			if (cwd)
-				change_pwd("OLDPWD", cwd);
-			chdir(old_d);
-			change_pwd("PWD", cwd);
-			return (0);
-		}
-		node = node->next;
+		change_pwd("PWD", tmp);
+		ft_putstr(getcwd(NULL, 0));
+		ft_putchar('\n');
+		free(tmp);
+		return (0);
 	}
-	ft_putstr(": No such file or directory.\n");
+	ft_putstr_fd("cd: ", STDERR);
+	ft_putstr_fd(tmp, STDERR);
+	free(tmp);
+	ft_putstr_fd(": No such file or directory.\n", STDERR);
 	return (1);
 }

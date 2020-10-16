@@ -62,7 +62,7 @@ void	token_print(t_list_token *node)
 	while (node)
 	{
 		if(node->type == WORD)
-			fprintf(ttyfd, "[%s]", node->data);
+			fprintf(ttyfd, "[%s:%d]", node->data, node->type);
 		else if(node->type == QUOTE || node->type == DQUOTE)
 			fprintf(ttyfd, "{%d:%s}", node->is_ok, node->data);
 		else
@@ -89,7 +89,7 @@ void	token_print(t_list_token *node)
 				fprintf(ttyfd, "&");
 				break;
 			case -12:
-				fprintf(ttyfd, "[%s]", node->data);
+				fprintf(ttyfd, "[%s:%d]", node->data, node->type);
 				break;
 			case -20:
 				fprintf(ttyfd, ">");
@@ -307,9 +307,8 @@ t_list_token	*add_escape(int *index, char *str) // need thinking and recoding
 	node = (t_list_token *)malloc(sizeof(t_list_token));
 	if (!node)
 		return (NULL);
-	node->type = ESCAPE;
-	// need to verifie if it s a reserved word
-	node->data = ft_strsub(str, *index + 1, 1);printf("---|%s|---\n", node->data);
+	node->type = WORD;
+	node->data = ft_strsub(str, *index + 1, 1);
 	node->next = NULL;
 	node->prec = NULL;
 	*index += 2;
@@ -958,17 +957,20 @@ void	join_words(t_list_token *token)
 {
 	t_list_token	*node;
 	t_list_token	*tmp;
-
+fprintf(ttyfd,"j----******************dsadasd\n");
 	node = token;
 	while (node->next)
 	{
+		fprintf(ttyfd,"====[%d:%s]===\n", node->type, node->data);
 		if (node->type == WORD || node->type == QUOTE || node->type == DQUOTE)
 		{
 			tmp = node->next;
 			if (tmp->type == WORD || tmp->type == QUOTE || tmp->type == DQUOTE)
 			{
+				fprintf(ttyfd,"joining [%s]-[%s]\n", node->data, tmp->data);
 				join_nodes(node, tmp);
 				node = token;
+				// continue;
 			}
 		}
 		if (!(node->next))
@@ -1188,7 +1190,9 @@ int main_parse(char *line)
 	int				ret;
 
     tokens = __tokenize(line);
-	// printf("\n");token_print(tokens);printf("\n");
+	// fprintf(ttyfd,"----*+*1+*+---------\n");
+	// token_print(tokens);
+	// fprintf(ttyfd,"----*+*+*1+*+*+---------\n");
 	
 	g_var.errno = 0;
 	if (lexer(&tokens) || verify_tokens(tokens))

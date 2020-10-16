@@ -14,7 +14,7 @@
 #include "parse.h"
 #include "builtins.h"
 
-int     ft_export(char **flag)
+int     ft_export(char **flag, char **env)
 {fprintf(ttyfd, "-------[export]-------\n");
     int     i;
     char    *key;
@@ -26,7 +26,7 @@ int     ft_export(char **flag)
     {
         if (flag[1] == NULL)
         {
-			print_env(0);
+			print_env(env);
             return (0);
         }
         if (get_key_value(key, value, flag[i]))
@@ -37,36 +37,30 @@ int     ft_export(char **flag)
     return (0);
 }
 
-void    print_env(int type)
+void    print_env(char **env)
 {
-    t_variable	*node;
-
-    node = g_var.var;
-    fprintf(ttyfd, "+++++++++env[%d,%s=%s]\n",type, node->key, node->value);
-    while (node)
+    int     i;
+fprintf(ttyfd, "-**-[env]--**--\n");
+    i = 0;
+    while (env[i])
     {
-        if (type || (type == 0 && node->env == 0))
-        {
-            ft_putstr(node->key);
-            ft_putchar('=');
-            ft_putstr(node->value);
-            ft_putchar('\n');
-        }
-        node = node->next;
+        ft_putstr(env[i]);
+        ft_putchar('\n');
+        i++;
     }
 }
 
-int     cd_builtin(char **av)
+int     cd_builtin(char **av, char **env)
 {
     fprintf(ttyfd, "-**-[cd]--**--\n");
     if (av[1] == NULL)
-        return (ft_cd_home());
+        return (ft_cd_home(env));
     else
     {
         if (av[1][0] == '-' )
         {
             if (av[1][1] == '\0')
-                return (ft_cd_old());
+                return (ft_cd_old(env));
             else if (av[1][1] == 'P')
                 return (ft_cd_1(av[2]));
             else if (av[1][1] == 'L')
@@ -84,10 +78,10 @@ int     builtins(char *cmd, char **av, char **env)
     if (ft_strcmp(cmd, "echo") == 0)
         return (ft_echo(av));
     else if (ft_strcmp(cmd, "cd") == 0)
-        return (cd_builtin(av));
+        return (cd_builtin(av, env));
     if (ft_strcmp(cmd, "env") == 0)
     {
-        print_env(0);
+        print_env(env);
         return (0);
     }
     else if (ft_strcmp(cmd, "setenv") == 0)
@@ -95,6 +89,6 @@ int     builtins(char *cmd, char **av, char **env)
     else if (ft_strcmp(cmd, "unsetenv") == 0)
         return (ft_unsetenv(av));
     else if (ft_strcmp(cmd, "export") == 0)
-        return (ft_export(av));
+        return (ft_export(av, env));
     return (42);
 }

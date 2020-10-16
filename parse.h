@@ -45,10 +45,6 @@
 
 // FILE			*ttyfd;
 
-typedef union	u_token
-{
-	/* data */
-} 				t_token;
 // <& (fd or file name) check if number => fd or string => filename only in aggr
 // ' and " WORDs
 // ls 2>&1 < kuhkj | cat -e  plan should read all command before exec
@@ -178,9 +174,10 @@ char		*fetch_variables(char *key, int typ);
 char		**paths_from_env(void);
 int			run_cmd(char **cmd);
 int			builtins(char *cmd, char **av, char **env);
-int			cd_builtin(char **av);
+int			cd_builtin(char **av, char **env);
 t_variable	*get_env(char *s, int typ);
 int			dollar_sub(t_list_token **cmd_token);
+char		*get_var_from_tab(char **env, char *str);
 
 // ******************************************
 
