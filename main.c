@@ -26,6 +26,7 @@
 // 		node = node->next;
 // 	}
 // }
+char	*line = NULL;
 
 t_hist	*create_history(void)
 {
@@ -47,7 +48,8 @@ int		ft_exit(int status)
 {
 	ft_set_attr(1);
 	save_list();
-	ft_putstr("\nexit\n");
+	if (!status)
+		ft_putstr("\nexit\n");
 	exit(status);
 }
 
@@ -126,7 +128,7 @@ int		init_shell(char **env)
 {
 	if (ft_set_attr(0))
 		return (1);
-	g_var = (t_shell_var){0, 0, NULL, NULL};
+	g_var = (t_shell_var){0, 0, 0, NULL, NULL};
 	g_var.var = get_set(env);
 	g_var.history = create_history();
 	get_aliases();// should be removed from here (no aliases at program start)
@@ -136,49 +138,53 @@ int		init_shell(char **env)
 
 void	signal_callback_handler(int signum)
 {
-	printf("\nexiting from signal:%d\n", signum);
+	// printf("\nexiting from signal:%d\n", signum);
 	if (signum == 2)
 	{
-		printf("*-*-*-*-*");
-		return;
+		// printf("ctrl-c received\n");
+		// ft_prompt("\n&> ");
+		g_var.sig = signum;
+		// ft_set_attr(0);
+		// free(line);
 	}
-	exit(signum);
+	else
+		ft_exit(signum);
 }
 
 void	ft_signal(void)
 {
 	signal(SIGINT, &signal_callback_handler);
-	signal(SIGQUIT, &signal_callback_handler);
-	signal(SIGILL, &signal_callback_handler);
-	signal(SIGABRT, &signal_callback_handler);
-	signal(SIGFPE, &signal_callback_handler);
-	signal(SIGBUS, &signal_callback_handler);
-	signal(SIGSEGV, &signal_callback_handler);
-	signal(SIGTERM, &signal_callback_handler);
-	signal(SIGPIPE, &signal_callback_handler);
-	signal(SIGHUP, &signal_callback_handler);
-	signal(SIGTRAP, &signal_callback_handler);
-	signal(SIGEMT, &signal_callback_handler);
-	signal(SIGKILL, &signal_callback_handler);
-	signal(SIGSYS, &signal_callback_handler);
-	signal(SIGALRM , &signal_callback_handler);
-	signal(SIGURG, &signal_callback_handler);
-	signal(SIGTSTP, &signal_callback_handler);
-	signal(SIGTTOU, &signal_callback_handler);
-	signal(SIGIO, &signal_callback_handler);
-	signal(SIGXCPU, &signal_callback_handler);
-	signal(SIGXFSZ, &signal_callback_handler);
-	signal(SIGINFO, &signal_callback_handler);
-	signal(SIGUSR1, &signal_callback_handler);
-	signal(SIGUSR2, &signal_callback_handler);
+	// signal(SIGQUIT, &signal_callback_handler);
+	// signal(SIGILL, &signal_callback_handler);
+	// signal(SIGABRT, &signal_callback_handler);
+	// signal(SIGFPE, &signal_callback_handler);
+	// signal(SIGBUS, &signal_callback_handler);
+	// signal(SIGSEGV, &signal_callback_handler);
+	// signal(SIGTERM, &signal_callback_handler);
+	// signal(SIGPIPE, &signal_callback_handler);
+	// signal(SIGHUP, &signal_callback_handler);
+	// signal(SIGTRAP, &signal_callback_handler);
+	// signal(SIGEMT, &signal_callback_handler);
+	// signal(SIGKILL, &signal_callback_handler);
+	// signal(SIGSYS, &signal_callback_handler);
+	// signal(SIGALRM , &signal_callback_handler);
+	// signal(SIGURG, &signal_callback_handler);
+	// signal(SIGTSTP, &signal_callback_handler);
+	// signal(SIGTTOU, &signal_callback_handler);
+	// signal(SIGIO, &signal_callback_handler);
+	// signal(SIGXCPU, &signal_callback_handler);
+	// signal(SIGXFSZ, &signal_callback_handler);
+	// signal(SIGINFO, &signal_callback_handler);
+	// signal(SIGUSR1, &signal_callback_handler);
+	// signal(SIGUSR2, &signal_callback_handler);
 }
 
 int		main(int ac, char **av, char **env)
 {
-	char	*line = NULL;
+	
 	int		ret = 0;
 
-	ft_signal();
+	// ft_signal();
 	ttyfd = fopen("/dev/ttys001", "w");
 	if (init_shell(env))
 		return (1);

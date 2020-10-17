@@ -48,6 +48,44 @@ int		termtype(void)
 	return (1);
 }
 
+void	copy_attr_set_icanon(struct termios *src, struct termios *dst)
+{
+	ft_memcpy(dst->c_cc, src->c_cc, NCCS);
+	dst->c_cflag = src->c_cflag;
+	dst->c_iflag = src->c_iflag;
+	dst->c_ispeed = src->c_ispeed;
+	dst->c_oflag = src->c_oflag;
+	dst->c_ospeed = src->c_ospeed;
+	dst->c_lflag = src->c_lflag & ~(ECHO | ICANON);
+}
+
+// int		ft_set_attr(int index)
+// {
+// 	static struct termios	old_termios;
+// 	struct termios			s_termios;
+
+// 	if (index == 0)
+// 	{
+// 		tcgetattr(0, &old_termios);
+// 		if (termtype() && check_termcap())
+// 		{
+// 			if (tcgetattr(0, &s_termios) == -1)
+// 				return (1);
+// 			s_termios.c_lflag &= ~(ECHO | ICANON);
+// 			if (tcsetattr(0, 0, &s_termios) == -1)
+// 				return (1);
+// 		}
+// 		else
+// 			return (1);
+// 	}
+// 	else
+// 	{
+// 		tcsetattr(0, 0, &old_termios);
+// 		return (1);
+// 	}
+// 	return (0);
+// }
+
 int		ft_set_attr(int index)
 {
 	static struct termios	old_termios;
@@ -55,12 +93,14 @@ int		ft_set_attr(int index)
 
 	if (index == 0)
 	{
-		tcgetattr(0, &old_termios);
+		if (!old_termios.c_cflag && !old_termios.c_ospeed)
+		{
+			if (tcgetattr(0, &old_termios) == -1)
+				return (1);
+		}
 		if (termtype() && check_termcap())
 		{
-			if (tcgetattr(0, &s_termios) == -1)
-				return (1);
-			s_termios.c_lflag &= ~(ECHO | ICANON);
+			copy_attr_set_icanon(&old_termios, &s_termios);
 			if (tcsetattr(0, 0, &s_termios) == -1)
 				return (1);
 		}
@@ -77,7 +117,10 @@ int		ft_set_attr(int index)
 
 void	free_term(t_terminal **term)
 {
+	if (*term == NULL)
+		return;
 	free((*term)->line);
 	free((*term)->select);
 	free(*term);
+	*term = NULL;
 }

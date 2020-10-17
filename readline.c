@@ -62,7 +62,7 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 	{
 		term->buff = 0;
 		read(0, &term->buff, 4);
-		if (ft_strcmp(prompt, "---PRESS TAB FOR MORE---") && printable(term, his_head, mult_line))
+		if (printable(term, his_head, mult_line))
 			break ;
 		else if (!(ft_isprint(term->buff)))
 			unprintable(term, his_head, &to_past, prompt);
@@ -80,8 +80,6 @@ char		*readline(int prompt)
 		prmt = "$> ";
 	else if (prompt == -1)
 		prmt = "$> ";
-	else if (prompt == COMPL)
-		prmt = "---PRESS TAB FOR MORE---";
 	else if (prompt == QUOTE)
 		prmt = "\nquote> ";
 	else if (prompt == DQUOTE)
