@@ -137,6 +137,11 @@ int		init_shell(char **env)
 void	signal_callback_handler(int signum)
 {
 	printf("\nexiting from signal:%d\n", signum);
+	if (signum == 2)
+	{
+		printf("*-*-*-*-*");
+		return;
+	}
 	exit(signum);
 }
 
