@@ -90,6 +90,7 @@ typedef struct					s_shell_var
 {
 	int							errno;
 	int							exit_status;
+	int							sig;
 	t_alias						*aliases;
 	t_variable					*var;
 	t_hist						*history;
