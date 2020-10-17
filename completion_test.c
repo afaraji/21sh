@@ -9,8 +9,6 @@ void	print_tab(char **tabl)
 	while (tabl[i])
 	{
 		fprintf(ttyfd, "%s\n", tabl[i]);
-		if (i == 20)
-			break;
 		//ft_putchar('\n');
 		//ft_putstr(tabl[i]);
 		i++;
@@ -255,8 +253,10 @@ char	**files_dirs_search(char *str)
 	char    *path;
 	t_simple_lst   *files_dirs_list;
 	char    **dir_tab;
-
+	struct  stat sb;
+	
 	path = get_path(str);
+	fprintf(ttyfd, "path : |%s|\n", path);
 	to_cmp = get_to_cmp(str);
 	files_dirs_list = NULL;
 	d = opendir(path);
@@ -264,9 +264,23 @@ char	**files_dirs_search(char *str)
 	{
 		while ((dir = readdir(d)))
 		{
-			fprintf(ttyfd, "to_cmp : |%s|, path : |%s|\n", to_cmp, path);
-			if ((!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))) && dir->d_name[0] != '.')
-				files_dirs_list = names_list(dir->d_name, files_dirs_list);
+			if (path[0] == '.')
+			{
+				if (ft_strcmp(dir->d_name, ".") && ft_strcmp(dir->d_name, ".."))
+				{
+					if ((!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))))
+						files_dirs_list = names_list(dir->d_name, files_dirs_list);
+					if ((stat(dir->d_name, &sb) == 0 && sb.st_mode & S_IXUSR))
+						files_dirs_list = names_list(dir->d_name, files_dirs_list);
+				}
+			}
+			else
+			{
+				if ((!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))) && dir->d_name[0] != '.')
+					files_dirs_list = names_list(dir->d_name, files_dirs_list);
+			}
+			
+			
 		}
 		closedir(d);
 		if (files_dirs_list)
@@ -389,7 +403,7 @@ char	**cmd_search(char *str)
 		cmd_tab[0] = NULL;
 	}
 	else
-		cmd_tab = tab_from_list((cmd_list));
+		cmd_tab = tab_from_list(sort_list(cmd_list));
 	free(cmd_list);
 	return(cmd_tab);
 }
@@ -464,7 +478,7 @@ char	*completed_line(char *line, char *str)
 	return (tmp);
 }
 
-void	print_result(char **t, t_line *line)
+int	print_result(char **t, t_line *line)
 {
 	int i;
 	int	space;
@@ -488,7 +502,7 @@ void	print_result(char **t, t_line *line)
 	}
 	word_per_line = line->col /str_max_len;
 	lines_to_print = total_words/word_per_line;
-	words_to_print = (line->nline - 3) * word_per_line;
+	words_to_print = (line->nline - 1) * word_per_line;
 	if (lines_to_print < line->nline)
 	{
 		i = 0;
@@ -506,11 +520,12 @@ void	print_result(char **t, t_line *line)
 				ft_putchar('\n');
 			i++;
 		}
+		return (1);
 	}
 	else
 	{
 		i = 0;
-		while (words_to_print)
+		while (words_to_print && t[i])
 		{
 			ft_putstr(t[i]);
 			space = str_max_len - ft_strlen(t[i]);
@@ -524,12 +539,9 @@ void	print_result(char **t, t_line *line)
 				ft_putchar('\n');
 			i++;
 		}
+		return (2);
 	}
-	// max ft_strlen(t[i]) ==> + 2 space
-	// word / ligne
-	/* nombre de ligne a affiche |
-	   should know available ligne in terminal*/
-	// split tab to the available lines
+	return (0);
 }
 
 void    auto_completion(t_line *line)
@@ -550,6 +562,8 @@ void    auto_completion(t_line *line)
 		else
 			result = var_search(splited_line[i] + 1);
 	}
+	else if (i == 0 && splited_line[0][0] == '.')
+		result = files_dirs_search(splited_line[0]);
 	else if (i != 0 || is_path(splited_line[i]) != 0)
 	{
 		result = files_dirs_search(splited_line[i]);
@@ -574,6 +588,8 @@ void    auto_completion(t_line *line)
 		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
 		ft_putchar('\n');
 		print_result(result, line);
+		//if (print_result(result, line) == 2)
+		//	readline(-7);
 		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 	}
 }

@@ -67,11 +67,11 @@ int		unprintable_1(t_terminal *term, char **to_past)
 	return (0);
 }
 
-void	unprintable(t_terminal *term, t_hist **his_head, char **to_past)
+void	unprintable(t_terminal *term, t_hist **his_head, char **to_past, char *prompt)
 {
 	if (unprintable_1(term, to_past))
 		return ;
-	else
+	else if (ft_strcmp(prompt, "---PRESS TAB FOR MORE---"))
 	{
 		move_curs(term);
 		navigate_history(term, his_head);

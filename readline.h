@@ -31,6 +31,7 @@
 # define CUT 0x8889E2
 # define PAST 0x9A88E2
 # define TAB 0x9
+# define COMPL	-7			/* for completion */
 
 
 typedef	struct		s_line
@@ -73,7 +74,7 @@ char				*manage_line(char *prompt, t_hist **his_head, int m_line);
 t_line				*init_line(char *prompt);
 void				ft_prompt(char *prompt);
 int					printable(t_terminal *term, t_hist **his_head, int m_line);
-void				unprintable(t_terminal *term, t_hist **his, char **to_past);
+void				unprintable(t_terminal *term, t_hist **his, char **to_past, char *prompt);
 int					unprintable_1(t_terminal *term, char **to_past);
 int					unprintable_2(t_terminal *term);
 int					ft_intputchar(int c);
