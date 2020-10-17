@@ -558,8 +558,9 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 				{
 					g_var.errno = 125;
 					*cmd = NULL;
-					ft_putstr_fd("\nexpected file number, found: ", 2);
+					ft_putstr_fd("expected file number, found: ", 2);
 					ft_putstr_fd(file, 2);
+					ft_putchar_fd('\n', 2);
 					return (NULL);
 				}
 				*cmd = (*cmd)->next;
@@ -567,7 +568,7 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 			}
 			return ("");
 		}
-		ft_putstr_fd("\nsyntax error, unexpected token near -- '", 2);
+		ft_putstr_fd("syntax error, unexpected token near -- '", 2);
 		if (*cmd)
 		{
 			ft_putstr_fd(tokentoa((*cmd)->type), 2);
@@ -576,7 +577,7 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 		{
 			ft_putstr_fd(tokentoa((*end)->type), 2);
 		}
-		ft_putstr_fd("'", 2);
+		ft_putstr_fd("'\n", 2);
 		g_var.errno = 120;
 		*cmd = NULL;
 		return (NULL);
@@ -607,7 +608,7 @@ char		*io_here(t_list_token **cmd, t_list_token **end, int *r_type)
 			}
 			return ("");
 		}
-		ft_putstr_fd("\nsyntax error, unexpected token near '", 2);
+		ft_putstr_fd("syntax error, unexpected token near '", 2);
 		if (*cmd)
 		{
 			ft_putstr_fd(tokentoa((*cmd)->type), 2);
@@ -616,7 +617,7 @@ char		*io_here(t_list_token **cmd, t_list_token **end, int *r_type)
 		{
 			ft_putstr_fd(tokentoa((*end)->type), 2);
 		}
-		ft_putstr_fd("'", 2);
+		ft_putstr_fd("'\n", 2);
 		g_var.errno = 121;
 		*cmd = NULL;
 		return (NULL);
@@ -831,9 +832,9 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 	{
 		if (!g_var.errno)// here if sigfaults
 		{
-			ft_putstr_fd("\nsyntax error, unexpected token near '", 2);
+			ft_putstr_fd("syntax error, unexpected token near '", 2);
 			ft_putstr_fd(tokentoa(start->type), 2);
-			ft_putstr_fd("'", 2);
+			ft_putstr_fd("'\n", 2);
 			g_var.errno = 122;
 		}
 		return(NULL);
@@ -850,7 +851,7 @@ t_pipe_seq	*ast(t_list_token *tokens)
 	{
 		if (!g_var.errno)
 		{
-			ft_putstr_fd("\nsyntax error, unexpected <newline>", 2);
+			ft_putstr_fd("syntax error, unexpected <newline>\n", 2);
 			g_var.errno = 122;
 		}
 		return (NULL);
@@ -988,9 +989,9 @@ int		verify_tokens(t_list_token *token)
 		return (1);
 	if (_OR(token->type, SMCLN, ANDLG, ORLG, BGJOB, PIP))
 	{
-		ft_putstr_fd("\nsyntax error, unexpected token `", 2);
+		ft_putstr_fd("syntax error, unexpected token `", 2);
 		ft_putstr_fd(tokentoa(token->type), 2);
-		ft_putstr_fd("'", 2);
+		ft_putstr_fd("'\n", 2);
 		g_var.errno = 130;
 		return (2);
 	}
@@ -1004,17 +1005,17 @@ int		verify_tokens(t_list_token *token)
 				tmp = tmp->next;
 			if (!tmp && (node->type == ANDLG || node->type == ORLG))
 			{
-				ft_putstr_fd("\nsyntax error after `", 2);
+				ft_putstr_fd("syntax error after `", 2);
 				ft_putstr_fd(tokentoa(node->type), 2);
-				ft_putstr_fd("'", 2);
+				ft_putstr_fd("'\n", 2);
 				g_var.errno = 131;
 				return (3);
 			}
 			if (tmp && (_OR(tmp->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN)))
 			{
-				ft_putstr_fd("\nsyntax error, unexpected token `", 2);
+				ft_putstr_fd("syntax error, unexpected token `", 2);
 				ft_putstr_fd(tokentoa(tmp->type), 2);
-				ft_putstr_fd("'", 2);
+				ft_putstr_fd("'\n", 2);
 				g_var.errno = 132;
 				return (4);
 			}
@@ -1203,23 +1204,15 @@ int main_parse(char *line)
 		return (100);
 	join_words(tokens);
 	cmdlist = token_split_sep_op(tokens);
-	// free_tokens(tokens);	
-	int i = 0;
+	if (!cmdlist || g_var.errno)
+		return (42);
+	// free_tokens(tokens);
 	node = cmdlist;
 	while (node)
 	{
-		/*
-		execFunc(node);
-		// right before exec, this func should impliment what is in lexer.c 
-		// (more important) and parser.c (most of it alredy implimented)
-		*/
-
-		// fprintf(ttyfd, "++++++++++ (cmd: %d | BG: %d) ++++++++++\n", i, node->bg);
-		i++;
 		// print_andor(node);
 		ret = execute(node->and_or, node->bg);
 		// print_tokenlist(node->and_or->ast);
-		// fprintf(ttyfd, "-----------------------------------------------------\n");
 		node = node->next;
 	}
 	return (0);

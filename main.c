@@ -134,11 +134,46 @@ int		init_shell(char **env)
 	return (0);
 }
 
+void	signal_callback_handler(int signum)
+{
+	printf("\nexiting from signal:%d\n", signum);
+	exit(signum);
+}
+
+void	ft_signal(void)
+{
+	signal(SIGINT, &signal_callback_handler);
+	signal(SIGQUIT, &signal_callback_handler);
+	signal(SIGILL, &signal_callback_handler);
+	signal(SIGABRT, &signal_callback_handler);
+	signal(SIGFPE, &signal_callback_handler);
+	signal(SIGBUS, &signal_callback_handler);
+	signal(SIGSEGV, &signal_callback_handler);
+	signal(SIGTERM, &signal_callback_handler);
+	signal(SIGPIPE, &signal_callback_handler);
+	signal(SIGHUP, &signal_callback_handler);
+	signal(SIGTRAP, &signal_callback_handler);
+	signal(SIGEMT, &signal_callback_handler);
+	signal(SIGKILL, &signal_callback_handler);
+	signal(SIGSYS, &signal_callback_handler);
+	signal(SIGALRM , &signal_callback_handler);
+	signal(SIGURG, &signal_callback_handler);
+	signal(SIGTSTP, &signal_callback_handler);
+	signal(SIGTTOU, &signal_callback_handler);
+	signal(SIGIO, &signal_callback_handler);
+	signal(SIGXCPU, &signal_callback_handler);
+	signal(SIGXFSZ, &signal_callback_handler);
+	signal(SIGINFO, &signal_callback_handler);
+	signal(SIGUSR1, &signal_callback_handler);
+	signal(SIGUSR2, &signal_callback_handler);
+}
+
 int		main(int ac, char **av, char **env)
 {
 	char	*line = NULL;
 	int		ret = 0;
 
+	ft_signal();
 	ttyfd = fopen("/dev/ttys001", "w");
 	if (init_shell(env))
 		return (1);
@@ -148,7 +183,8 @@ int		main(int ac, char **av, char **env)
 		if (ft_strncmp(line, "exit", 4) == 0)
 			ft_exit(ft_atoi(&line[4]));
 		printf("\n");
-		ret = main_parse(line);
+		if ((ret = main_parse(line)))
+			exit_status(ret << 8);
 		if (line)
 			ft_strdel(&line);
 		if (ft_set_attr(0))

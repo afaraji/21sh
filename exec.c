@@ -14,18 +14,19 @@
 
 FILE	*ttt;
 
-void	exit_status(int status)
+void	exit_status(int status)// src: 0 form exit, 1 from return
 {
 	t_variable *tmp;
 
-	g_var.exit_status = WEXITSTATUS(status);
+	// if (!src)
+		g_var.exit_status = WEXITSTATUS(status);
 	tmp = g_var.var;
 	while (tmp)
 	{
 		if (!ft_strcmp(tmp->key, "?"))
 		{
 			free(tmp->value);
-			tmp->value = ft_itoa(WEXITSTATUS(status));
+			tmp->value = ft_itoa(g_var.exit_status);
 			break;
 		}
 		tmp = tmp->next;
@@ -552,6 +553,13 @@ t_variable	*var_list_dup(t_variable *src)
 	return (head);
 }
 
+void	reset_in_out(int in, int out, int err)
+{
+	dup2(in, 0);
+	dup2(out, 1);
+	dup2(err, 2);
+}
+
 int		exec_ast(t_pipe_seq *cmd, int bg)
 {
 	char		**av;
@@ -565,7 +573,9 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 		av = get_arg_var_sub(cmd->left);
 		if (av && is_builtin(av[0]))
 		{
-			//	cd need fixing (symbolic links management and printing getcwd)
+			int in = dup(STDIN);
+			int out = dup(STDOUT);
+			int err = dup(STDERR);
 			tmp = var_list_dup(g_var.var);
 			do_prefix(cmd->left->prefix, tmp);
 			do_suffix(cmd->left->suffix);
@@ -576,7 +586,11 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 				fprintf(ttt, "%s\n", env[i]);
 			//free(tmp);
 			//free(av);
-			return (builtins(av[0], av, env));
+			status = builtins(av[0], av, env);
+			reset_in_out(in, out, err);
+			// free(env);
+			// free(av);
+			return (status);
 		}
 		if (!(cmd->left->name) && !(cmd->left->word))
 			do_assignement(cmd->left->prefix, g_var.var);

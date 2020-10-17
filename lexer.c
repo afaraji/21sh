@@ -274,7 +274,8 @@ int		tilde_sub(t_list_token **cmd_token)
 				{
 					pw = getpwuid(getuid());
 					free(str);
-					str = ft_strjoin(pw->pw_dir, rest);
+					if (pw)
+						str = ft_strjoin(pw->pw_dir, rest);
 				}
 			}
 			else if(!ft_strcmp(tilde_prefix, "-"))
@@ -369,27 +370,26 @@ char	*get_dollar_var(char *s, int start, int end)
 }
 
 char		*str_dollar_sub(char *str)
-{	fprintf(ttyfd, "++++++++++1+++++++++\n");
+{
 	int		start;
 	int		end;
 	char	*prefix;
 	char	*suffix;
 	char	*var;
-	fprintf(ttyfd, "++++++++++1+++++++++\n");
+
 	start = is_dollar(str);
 	if (start < 0)
 		return (str);
-	end = end_dollar_word(str, start);fprintf(ttyfd, "++++++++++2+++++++++\n");
-	prefix = ft_strsub(str, 0, start);fprintf(ttyfd, "++++++++++3+++++++++\n");
-	var = get_dollar_var(str, start, end);fprintf(ttyfd, "++++++++4+++++++++++\n");
-	suffix = ft_strjoin(var, &(str[end]));fprintf(ttyfd, "+++++++++5++++++++++\n");
+	end = end_dollar_word(str, start);
+	prefix = ft_strsub(str, 0, start);
+	var = get_dollar_var(str, start, end);
+	suffix = ft_strjoin(var, &(str[end]));
 	free(str);
-	str = ft_strjoin(prefix, suffix);fprintf(ttyfd, "++++++++++++6+++++++\n");
+	str = ft_strjoin(prefix, suffix);
 	free(prefix);
 	free(var);
 	free(suffix);
-	fprintf(ttyfd, "asdasdsa[%s]sadasdasd\n",str);
-	if (is_dollar(str) >= 0 && (end - start) > 1)// why ?
+	if (is_dollar(str) >= 0 && (end - start) > 1)
 		str = str_dollar_sub(str);
 	return (str);
 }

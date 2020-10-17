@@ -167,6 +167,7 @@ typedef struct					s_simple_lst
 /*	-----------------------------------------------------------	*/
 
 int 		main_parse(char *line);
+void		exit_status(int status);
 int			is_dollar(char *str);
 char		*str_dollar_sub(char *str);
 char		**env_to_tab(t_variable *var);
