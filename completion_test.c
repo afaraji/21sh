@@ -245,7 +245,7 @@ t_simple_lst   *matched_files_dirs(char *str, t_simple_lst *head)
 	return(files_dirs_list);
 }
 
-char	**files_dirs_search(char *str)
+char	**files_dirs_search(char *str, int i)
 {
 	DIR     *d;
 	struct  dirent *dir;
@@ -270,7 +270,7 @@ char	**files_dirs_search(char *str)
 				{
 					if ((!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))))
 						files_dirs_list = names_list(dir->d_name, files_dirs_list);
-					if ((stat(dir->d_name, &sb) == 0 && sb.st_mode & S_IXUSR))
+					else if (i == 0 && (stat(dir->d_name, &sb) == 0 && sb.st_mode & S_IXUSR))
 						files_dirs_list = names_list(dir->d_name, files_dirs_list);
 				}
 			}
@@ -474,7 +474,7 @@ char	*completed_line(char *line, char *str)
 	left = ft_strsub(line, 0, i + 1);
 	tmp = ft_strjoin(left, str);
 	free(left);
-	free(line);
+	//free(line);
 	return (tmp);
 }
 
@@ -552,6 +552,7 @@ void    auto_completion(t_line *line)
 	int j;
 
 	splited_line = completion_split(line->str);
+		fprintf(ttyfd, "line (-1) : (%s) \n", line->str);
 	i = 0;
 	while (splited_line[i + 1])
 		i++;
@@ -563,10 +564,10 @@ void    auto_completion(t_line *line)
 			result = var_search(splited_line[i] + 1);
 	}
 	else if (i == 0 && splited_line[0][0] == '.')
-		result = files_dirs_search(splited_line[0]);
+		result = files_dirs_search(splited_line[0], i);
 	else if (i != 0 || is_path(splited_line[i]) != 0)
 	{
-		result = files_dirs_search(splited_line[i]);
+		result = files_dirs_search(splited_line[i], i);
 	}
 	else
 	{
@@ -585,11 +586,30 @@ void    auto_completion(t_line *line)
 	}
 	else
 	{
-		tputs(tgetstr("sc", NULL), 1, ft_intputchar);
+		//tputs(tgetstr("sc", NULL), 1, ft_intputchar);
 		ft_putchar('\n');
 		print_result(result, line);
-		//if (print_result(result, line) == 2)
-		//	readline(-7);
-		tputs(tgetstr("rc", NULL), 1, ft_intputchar);
+		// if (print_result(result, line) == 2)
+		// {
+		// 	ft_prompt("---- MORE ----");
+		// 	display_line(line);
+		// 	int buff;
+
+		// 	buff = 0;
+		// 	while (read(0, &buff, 4))
+		// 	{
+		// 		if (buff == TAB)
+		// 		{
+		// 			fprintf(ttyfd, "loool\n");
+		// 		}
+		// 		else
+		// 		{
+		// 			fprintf(ttyfd, "kiki\n");
+		// 		}
+		// 		buff = 0;
+		// 	}
+	//		
+	//	}
+	//	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
 	}
 }
