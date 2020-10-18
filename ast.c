@@ -1156,7 +1156,7 @@ int		need_append(t_list_token *tokens)
 	{
 		if (typ == QUOTE || typ == DQUOTE)
 		{
-			toappend = ft_strjoin(node->data, "#");
+			toappend = ft_strjoin(node->data, "\n");
 			toappend = ft_strjoin(toappend, readline(typ));
 			toappend = ft_strjoin(tokentoa(typ), toappend);
 			ttt = __tokenize(toappend);

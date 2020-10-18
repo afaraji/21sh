@@ -138,23 +138,37 @@ t_variable	*var_dup(t_variable *var)
 	return (node);
 }
 
-int		do_assignement(t_cmd_prefix *pref, t_variable *head)
+int		do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 {
 	t_cmd_prefix	*node;
 	t_variable		*tmp;
 	int				state;
 
+	// //**************************************
 	node = pref;
 	while (node)
 	{
 		if (node->ass_word)
 		{
-			fprintf(ttt, "%s=%s\n", node->ass_word->key, node->ass_word->value);
+			tmp = node->ass_word;
+			fprintf(ttt,"3333==>[%d: %s=%s]\n", tmp->env,tmp->key, tmp->value);
+		}
+		node = node->prefix;
+	}
+	//**************************************
+	node = pref;
+	while (node)
+	{
+		if (node->ass_word)
+		{
+			fprintf(ttt, "--->%s=%s\n", node->ass_word->key, node->ass_word->value);
 			tmp = head;
 			state = 0;
+			node->ass_word->env = (node->ass_word->env == 2) ? 2: env;
 			while (tmp)
 			{
-				if (!ft_strcmp(tmp->key, node->ass_word->key))
+				// fprintf(ttt, "--->%s=%s\n", node->ass_word->key, node->ass_word->value);
+				if (tmp->env != 2 && !ft_strcmp(tmp->key, node->ass_word->key))
 				{
 					tmp->env = node->ass_word->env;
 					free(tmp->value);
@@ -165,22 +179,24 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head)
 				tmp = tmp->next;
 			}
 			if (!state)
-			tmp = head;
-			while (tmp->next)
-				tmp = tmp->next;
-			tmp->next = var_dup(node->ass_word);
+			{
+				tmp = head;
+				while (tmp->next)
+					tmp = tmp->next;
+				tmp->next = var_dup(node->ass_word);
+			}
 		}
 		node = node->prefix;
 	}
 	return (0);
 }
 
-int		do_prefix(t_cmd_prefix *prefix, t_variable *var)
+int		do_prefix(t_cmd_prefix *prefix, t_variable *var, int env)
 {
 	t_cmd_prefix	*node;
 	int				ret;
 
-	do_assignement(prefix, var);
+	do_assignement(prefix, var, env);
 	node = prefix;
 	while (node)
 	{
@@ -312,7 +328,7 @@ int		do_simpleCmd(t_simple_cmd *cmd)
 
 	if (cmd->prefix)
 	{
-		ret = do_prefix(cmd->prefix, g_var.var);
+		ret = do_prefix(cmd->prefix, g_var.var, 1); // 1? to verifie
 	}
 	else if (cmd->name && cmd->suffix)
 	{
@@ -458,9 +474,8 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	
 	if (!cmd)
 		return (404);
-	//does prefix and suffix
+	do_simpleCmd(cmd);//does prefix and suffix
 	args = get_arg_var_sub(cmd);
-	do_simpleCmd(cmd);
 	if (!args)
 		exit (0);
 	env = env_to_tab(g_var.var);
@@ -555,9 +570,9 @@ t_variable	*var_list_dup(t_variable *src)
 
 void	reset_in_out(int in, int out, int err)
 {
-	dup2(in, 0);
-	dup2(out, 1);
-	dup2(err, 2);
+	dup2(in, STDIN);
+	dup2(out, STDOUT);
+	dup2(err, STDERR);
 }
 
 int		exec_ast(t_pipe_seq *cmd, int bg)
@@ -577,9 +592,11 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			int out = dup(STDOUT);
 			int err = dup(STDERR);
 			tmp = var_list_dup(g_var.var);
-			do_prefix(cmd->left->prefix, tmp);
+			do_prefix(cmd->left->prefix, tmp, 0);
 			do_suffix(cmd->left->suffix);
-			do_assignement(cmd->left->prefix, tmp);
+			fprintf(ttyfd, "--------------------------\n");
+			for (t_variable *ll=tmp; ll; ll=ll->next)
+				fprintf(ttyfd, "[%d|%s=%s]\n", ll->env,ll->key,ll->value);
 			env = env_to_tab(tmp);
 			fprintf(ttt, "-+--+-+-+-+-+-+-+-+-+-+-+-\n");
 			for (int i = 0; env[i];i++)
@@ -593,7 +610,10 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			return (status);
 		}
 		if (!(cmd->left->name) && !(cmd->left->word))
-			do_assignement(cmd->left->prefix, g_var.var);
+		{
+			do_prefix(cmd->left->prefix, g_var.var, 1);
+			return (0);
+		}
 	}
 	child = fork();
 	if (child == 0)
