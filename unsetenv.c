@@ -49,7 +49,10 @@ int		ft_unsetenv(char **flag)
 	i = 1;
 	while (flag[i])
 	{
-		if (node->env != 2)
+		// 1st find flag[i] in list
+		// check if node->env != 2
+		// yes? delet no print error
+		if (node->env != 2)// need while(node->next){node = node->next}
 			ft_unsetenv_1(flag[i]);
 		else
 		{

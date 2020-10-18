@@ -21,17 +21,19 @@ int     ft_export(char **flag, char **env)
     char    *value;
 
     i = 1;
+    if (flag[1] == NULL)
+    {
+        print_env(env);
+        return (0);
+    }
     value = NULL;
     while (flag[i])
     {
-        if (flag[1] == NULL)
-        {
-			print_env(env);
-            return (0);
-        }
-        if (get_key_value(key, value, flag[i]))
+       
+        if (get_key_value(&key, &value, flag[i]))
             return (1);
-        ft_export_2(key, value);
+        fprintf(ttyfd, "-------export[%s=%s]-------\n", key, value);
+        ft_export_2(key, value);//need remake eg. abc=lol; export abc
         i++;
     }
     return (0);
@@ -40,7 +42,9 @@ int     ft_export(char **flag, char **env)
 void    print_env(char **env)
 {
     int     i;
-fprintf(ttyfd, "-**-[env]--**--\n");
+    fprintf(ttyfd, "-**-[env]--**--\n");
+    if (!env)
+        return;
     i = 0;
     while (env[i])
     {
@@ -52,7 +56,6 @@ fprintf(ttyfd, "-**-[env]--**--\n");
 
 int     cd_builtin(char **av, char **env)
 {
-    fprintf(ttyfd, "-**-[cd]--**--\n");
     if (av[1] == NULL)
         return (ft_cd_home(env));
     else

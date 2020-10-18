@@ -41,6 +41,7 @@ int		ft_set_node(char **flag)
 	{
 		if (ft_strcmp(node->key, flag[1]) == 0)
 		{
+			node->env = 0;
 			if (flag[2] == NULL)
 			{
 				free(node->value);
@@ -68,15 +69,17 @@ void	ft_set_lastnode(char **flag)
 	node->next = (t_variable *)malloc(sizeof(t_variable));
 	node = node->next;
 	node->key = ft_strdup(flag[1]);
+	node->env = 0;
 	if (flag[2] == NULL)
 		node->value = ft_strdup("");
 	else
 		node->value = ft_strdup(flag[2]);
 	node->next = NULL;
+	fprintf(ttyfd, "-------[%d][%s=%s]-------\n", node->env, node->key, node->value);
 }
 
 int		ft_setenv(char **flag)
-{fprintf(ttyfd, "-------[setenv]-------\n");
+{
 	if (flag[1] != NULL && flag[2] != NULL && flag[3] != NULL)
 	{
 		ft_putstr("setenv: Too many arguments.\n");
@@ -85,7 +88,7 @@ int		ft_setenv(char **flag)
 	else
 	{
 		if (flag[1] == NULL)
-			print_env(0);
+			print_env(env_to_tab(g_var.var));
 		else
 		{
 			if (!(ft_isalpha(flag[1][0])) && flag[1][0] != '_')
@@ -95,7 +98,7 @@ int		ft_setenv(char **flag)
 			}
 			else if (ft_set_alnum(flag) == 1)
 				return (1);
-			else if (ft_set_node(flag) == 1)
+			else if (ft_set_node(flag) == 0)
 				return (1);
 			ft_set_lastnode(flag);
 		}

@@ -69,6 +69,6 @@ void    			print_env(char **env);
 int					ft_setenv(char **flag);
 int					ft_export(char **flag, char **env);
 void			    ft_export_2(char *key, char *value);
-int     			get_key_value(char *key, char *value, char *flag);
+int     			get_key_value(char **key, char **value, char *flag);
 
 #endif

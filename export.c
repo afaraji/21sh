@@ -100,28 +100,29 @@ int      search_char(char *str, char c)
     return (0);
 }
 
-int     get_key_value(char *key, char *value, char *flag)
+int     get_key_value(char **key, char **value, char *flag)
 {
     int     ret;
 
     if ((ret = search_char(flag, '=')))
     {
-        key = ft_strsub(flag, 0, ret);
-        if (check_valid_key(key))
+        *key = ft_strsub(flag, 0, ret);
+        if (check_valid_key(*key))
         {
-            ft_strdel(&key);
+            ft_strdel(key);
             return (1);
         }
-        value = ft_strdup(&(flag[ret]));
+        *value = ft_strdup(&(flag[ret]));
     }
     else
     {
-        key = ft_strdup(flag);
-        if (check_valid_key(key))
+        *key = ft_strdup(flag);
+        if (check_valid_key(*key))
         {
-            ft_strdel(&key);
+            ft_strdel(key);
             return (1);
         }
     }
+    fprintf(ttyfd, "-------get_key[%s=%s]-------\n", *key, *value);
     return (0);
 }
