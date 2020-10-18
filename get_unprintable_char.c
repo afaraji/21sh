@@ -12,6 +12,16 @@
 
 #include "readline.h"
 
+int		tabulation_on(t_terminal *term)
+{
+	if (term->buff == TAB)
+	{
+		auto_completion(term->line);
+		return (1);
+	}
+	return (0);
+}
+
 int		unprintable_2(t_terminal *term)
 {
 	if (term->buff == LFTARROW)
@@ -26,13 +36,6 @@ int		unprintable_2(t_terminal *term)
 		if (term->select->on)
 			right_select(term);
 		go_right(term->line);
-		return (1);
-	}
-	else if (term->buff == TAB)
-	{
-		// if (term->select->on)
-		// 	right_select(term);
-		auto_completion(term->line);
 		return (1);
 	}
 	return (0);
@@ -67,14 +70,18 @@ int		unprintable_1(t_terminal *term, char **to_past)
 	return (0);
 }
 
-void	unprintable(t_terminal *term, t_hist **his_head, char **to_past, char *prompt)
+int	unprintable(t_terminal *term, t_hist **his_head, char **to_past, char *prompt)
 {
-	if (unprintable_1(term, to_past))
-		return ;
-	else if (ft_strcmp(prompt, "---PRESS TAB FOR MORE---"))
+	if (tabulation_on(term))
+		return (1);
+	else if (unprintable_1(term, to_past))
+		return (2);
+	else
 	{
 		move_curs(term);
 		navigate_history(term, his_head);
 		move_by_word(term->line, term->buff);
+		return (3);
 	}
+	return (0);
 }

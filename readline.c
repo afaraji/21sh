@@ -81,7 +81,13 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 		if (printable(term, his_head, mult_line))
 			break ;
 		else if (!(ft_isprint(term->buff)))
-			unprintable(term, his_head, &to_past, prompt);
+		{
+			if (unprintable(term, his_head, &to_past, prompt) == 1)
+			{
+				ft_prompt("\n$> ");
+				ft_putstr(term->line->str);
+			}
+		}
 	}
 	tmp = ft_strdup(term->line->str);
 	free_term(&term);
