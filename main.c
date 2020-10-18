@@ -50,6 +50,8 @@ int		ft_exit(int status)
 	save_list();
 	if (!status)
 		ft_putstr("\nexit\n");
+	if (status == -1)
+		ft_putstr("exit\n");
 	exit(status);
 }
 
@@ -142,9 +144,9 @@ void	signal_callback_handler(int signum)
 	if (signum == 2)
 	{
 		// printf("ctrl-c received\n");
-		// ft_prompt("\n&> ");
+		ft_prompt("\n&> ");
 		g_var.sig = signum;
-		// ft_set_attr(0);
+		ft_set_attr(0);
 		// free(line);
 	}
 	else
@@ -184,7 +186,7 @@ int		main(int ac, char **av, char **env)
 	
 	int		ret = 0;
 
-	// ft_signal();
+	ft_signal();
 	ttyfd = fopen("/dev/ttys001", "w");
 	if (init_shell(env))
 		return (1);

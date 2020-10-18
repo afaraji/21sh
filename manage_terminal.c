@@ -56,7 +56,7 @@ void	copy_attr_set_icanon(struct termios *src, struct termios *dst)
 	dst->c_ispeed = src->c_ispeed;
 	dst->c_oflag = src->c_oflag;
 	dst->c_ospeed = src->c_ospeed;
-	dst->c_lflag = src->c_lflag & ~(ECHO | ICANON);
+	dst->c_lflag = src->c_lflag & ~(ECHO | ICANON | ISIG);
 }
 
 // int		ft_set_attr(int index)

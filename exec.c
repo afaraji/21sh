@@ -611,7 +611,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 
 int		execute(t_and_or *cmd, int bg)
 {
-	ttt = fopen("/dev/ttys003", "w");
+	ttt = fopen("/dev/ttys004", "w");
 	int dp;
 	int ret = 0;
 

@@ -13,25 +13,29 @@
 #ifndef _READLINE_H
 # define _READLINE_H
 # include "21sh.h"
-# define LFTARROW 0x445B1B
-# define RTARROW 0x435B1B
-# define UPARROW 0x415B1B
-# define DWNARROW 0x425B1B
-# define HOME 0x485B1B
-# define END 0x465B1B
-# define DEL 0x7f
-# define ENTER 0xa
-# define BUFF_SIZE 4
-# define RTWORD 0x8288E2
-# define LFTWORD 0xA5C3
-# define UPLINE 0x9188E2
-# define DWNLINE 0x9FC3
-# define SELECT 0x10
-# define COPY 0xA7C3
-# define CUT 0x8889E2
-# define PAST 0x9A88E2
-# define TAB 0x9
-# define COMPL	-7			/* for completion */
+# define LFTARROW		0x445B1B
+# define RTARROW		0x435B1B
+# define UPARROW		0x415B1B
+# define DWNARROW		0x425B1B
+# define HOME			0x485B1B
+# define END			0x465B1B
+# define DEL			0x7F
+# define ENTER			0xA
+# define BUFF_SIZE		4
+# define RTWORD			0x8288E2
+# define LFTWORD		0xA5C3
+# define UPLINE			0x9188E2
+# define DWNLINE		0x9FC3
+# define SELECT			0x10
+# define COPY			0xA7C3
+# define CUT			0x8889E2
+# define PAST			0x9A88E2
+# define TAB			0x9
+# define CTRL_C			0x3
+# define CTRL_QUIT		0x1C
+# define CTRL_D			0x4
+# define CTRL_L			0xC
+# define COMPL			-7			/* for completion */
 
 
 typedef	struct		s_line
