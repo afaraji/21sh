@@ -18,9 +18,12 @@ int		ft_pdenied(char *flag)
 	DIR	*dir;
 
 	dir = opendir(flag);
-	if (dir == NULL || access(flag, X_OK) != 0)
+	if (dir == NULL)
 	{
-		ft_putstr_fd("cd: permission denied: ", STDERR);
+		if (access(flag, F_OK) == 0 && !access(flag, X_OK))
+			ft_putstr_fd("cd: permission denied: ", STDERR);
+		else
+			ft_putstr_fd("cd: no such file or directory: ", STDERR);
 		ft_putstr_fd(flag, STDERR);
 		ft_putchar_fd('\n', STDERR);
 		return (1);
@@ -144,11 +147,12 @@ int	ft_cd_3(char *flag)
 		change_pwd("OLDPWD", getcwd(NULL, 0));
 	if (chdir(flag))
 		return (1);
-	ft_putstr(getcwd(NULL, 0));
-	ft_putchar('\n');
 	cwd = getcwd(NULL, 0);
 	cwd = ft_get_ld(cwd, flag);
 	change_pwd("PWD", cwd);
+	ft_putstr(cwd);
+	ft_putchar('\n');
+	free(cwd);
 	return (0);
 }
 
