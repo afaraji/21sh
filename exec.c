@@ -648,7 +648,7 @@ int		execute(t_and_or *cmd, int bg)
 		cmd = cmd->next;
 	}	
 	return (ret);
-}//lexer.c line 366
+}//lol=1xxxxxx  env | grep lol
 
 // int		execute(t_and_or *cmd, int bg)
 // {
