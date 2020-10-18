@@ -78,7 +78,7 @@ char				*manage_line(char *prompt, t_hist **his_head, int m_line);
 t_line				*init_line(char *prompt);
 void				ft_prompt(char *prompt);
 int					printable(t_terminal *term, t_hist **his_head, int m_line);
-void				unprintable(t_terminal *term, t_hist **his, char **to_past, char *prompt);
+int				unprintable(t_terminal *term, t_hist **his, char **to_past, char *prompt);
 int					unprintable_1(t_terminal *term, char **to_past);
 int					unprintable_2(t_terminal *term);
 int					ft_intputchar(int c);

@@ -385,6 +385,7 @@ char	**cmd_search(char *str)
 		d = opendir(cmd_paths[i]);
 		if (d)
 		{
+			fprintf(ttyfd, "loool1\n");
 			while ((dir = readdir(d)))
 			{
 				if (!ft_strncmp(str, dir->d_name, ft_strlen(str))
@@ -396,8 +397,10 @@ char	**cmd_search(char *str)
 		}
 		i++;
 	}
-	if (d == NULL)
+	closedir(d);
+	if (!cmd_list)
 	{
+		fprintf(ttyfd, "loool2\n");
 		cmd_tab = (char **)malloc(sizeof(char *) * 1);
 		cmd_tab[0] = NULL;
 	}
@@ -476,26 +479,11 @@ char	*completed_line(char *line, char *str)
 	//free(line);
 	return (tmp);
 }
-void	print_long_result(int str_max_len, int word_per_line, int *words_to_print, char **t, int *i)
+
+void	print_result(char **t, t_line *line)
 {
 	int	space;
-
-	ft_putstr(t[*i]);
-	space = str_max_len - ft_strlen(t[*i]);
-	while (space)
-	{
-		ft_putchar(' ');
-		space--;
-	}
-	(*words_to_print)--;
-	if ((*words_to_print % word_per_line == 0))
-		ft_putchar('\n');
-	(*i)++;
-}
-
-int	print_result(char **t, t_line *line, int *i)
-{
-	int	space;
+	int i;
 	int	total_words;
 	int str_max_len;
 	int word_per_line;
@@ -517,58 +505,22 @@ int	print_result(char **t, t_line *line, int *i)
 	word_per_line = line->col /str_max_len;
 	lines_to_print = total_words/word_per_line;
 	words_to_print = (line->nline - 1) * word_per_line;
-	if (lines_to_print < line->nline)
+	i = 0;
+	while (total_words)
 	{
-		fprintf(ttyfd, "seg----\n");
-		while (words_to_print && t[*i])
+		ft_putstr(t[i]);
+		space = str_max_len - ft_strlen(t[i]);
+		while (space)
 		{
-			ft_putstr(t[*i]);
-			space = str_max_len - ft_strlen(t[*i]);
-			while (space)
-			{
-				ft_putchar(' ');
-				space--;
-			}
-			words_to_print--;
-			if ((words_to_print % word_per_line == 0))
-				ft_putchar('\n');
-			(*i)++;
+			ft_putchar(' ');
+			space--;
 		}
-		return (1);
+		total_words--;
+		words_to_print--;
+		if ((words_to_print % word_per_line == 0))
+			ft_putchar('\n');
+		(i)++;
 	}
-	else
-	{
-		while (words_to_print && t[*i])
-			print_long_result(str_max_len, word_per_line, &words_to_print, t, i);
-		ft_prompt("---- MORE ----");
-		int buff;
-
-		buff = 0;
-		while (read(0, &buff, 4))
-		{
-			if (total_words == *i)
-			{	
-				fprintf(ttyfd, "------1-----\n");
-				buff = -1;
-				break;
-			}
-			else if (buff == TAB && t[*i])
-			{
-				fprintf(ttyfd, "------2-----\n");
-				tputs(tgetstr("dl", NULL), 1, ft_intputchar);
-				//ft_putchar('\n');
-				print_result(t, line, i);
-			}
-			else
-			{
-				fprintf(ttyfd, "------3-----\n");
-				tputs(tgetstr("dl", NULL), 1, ft_intputchar);
-			}
-			buff = 0;
-		}
-		return(2);
-	}
-	return (0);
 }
 
 void    auto_completion(t_line *line)
@@ -612,34 +564,8 @@ void    auto_completion(t_line *line)
 	}
 	else
 	{
-		//tputs(tgetstr("sc", NULL), 1, ft_intputchar);
 		i = 0;
 		ft_putchar('\n');
-		if (print_result(result, line, &i) == 2)
-		{
-			fprintf(ttyfd, "------4-----\n");
-			return;
-		}
-		// if (print_result(result, line) == 2)
-		// {
-		// 	ft_prompt("---- MORE ----");
-		// 	display_line(line);
-		// 	int buff;
-		// 	buff = 0;
-		// 	while (read(0, &buff, 4))
-		// 	{
-		// 		if (buff == TAB)
-		// 		{
-		// 			fprintf(ttyfd, "loool\n");
-		// 		}
-		// 		else
-		// 		{
-		// 			fprintf(ttyfd, "kiki\n");
-		// 		}
-		// 		buff = 0;
-		// 	}
-	//		
-	//	}
-	//	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
+		print_result(result, line);
 	}
 }
