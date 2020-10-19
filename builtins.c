@@ -15,7 +15,7 @@
 #include "builtins.h"
 
 int     ft_export(char **flag, char **env)
-{fprintf(ttyfd, "-------[export]-------\n");
+{
     int     i;
     char    *key;
     char    *value;
@@ -32,8 +32,7 @@ int     ft_export(char **flag, char **env)
        
         if (get_key_value(&key, &value, flag[i]))
             return (1);
-        fprintf(ttyfd, "-------export[%s|%s]-------\n", key, value);
-        ft_export_2(key, value);//need remake eg. abc=lol; export abc
+        ft_export_2(key, value);
         ft_strdel(&key);
         ft_strdel(&value);
         i++;
@@ -44,7 +43,7 @@ int     ft_export(char **flag, char **env)
 void    print_env(char **env)
 {
     int     i;
-    fprintf(ttyfd, "-**-[env]--**--\n");
+
     if (!env)
         return;
     i = 0;
@@ -79,7 +78,6 @@ int     cd_builtin(char **av, char **env)
 
 int     builtins(char *cmd, char **av, char **env)
 {// need verification !! n oublie pas return value
-    fprintf(ttyfd, "+-+-+->[%s]=>[%s|%s]-------\n", cmd, av[0], av[1]);
     if (ft_strcmp(cmd, "echo") == 0)
         return (ft_echo(av));
     else if (ft_strcmp(cmd, "cd") == 0)

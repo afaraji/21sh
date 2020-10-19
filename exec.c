@@ -72,7 +72,29 @@ int		do_redirect(t_io_redirect *io)
 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
 		// if (!ft_strcmp(io->filename, "-"))
 		tmpfd = dup(fd_io);		//??
-		filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+		// is io->filename a digit ? (digit valid fd ? __ :erro bad fd ) : __ ;
+		if (is_alldigit(io->filename))
+		{
+			int fd = ft_atoi(io->filename);
+			if (write(fd, NULL, 0) < 0)
+			{
+				ft_putstr_fd("Shell: ", STDERR);
+				ft_putnbr_fd(fd, STDERR);
+				ft_putstr_fd(": Bad file descriptor.\n", STDERR);
+				return (-1);
+			}
+			else
+			{
+				// https://github.com/xopxop/21sh/blob/master/src/executor/redirects_great.c
+			}
+			
+
+		}
+		else
+		{
+
+			filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+		}
 		if (filefd < 0)
 		{
 			ft_putstr_fd("error at open file [fd<0]\n", 2);

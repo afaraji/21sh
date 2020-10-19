@@ -117,6 +117,5 @@ int     get_key_value(char **key, char **value, char *flag)
             return (1);
         }
     }
-    fprintf(ttyfd, "-------get_key[%s=%s]-------\n", *key, *value);
     return (0);
 }

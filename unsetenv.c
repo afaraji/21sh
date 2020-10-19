@@ -24,7 +24,7 @@ void	delete_node(t_variable *prec, t_variable *current, t_variable *after)
 }
 
 int		ft_unsetenv(char **flag)
-{fprintf(ttyfd, "-------[unsetenv]-------\n");
+{
 	int			i;
 	t_variable	*node;
 	t_variable	*prec;

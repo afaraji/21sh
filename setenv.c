@@ -75,14 +75,13 @@ void	ft_set_lastnode(char **flag)
 	else
 		node->value = ft_strdup(flag[2]);
 	node->next = NULL;
-	fprintf(ttyfd, "-------[%d][%s=%s]-------\n", node->env, node->key, node->value);
 }
 
 int		ft_setenv(char **flag)
 {
 	if (flag[1] != NULL && flag[2] != NULL && flag[3] != NULL)
 	{
-		ft_putstr("setenv: Too many arguments.\n");
+		ft_putstr_fd("setenv: Too many arguments.\n", STDERR);
 		return (1);
 	}
 	else
@@ -93,7 +92,8 @@ int		ft_setenv(char **flag)
 		{
 			if (!(ft_isalpha(flag[1][0])) && flag[1][0] != '_')
 			{
-				ft_putstr("setenv: Variable name must begin with a letter.\n");
+				ft_putstr_fd("setenv: Variable name must begin ", 2);
+				ft_putstr_fd("with a letter.\n", 2);
 				return (1);
 			}
 			else if (ft_set_alnum(flag) == 1)
