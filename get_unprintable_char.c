@@ -71,9 +71,12 @@ int		unprintable_1(t_terminal *term, char **to_past)
 
 int	unprintable(t_terminal *term, t_hist **his_head, char **to_past, char *prompt)
 {
-	if (tabulation_on(term) == 1)
+	int tab_ret;
+
+	tab_ret = tabulation_on(term);
+	if (tab_ret == 1)
 		return (1);
-	else if (tabulation_on(term) == 2)
+	else if (tab_ret == 2)
 		return (2);
 	else if (unprintable_1(term, to_past))
 		return (3);

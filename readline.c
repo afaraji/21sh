@@ -52,6 +52,7 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 	t_terminal	*term;
 	static char	*to_past = NULL;
 	char		*tmp;
+	int			unprint_ret;
 
 	term = initiate_unprint_var();
 	term->line = init_line(prompt);
@@ -84,19 +85,15 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 			break ;
 		else if (!(ft_isprint(term->buff)))
 		{
-			if (unprintable(term, his_head, &to_past, prompt) == 1)
-			{
-				fprintf(ttyfd, "******1\n");
+			unprint_ret = unprintable(term, his_head, &to_past, prompt);
+			if (unprint_ret == 1)
 				continue;
-			}
-			else if (unprintable(term, his_head, &to_past, prompt) == 2)
+			else if (unprint_ret == 2)
 			{
 				fprintf(ttyfd, "******2\n");
 				ft_prompt("\n$> ");
 				ft_putstr(term->line->str);
 			}
-			else
-				unprintable(term, his_head, &to_past, prompt);
 		}
 	}
 	tmp = ft_strdup(term->line->str);
