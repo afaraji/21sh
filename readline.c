@@ -84,9 +84,17 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 		{
 			if (unprintable(term, his_head, &to_past, prompt) == 1)
 			{
+				fprintf(ttyfd, "******1\n");
+				continue;
+			}
+			else if (unprintable(term, his_head, &to_past, prompt) == 2)
+			{
+				fprintf(ttyfd, "******2\n");
 				ft_prompt("\n$> ");
 				ft_putstr(term->line->str);
 			}
+			else
+				unprintable(term, his_head, &to_past, prompt);
 		}
 	}
 	tmp = ft_strdup(term->line->str);

@@ -1,3 +1,15 @@
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   readline.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/10/02 19:33:46 by sazouaka          #+#    #+#             */
+/*   Updated: 2020/10/02 19:33:48 by sazouaka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "readline.h"
 #include "parse.h"
 
@@ -332,8 +344,8 @@ t_simple_lst	*search_builtin(char *str)
 {
 	int i;
 	t_simple_lst	*head;
-	char *builtins_list[] = {"cd", "echo", "export", "alias", "unalias",
-						"exit", "type", "fc", "set", "unset", NULL};
+	char *builtins_list[] = {"cd", "echo", "export", "env",
+						"exit", "setenv", "unsetenv", NULL};
 
 	i = 0;
 	head = NULL;
@@ -385,7 +397,6 @@ char	**cmd_search(char *str)
 		d = opendir(cmd_paths[i]);
 		if (d)
 		{
-			fprintf(ttyfd, "loool1\n");
 			while ((dir = readdir(d)))
 			{
 				if (!ft_strncmp(str, dir->d_name, ft_strlen(str))
@@ -400,7 +411,6 @@ char	**cmd_search(char *str)
 	closedir(d);
 	if (!cmd_list)
 	{
-		fprintf(ttyfd, "loool2\n");
 		cmd_tab = (char **)malloc(sizeof(char *) * 1);
 		cmd_tab[0] = NULL;
 	}
@@ -523,12 +533,12 @@ void	print_result(char **t, t_line *line)
 	}
 }
 
-void    auto_completion(t_line *line)
+int    auto_completion(t_line *line)
 {
-	char **result;
-	char **splited_line;
-	int i;
-	int j;
+	char	**result;
+	char	**splited_line;
+	int		i;
+	int		j;
 
 	splited_line = completion_split(line->str);
 	i = 0;
@@ -552,7 +562,7 @@ void    auto_completion(t_line *line)
 		result = cmd_search(splited_line[0]);
 	}
 	if (result[0] == NULL)
-		return;
+		return (0);
 	j = 0;
 	while (result && result[j + 1])
 		j++;
@@ -561,11 +571,13 @@ void    auto_completion(t_line *line)
 		line->str = completed_line(line->str, result[0]);
 		display_line(line);
 		move_curs_right(line);
+		return (1);
 	}
 	else
 	{
-		i = 0;
 		ft_putchar('\n');
 		print_result(result, line);
+		return (2);
 	}
+	return (0);
 }

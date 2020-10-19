@@ -16,8 +16,7 @@ int		tabulation_on(t_terminal *term)
 {
 	if (term->buff == TAB)
 	{
-		auto_completion(term->line);
-		return (1);
+		return (auto_completion(term->line));
 	}
 	return (0);
 }
@@ -72,16 +71,18 @@ int		unprintable_1(t_terminal *term, char **to_past)
 
 int	unprintable(t_terminal *term, t_hist **his_head, char **to_past, char *prompt)
 {
-	if (tabulation_on(term))
+	if (tabulation_on(term) == 1)
 		return (1);
-	else if (unprintable_1(term, to_past))
+	else if (tabulation_on(term) == 2)
 		return (2);
+	else if (unprintable_1(term, to_past))
+		return (3);
 	else
 	{
 		move_curs(term);
 		navigate_history(term, his_head);
 		move_by_word(term->line, term->buff);
-		return (3);
+		return (4);
 	}
 	return (0);
 }

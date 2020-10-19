@@ -120,6 +120,6 @@ void				left_select(t_terminal *term);
 void				right_select(t_terminal *term);
 char				*readline(int prompt);
 void				free_term(t_terminal **term);
-void				auto_completion(t_line *line);
+int				auto_completion(t_line *line);
 
 #endif
