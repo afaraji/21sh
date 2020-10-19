@@ -183,7 +183,7 @@ int			dollar_sub(t_list_token **cmd_token);
 char		*get_var_from_tab(char **env, char *str);
 
 // ******************************************
-
+// https://github.com/xopxop/21sh/blob/master/src/executor/redirects_great.c
 
 /*
 	https://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_03

@@ -33,13 +33,36 @@ void	exit_status(int status)// src: 0 form exit, 1 from return
 	}
 }
 
+int		is_alldigit(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int		check_fd(int fd)
+{
+	int tmpfd;
+
+	tmpfd = dup(fd);
+	if (tmpfd < 0)
+		return (0);
+	return (1);
+}
+
 int		do_redirect(t_io_redirect *io)
 { // no error handling yet !!!
 	int tmpfd;
 	int filefd;
 	int	fd_io;
 	//io->filename(when to test if fd)
-
 	// printf("-----[%s|%d|%d]\n", io->filename, io->io_num, io->redirect_type);
 	if (io->redirect_type == GRT)
 	{
@@ -69,39 +92,32 @@ int		do_redirect(t_io_redirect *io)
 	}
 	if (io->redirect_type == GRTAND)// ???
 	{
-		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
-		// if (!ft_strcmp(io->filename, "-"))
-		tmpfd = dup(fd_io);		//??
-		// is io->filename a digit ? (digit valid fd ? __ :erro bad fd ) : __ ;
-		if (is_alldigit(io->filename))
+		printf("-----1----\n");
+		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);		
+		if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
 		{
-			int fd = ft_atoi(io->filename);
-			if (write(fd, NULL, 0) < 0)
+			printf("-----2----\n");
+			filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+			if (filefd < 0)
 			{
-				ft_putstr_fd("Shell: ", STDERR);
-				ft_putnbr_fd(fd, STDERR);
-				ft_putstr_fd(": Bad file descriptor.\n", STDERR);
+				ft_putstr_fd("error at open file [fd<0]\n", 2);
 				return (-1);
 			}
-			else
-			{
-				// https://github.com/xopxop/21sh/blob/master/src/executor/redirects_great.c
-			}
-			
-
+			dup2(filefd, fd_io);
+		}
+		else if (is_alldigit(io->filename))
+		{
+			printf("-----3----\n");
+			tmpfd = ft_atoi(io->filename);
+			// if (check_fd(tmpfd))
+			// 	return (-1);
+			printf("-----4----\n");
+			dup2(tmpfd, fd_io);
 		}
 		else
 		{
-
-			filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+			close(ft_atoi(io->filename));
 		}
-		if (filefd < 0)
-		{
-			ft_putstr_fd("error at open file [fd<0]\n", 2);
-			return (-1);
-		}
-		dup2(filefd, fd_io);
-		close(filefd);
 	}
 	if (io->redirect_type == SML)
 	{
@@ -141,11 +157,6 @@ int		do_redirect(t_io_redirect *io)
 		return 1;
 	}
 	return (0);
-}
-
-int		do_ass_word(t_variable *var, t_variable *head)
-{
-	return 0;
 }
 
 t_variable	*var_dup(t_variable *var)
