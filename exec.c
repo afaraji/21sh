@@ -151,6 +151,7 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 		if (node->ass_word)
 		{
 			tmp = node->ass_word;
+			fprintf(ttt,"3333==>[%d: %s=%s]\n", tmp->env,tmp->key, tmp->value);
 		}
 		node = node->prefix;
 	}
@@ -160,6 +161,7 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 	{
 		if (node->ass_word)
 		{
+			fprintf(ttt, "--->%s=%s\n", node->ass_word->key, node->ass_word->value);
 			tmp = head;
 			state = 0;
 			node->ass_word->env = (node->ass_word->env == 2) ? 2: env;
@@ -326,7 +328,7 @@ int		do_simpleCmd(t_simple_cmd *cmd)
 
 	if (cmd->prefix)
 	{
-		ret = do_prefix(cmd->prefix, g_var.var, 0); // 1? to verifie
+		ret = do_prefix(cmd->prefix, g_var.var, 1); // 1? to verifie
 	}
 	else if (cmd->name && cmd->suffix)
 	{
@@ -594,7 +596,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			do_suffix(cmd->left->suffix);
 			fprintf(ttyfd, "--------------------------\n");
 			for (t_variable *ll=tmp; ll; ll=ll->next)
-				fprintf(ttyfd, "[%d|%s=%s]\n", ll->env,ll->key,ll->value);
+				fprintf(ttyfd, "[%d|%s:%s]\n", ll->env,ll->key,ll->value);
 			env = env_to_tab(tmp);
 			fprintf(ttt, "-+--+-+-+-+-+-+-+-+-+-+-+-\n");
 			for (int i = 0; env[i];i++)
@@ -629,7 +631,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 
 int		execute(t_and_or *cmd, int bg)
 {
-	ttt = fopen("/dev/ttys004", "w");
+	ttt = fopen("/dev/ttys002", "w");
 	int dp;
 	int ret = 0;
 

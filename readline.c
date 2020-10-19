@@ -68,14 +68,16 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 			ft_putstr_fd("^C", 1);
 			return (ft_strdup(""));
 		}
-		if (term->buff == CTRL_D)
+		if (term->buff == CTRL_D && !ft_strcmp(term->line->str, ""))
 		{
 			ft_exit(-1);
 		}
 		if (term->buff == CTRL_L)
 		{
 			ft_putstr_fd("\033[H\033[2J", 1);
-			return (ft_strdup(""));
+			ft_prompt("$> ");
+			ft_putstr(term->line->str);
+			// return (ft_strdup(""));
 		}
 		//**********************************************
 		if (printable(term, his_head, mult_line))

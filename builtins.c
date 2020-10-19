@@ -32,8 +32,10 @@ int     ft_export(char **flag, char **env)
        
         if (get_key_value(&key, &value, flag[i]))
             return (1);
-        fprintf(ttyfd, "-------export[%s=%s]-------\n", key, value);
+        fprintf(ttyfd, "-------export[%s|%s]-------\n", key, value);
         ft_export_2(key, value);//need remake eg. abc=lol; export abc
+        ft_strdel(&key);
+        ft_strdel(&value);
         i++;
     }
     return (0);

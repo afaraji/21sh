@@ -958,7 +958,7 @@ void	join_words(t_list_token *token)
 {
 	t_list_token	*node;
 	t_list_token	*tmp;
-fprintf(ttyfd,"j----******************dsadasd\n");
+
 	node = token;
 	while (node->next)
 	{

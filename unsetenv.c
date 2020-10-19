@@ -14,52 +14,49 @@
 #include "parse.h"
 #include "builtins.h"
 
-void	ft_unsetenv_1(char *flag)
+void	delete_node(t_variable *prec, t_variable *current, t_variable *after)
 {
-	t_variable	*node;
-	t_variable	*tmp1;
-
-	node = g_var.var;
-	while (node)
-	{
-		if (ft_strcmp(node->key, flag) == 0)
-		{
-			free(node->key);
-			free(node->value);
-			tmp1->next = node->next;
-			free(node);
-			return ;
-		}
-		tmp1 = node;
-		node = node->next;
-	}
+	prec->next = after;
+	current->next = NULL;
+	free(current->key);
+	free(current->value);
+	free(current);
 }
 
 int		ft_unsetenv(char **flag)
 {fprintf(ttyfd, "-------[unsetenv]-------\n");
-	int i;
-	t_variable *node;
+	int			i;
+	t_variable	*node;
+	t_variable	*prec;
 
-	node = g_var.var;
 	if (flag[1] == NULL)
 	{
-		ft_putstr("unsetenv: Too few arguments.\n");
+		ft_putstr_fd("unsetenv: Too few arguments.\n", STDERR);
 		return (1);
 	}
 	i = 1;
 	while (flag[i])
 	{
-		// 1st find flag[i] in list
-		// check if node->env != 2
-		// yes? delet no print error
-		if (node->env != 2)// need while(node->next){node = node->next}
-			ft_unsetenv_1(flag[i]);
-		else
+		node = g_var.var;
+		prec = NULL;
+		while (node)
 		{
-			ft_putstr("21sh: read-only variable: ");
-			ft_putstr(flag[i]);
-			ft_putchar('\n');
-			return (1);
+			if (!ft_strcmp(node->key, flag[i]))
+			{
+				if (node->env != 2)
+				{
+					delete_node(prec, node, node->next);
+				}
+				else
+				{
+					ft_putstr_fd("unsetenv: read-only variable: ", STDERR);
+					ft_putstr_fd(flag[i], STDERR);
+					ft_putchar_fd('\n', STDERR);
+				}
+				break;
+			}
+			prec = node;
+			node = node->next;
 		}
 		i++;
 	}

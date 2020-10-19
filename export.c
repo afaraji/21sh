@@ -23,18 +23,13 @@ void	get_last_node(char *key, char *value)
 		node = node->next;
 	node->next = (t_variable *)malloc(sizeof(t_variable));
 	node = node->next;
+	node->env = 0;
 	node->key = ft_strdup(key);
-	if (value == NULL)
-    {
-		node->value = ft_strdup("");
-        node->env = 1;
-    }
-	else
-    {
-		node->value = ft_strdup(value);
-        node->env = 0;
-    }
 	node->next = NULL;
+	if (value == NULL)
+		node->value = ft_strdup("");
+	else
+		node->value = ft_strdup(value);
 }
 
 void    ft_export_2(char *key, char *value)
@@ -46,22 +41,17 @@ void    ft_export_2(char *key, char *value)
     {
         if (ft_strcmp(node->key, key) == 0)
         {
-            if (value == NULL)
-            {
-                free(node->value);
-                node->value = ft_strdup("");
-            }
-            else
+            if (value != NULL)
             {
                 free(node->value);
                 node->value = ft_strdup(value);
             }
             node->env = 0;
+			return;
         }
-        else
-            get_last_node(key, value);
         node = node->next;
     }
+	get_last_node(key, value);
 }
 
 int     check_valid_key(char *key)
@@ -70,7 +60,9 @@ int     check_valid_key(char *key)
 
     if (!(ft_isalpha(key[0])) && key[0] != '_')
     {
-        ft_putstr("export: not a valid identifier.\n");
+        ft_putstr_fd("export: ", STDERR);
+		ft_putstr_fd(key, STDERR);
+		ft_putstr_fd(": not a valid identifier.\n", STDERR);
         return (1);
     }
     i = 1;
@@ -78,7 +70,9 @@ int     check_valid_key(char *key)
 	{
 		if (!(ft_isalnum(key[i])) && key[i] != '_')
 		{
-			ft_putstr("export: not a valid identifier.\n");
+			ft_putstr_fd("export: ", STDERR);
+			ft_putstr_fd(key, STDERR);
+			ft_putstr_fd(": not a valid identifier.\n", STDERR);
 			return (1);
 		}
 		i++;
@@ -90,7 +84,7 @@ int      search_char(char *str, char c)
 {
     int i;
 
-    i = 0;
+    i = 1;
     while (str[i])
     {
         if (str[i] == c)
@@ -112,7 +106,7 @@ int     get_key_value(char **key, char **value, char *flag)
             ft_strdel(key);
             return (1);
         }
-        *value = ft_strdup(&(flag[ret]));
+        *value = ft_strdup(&(flag[ret + 1]));
     }
     else
     {
