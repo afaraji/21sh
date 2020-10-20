@@ -962,13 +962,13 @@ void	join_words(t_list_token *token)
 	node = token;
 	while (node->next)
 	{
-		fprintf(ttyfd,"====[%d:%s]===\n", node->type, node->data);
+		// fprintf(ttyfd,"====[%d:%s]===\n", node->type, node->data);
 		if (node->type == WORD || node->type == QUOTE || node->type == DQUOTE)
 		{
 			tmp = node->next;
 			if (tmp->type == WORD || tmp->type == QUOTE || tmp->type == DQUOTE)
 			{
-				fprintf(ttyfd,"joining [%s]-[%s]\n", node->data, tmp->data);
+				// fprintf(ttyfd,"joining [%s]-[%s]\n", node->data, tmp->data);
 				join_nodes(node, tmp);
 				node = token;
 				// continue;
@@ -1183,6 +1183,60 @@ int		need_append(t_list_token *tokens)
 	return (0);
 }
 
+char		*here_doc_string(char *word)
+{
+	char	*str;
+	char	*tmp;
+	char	*buff;
+	
+	ft_prompt("heredoc> ");
+	tmp = ft_strdup("");
+	while (get_next_line(0, &buff))
+	{
+		if (!ft_strcmp(buff, word))
+		{
+			tmp[ft_strlen(tmp) - 1] = '\0';
+			return (tmp);
+		}
+		str = ft_strjoin(tmp, buff);
+		free(tmp);
+		tmp = ft_strjoin(str, "\n");
+		free(str);
+		ft_prompt("heredoc> ");
+	}
+	tmp[ft_strlen(tmp) - 1] = '\0';
+	return (tmp);
+}
+
+void	here_doc(t_list_token *head)
+{
+	t_list_token	*node;
+	char			*str;
+
+	node = head;
+	while (node)
+	{
+		if (node->type == SMLSML)
+		{
+			ft_set_attr(1);
+			if (node->next->type == WORD)
+			{
+				str = str_dollar_sub(here_doc_string(node->next->data));
+			}
+			else if (node->next->type == QUOTE|| node->next->type == DQUOTE)
+			{
+				str = here_doc_string(node->next->data);
+			}
+			free(node->next->data);
+			node->next->data = str;
+			node->next->type = QUOTE;
+			node->next->is_ok = 1;
+			ft_set_attr(0);
+		}
+		node = node->next;
+	}
+}
+
 int main_parse(char *line)
 {
 	t_list_token    *tokens;
@@ -1203,6 +1257,13 @@ int main_parse(char *line)
 	if (need_append(tokens))
 		return (100);
 	join_words(tokens);
+	fprintf(ttyfd,"----*+*A+*+---------");
+	token_print(tokens);
+	fprintf(ttyfd,"----*+*+*.+*+*+---------\n");
+	here_doc(tokens);
+	fprintf(ttyfd,"----+++++++------");
+	token_print(tokens);
+	fprintf(ttyfd,"----+++++++-----\n");
 	cmdlist = token_split_sep_op(tokens);
 	if (!cmdlist || g_var.errno)
 		return (42);

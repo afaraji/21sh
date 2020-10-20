@@ -54,8 +54,35 @@ int		check_fd(int fd)
 	tmpfd = dup(fd);
 	if (tmpfd < 0)
 		return (0);
+	close(tmpfd);
 	return (1);
 }
+
+// int		here_doc(t_io_redirect	*io)
+// {
+// 	// if (io->io_num >= 0) ?
+// 	char	*str;
+// 	char	*tmp;
+// 	char	*buff;
+	
+// 	ft_prompt("here--doc> ");
+// 	tmp = ft_strdup("");
+// 	while (get_next_line(0, &buff))
+// 	{
+// 		if (!ft_strcmp(buff, io->filename) || !ft_strcmp(buff, "\x04"))
+// 		{
+// 			if (!str)
+// 				str = ft_strdup("");
+// 			ft_putstr_fd(str, STDIN);
+// 			free(str);
+// 			free(tmp);
+// 		}
+// 		str = ft_strjoin(tmp, buff);
+// 		free(tmp);
+// 		tmp = str;
+// 	}
+// 	return (0);
+// }
 
 int		do_redirect(t_io_redirect *io)
 { // no error handling yet !!!
@@ -94,7 +121,7 @@ int		do_redirect(t_io_redirect *io)
 	{
 		printf("-----1----\n");
 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);		
-		if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
+		if (!is_alldigit(io->filename) && !ft_strcmp("-", io->filename))
 		{
 			printf("-----2----\n");
 			filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
@@ -109,8 +136,8 @@ int		do_redirect(t_io_redirect *io)
 		{
 			printf("-----3----\n");
 			tmpfd = ft_atoi(io->filename);
-			// if (check_fd(tmpfd))
-			// 	return (-1);
+			if (!check_fd(tmpfd))
+				return (-1);
 			printf("-----4----\n");
 			dup2(tmpfd, fd_io);
 		}
@@ -134,7 +161,8 @@ int		do_redirect(t_io_redirect *io)
 	}
 	if (io->redirect_type == SMLSML)//special use case
 	{
-		return 1;
+		// return (here_doc(io));
+		return 0;
 	}
 	if (io->redirect_type == SMLAND)
 	{
@@ -177,30 +205,16 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 	t_variable		*tmp;
 	int				state;
 
-	// //**************************************
 	node = pref;
 	while (node)
 	{
 		if (node->ass_word)
 		{
-			tmp = node->ass_word;
-			fprintf(ttt,"3333==>[%d: %s=%s]\n", tmp->env,tmp->key, tmp->value);
-		}
-		node = node->prefix;
-	}
-	//**************************************
-	node = pref;
-	while (node)
-	{
-		if (node->ass_word)
-		{
-			fprintf(ttt, "--->%s=%s\n", node->ass_word->key, node->ass_word->value);
 			tmp = head;
 			state = 0;
 			node->ass_word->env = (node->ass_word->env == 2) ? 2: env;
 			while (tmp)
 			{
-				// fprintf(ttt, "--->%s=%s\n", node->ass_word->key, node->ass_word->value);
 				if (tmp->env != 2 && !ft_strcmp(tmp->key, node->ass_word->key))
 				{
 					tmp->env = node->ass_word->env;
@@ -627,13 +641,13 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			tmp = var_list_dup(g_var.var);
 			do_prefix(cmd->left->prefix, tmp, 0);
 			do_suffix(cmd->left->suffix);
-			fprintf(ttyfd, "--------------------------\n");
-			for (t_variable *ll=tmp; ll; ll=ll->next)
-				fprintf(ttyfd, "[%d|%s:%s]\n", ll->env,ll->key,ll->value);
+			// fprintf(ttyfd, "--------------------------\n");
+			// for (t_variable *ll=tmp; ll; ll=ll->next)
+			// 	fprintf(ttyfd, "[%d|%s:%s]\n", ll->env,ll->key,ll->value);
 			env = env_to_tab(tmp);
-			fprintf(ttt, "-+--+-+-+-+-+-+-+-+-+-+-+-\n");
-			for (int i = 0; env[i];i++)
-				fprintf(ttt, "%s\n", env[i]);
+			// fprintf(ttt, "-+--+-+-+-+-+-+-+-+-+-+-+-\n");
+			// for (int i = 0; env[i];i++)
+			// 	fprintf(ttt, "%s\n", env[i]);
 			//free(tmp);
 			//free(av);
 			status = builtins(av[0], av, env);
@@ -664,7 +678,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 
 int		execute(t_and_or *cmd, int bg)
 {
-	ttt = fopen("/dev/ttys002", "w");
+	ttt = fopen("/dev/ttys006", "w");
 	int dp;
 	int ret = 0;
 

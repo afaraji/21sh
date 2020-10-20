@@ -482,7 +482,9 @@ void    test_parse()
     //     syntax_error("Syntax error near %c\n", g_token.kind);
 }
 **************************************/
-
+more tests https://github.com/cbcercas/21sh-42sh/edit/master/tests/tests_bats/create.txt
+open fd in shel https://bash.cyberciti.biz/guide/Opening_the_file_descriptors_for_reading_and_writing
+***************************************
 
 top/htop
 ls -la /proc/pid/fd
