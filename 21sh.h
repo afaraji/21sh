@@ -13,6 +13,7 @@
 #ifndef _21SH_H
 # define _21SH_H
 # include "libft/libft.h"
+# include "builtins.h"
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <pwd.h>

@@ -90,7 +90,6 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 				continue;
 			else if (unprint_ret == 2)
 			{
-				fprintf(ttyfd, "******2\n");
 				ft_prompt("\n$> ");
 				ft_putstr(term->line->str);
 			}

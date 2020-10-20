@@ -266,6 +266,7 @@ char	**files_dirs_search(char *str, int i)
 	t_simple_lst   *files_dirs_list;
 	char    **dir_tab;
 	struct  stat sb;
+	char		*tmp;
 	
 	path = get_path(str);
 	to_cmp = get_to_cmp(str);
@@ -275,23 +276,33 @@ char	**files_dirs_search(char *str, int i)
 	{
 		while ((dir = readdir(d)))
 		{
+			tmp = ft_strjoin(path, dir->d_name);
+			if (verify_type(tmp) == 1)
+			{
+				free(tmp);
+				tmp = ft_strjoin(dir->d_name, "/");
+			}
+			else
+			{
+				free(tmp);
+				tmp = ft_strdup(dir->d_name);
+			}
 			if (path[0] == '.')
 			{
 				if (ft_strcmp(dir->d_name, ".") && ft_strcmp(dir->d_name, ".."))
 				{
 					if ((!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))))
-						files_dirs_list = names_list(dir->d_name, files_dirs_list);
+						files_dirs_list = names_list(tmp, files_dirs_list);
 					else if (i == 0 && (stat(dir->d_name, &sb) == 0 && sb.st_mode & S_IXUSR))
-						files_dirs_list = names_list(dir->d_name, files_dirs_list);
+						files_dirs_list = names_list(tmp, files_dirs_list);
 				}
 			}
 			else
 			{
 				if ((!ft_strcmp("", to_cmp) || !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))) && dir->d_name[0] != '.')
-					files_dirs_list = names_list(dir->d_name, files_dirs_list);
+					files_dirs_list = names_list(tmp, files_dirs_list);
 			}
-			
-			
+			free(tmp);
 		}
 		closedir(d);
 		if (files_dirs_list)
@@ -369,6 +380,8 @@ char	**cmd_search(char *str)
 	t_simple_lst			*cmd_list;
 	char			**cmd_tab;
 
+	cmd_tab = NULL;
+	tmp = NULL;
 	cmd_list = search_builtin(str);
 	var = g_var.var;
 	while (var)
@@ -380,17 +393,27 @@ char	**cmd_search(char *str)
 		}
 		var = var->next;
 	}
-	i = 0;
-	while (tmp[i])
-		i++;
-	cmd_paths = (char **)malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (tmp[i])
+	if (tmp == NULL)
 	{
-		cmd_paths[i] = ft_strjoin(tmp[i], "/");
-		i++;
+		cmd_tab = tab_from_list(sort_list(cmd_list));
+		free(cmd_list);
+		return(cmd_tab);
 	}
-	cmd_paths[i] = NULL;
+	else if (tmp != NULL)
+	{
+		i = 0;
+		while (tmp[i])
+			i++;
+		cmd_paths = (char **)malloc(sizeof(char *) * (i + 1));
+		i = 0;
+		while (tmp[i])
+		{
+			cmd_paths[i] = ft_strjoin(tmp[i], "/");
+			free(tmp[i]);
+			i++;
+		}
+		cmd_paths[i] = NULL;
+	}
 	i = 0;
 	while (cmd_paths[i])
 	{
