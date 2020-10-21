@@ -403,6 +403,8 @@ int		do_simpleCmd(t_simple_cmd *cmd)
 	{
 		ret = do_prefix(cmd->prefix, g_var.var, 1); // 1? to verifie
 	}
+	if (ret != 0)
+		return (ret);
 	if ((cmd->name || cmd->word) && cmd->suffix)
 	{
 		ret = do_suffix(cmd->suffix);
@@ -544,10 +546,11 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	char	*cmd_path;
 	t_simple_lst	*args_list;
 	t_variable	*vars;
-	
+fprintf(ttt,"---------[simpleCmd]------------\n");
 	if (!cmd)
 		return (404);
-	do_simpleCmd(cmd);//does prefix and suffix
+	if (do_simpleCmd(cmd))//does prefix and suffix
+		return (1);
 	args = get_arg_var_sub(cmd);
 	if (!args)
 		exit (0);
