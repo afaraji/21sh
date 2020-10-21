@@ -47,13 +47,18 @@ int		is_alldigit(char *str)
 	return (1);
 }
 
-int		check_fd(int fd)
+int		check_fd(int fd, int io)
 {
 	int tmpfd;
 
 	tmpfd = dup(fd);
-	if (tmpfd < 0)
+	if (tmpfd < 0 || (io == 0 && read(fd, NULL, 0) < 0) || (io == 1 && write(fd, NULL, 0) < 0))
+	{
+		ft_putstr_fd("shell: ", STDERR);
+		ft_putnbr_fd(fd, STDERR);
+		ft_putstr_fd(": Bad file descriptor.\n", STDERR);
 		return (0);
+	}
 	close(tmpfd);
 	return (1);
 }
@@ -84,21 +89,40 @@ int		check_fd(int fd)
 // 	return (0);
 // }
 
+int		do_heredoc(int fd_out, char *str)
+{
+	int		filefd;
+	char	*file;
+
+	file = ft_strjoin("/tmp/.21sh_tmp_", ft_itoa((int)getpid()));
+	filefd = open(file, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (filefd < 0)
+		return (-1);
+	ft_putstr_fd(str, filefd);
+	close(filefd);
+	filefd = open(file, O_RDONLY);
+	if (filefd < 0)
+		return (-1);
+	dup2(filefd, fd_out);
+	close(filefd);
+	unlink(file);//part of man 2[is good for 42 but not 21] ??
+	free(file);
+	return (0);
+}
+
 int		do_redirect(t_io_redirect *io)
 { // no error handling yet !!!
 	int tmpfd;
 	int filefd;
 	int	fd_io;
-	//io->filename(when to test if fd)
-	// printf("-----[%s|%d|%d]\n", io->filename, io->io_num, io->redirect_type);
+
 	if (io->redirect_type == GRT)
 	{
 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
-		tmpfd = dup(fd_io);		//??
 		filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 		if (filefd < 0)
 		{
-			ft_putstr_fd("error at open file [fd<0]\n", 2);
+			ft_putstr_fd("error at open file [fd<0]\n", STDERR);
 			return (-1);
 		}
 		dup2(filefd, fd_io);
@@ -107,73 +131,43 @@ int		do_redirect(t_io_redirect *io)
 	if (io->redirect_type == GRTGRT)
 	{
 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
-		tmpfd = dup(fd_io);
 		filefd = open(io->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
 		if (filefd < 0)
 		{
-			ft_putstr_fd("error at open file [fd<0]\n", 2);
+			ft_putstr_fd("error at open file [fd<0]\n", STDERR);
 			return (-1);
 		}
 		dup2(filefd, fd_io);
 		close(filefd);
 	}
-	if (io->redirect_type == GRTAND)// ???
+	if (io->redirect_type == GRTAND)
 	{
-		printf("-----1----\n");
 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);		
-		if (!is_alldigit(io->filename) && !ft_strcmp("-", io->filename))
+		if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
 		{
-			printf("-----2----\n");
 			filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 			if (filefd < 0)
 			{
-				ft_putstr_fd("error at open file [fd<0]\n", 2);
+				ft_putstr_fd("error at open file [fd<0]\n", STDERR);
 				return (-1);
 			}
 			dup2(filefd, fd_io);
 		}
 		else if (is_alldigit(io->filename))
 		{
-			printf("-----3----\n");
 			tmpfd = ft_atoi(io->filename);
-			if (!check_fd(tmpfd))
+			if (!check_fd(tmpfd, STDOUT))
 				return (-1);
-			printf("-----4----\n");
 			dup2(tmpfd, fd_io);
 		}
 		else
 		{
-			close(ft_atoi(io->filename));
+			close(fd_io);
 		}
 	}
 	if (io->redirect_type == SML)
 	{
 		(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
-		tmpfd = dup(fd_io);		//??
-		filefd = open(io->filename, O_RDONLY);
-		if (filefd < 0)
-		{
-			ft_putstr_fd("error at open file [fd<0]\n", 2);
-			return (-1);
-		}
-		dup2(filefd, fd_io);
-		close(filefd);
-	}
-	if (io->redirect_type == SMLSML)//special use case
-	{
-		// return (here_doc(io));
-		return 0;
-	}
-	if (io->redirect_type == SMLAND)
-	{
-		(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
-		if (!ft_strcmp(io->filename, "-"))
-		{
-			if (close(fd_io))
-				ft_putstr_fd("error closing fd [bad fd]\n", STDERR);
-			return (0);
-		}
-		tmpfd = dup(fd_io);		//??
 		filefd = open(io->filename, O_RDONLY);
 		if (filefd < 0)
 		{
@@ -182,7 +176,38 @@ int		do_redirect(t_io_redirect *io)
 		}
 		dup2(filefd, fd_io);
 		close(filefd);
-		return 1;
+	}
+	if (io->redirect_type == SMLSML)
+	{
+		(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
+		return (do_heredoc(fd_io, io->filename));
+	}
+	if (io->redirect_type == SMLAND)
+	{
+		(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
+		if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
+		{
+			filefd = open(io->filename, O_RDONLY);
+			if (filefd < 0)
+			{
+				ft_putstr_fd("error at open file [fd<0]\n", STDERR);
+				return (-1);
+			}
+			dup2(filefd, fd_io);
+			close(filefd);
+		}
+		else if (is_alldigit(io->filename))
+		{
+			tmpfd = ft_atoi(io->filename);
+			if (!check_fd(tmpfd, STDIN))
+				return (-1);
+			dup2(tmpfd, fd_io);
+		}
+		else
+		{
+			if (close(fd_io))
+				ft_putstr_fd("error closing fd [bad fd]\n", STDERR);
+		}
 	}
 	return (0);
 }
@@ -212,7 +237,7 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 		{
 			tmp = head;
 			state = 0;
-			node->ass_word->env = (node->ass_word->env == 2) ? 2: env;
+			node->ass_word->env = (node->ass_word->env == 2) ? 2: env;// ???
 			while (tmp)
 			{
 				if (tmp->env != 2 && !ft_strcmp(tmp->key, node->ass_word->key))
@@ -247,9 +272,9 @@ int		do_prefix(t_cmd_prefix *prefix, t_variable *var, int env)
 	node = prefix;
 	while (node)
 	{
-		if (prefix->io_redirect)
+		if (node->io_redirect)
 		{
-			ret = do_redirect(prefix->io_redirect);
+			ret = do_redirect(node->io_redirect);
 		}
 
 		node = node->prefix;
@@ -355,17 +380,18 @@ int		do_suffix(t_cmd_suffix *suffix)
 	t_cmd_suffix	*node;
 	t_simple_lst	*args;
 	t_simple_lst	*tmp;
+	int				ret;
 
 	node = suffix;
 	while (node)
 	{
 		if (node->io_redirect)
 		{
-			do_redirect(node->io_redirect);
+			ret = do_redirect(node->io_redirect);
 		}
 		node = node->suffix;
 	}
-	return (0);
+	return (ret);
 }
 
 int		do_simpleCmd(t_simple_cmd *cmd)
@@ -377,7 +403,7 @@ int		do_simpleCmd(t_simple_cmd *cmd)
 	{
 		ret = do_prefix(cmd->prefix, g_var.var, 1); // 1? to verifie
 	}
-	else if (cmd->name && cmd->suffix)
+	if ((cmd->name || cmd->word) && cmd->suffix)
 	{
 		ret = do_suffix(cmd->suffix);
 	}
@@ -629,18 +655,19 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 	int			child;
 	t_variable	*tmp;
 	int			status;
+	int in = dup(STDIN);
+	int out = dup(STDOUT);
+	int err = dup(STDERR);
 
 	if (cmd->right == NULL && !bg)
 	{
 		av = get_arg_var_sub(cmd->left);
 		if (av && is_builtin(av[0]))
 		{
-			int in = dup(STDIN);
-			int out = dup(STDOUT);
-			int err = dup(STDERR);
+			
 			tmp = var_list_dup(g_var.var);
-			do_prefix(cmd->left->prefix, tmp, 0);
-			do_suffix(cmd->left->suffix);
+			if (do_prefix(cmd->left->prefix, tmp, 0) || do_suffix(cmd->left->suffix))
+				return (1);
 			// fprintf(ttyfd, "--------------------------\n");
 			// for (t_variable *ll=tmp; ll; ll=ll->next)
 			// 	fprintf(ttyfd, "[%d|%s:%s]\n", ll->env,ll->key,ll->value);
@@ -658,8 +685,9 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 		}
 		if (!(cmd->left->name) && !(cmd->left->word))
 		{
-			do_prefix(cmd->left->prefix, g_var.var, 1);
-			return (0);
+			status = do_prefix(cmd->left->prefix, g_var.var, 1);
+			reset_in_out(in, out, err);
+			return (status);
 		}
 	}
 	child = fork();
@@ -678,7 +706,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 
 int		execute(t_and_or *cmd, int bg)
 {
-	ttt = fopen("/dev/ttys006", "w");
+	ttt = fopen("/dev/ttys003", "w");
 	int dp;
 	int ret = 0;
 

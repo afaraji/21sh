@@ -187,7 +187,7 @@ int		main(int ac, char **av, char **env)
 	int		ret = 0;
 
 	ft_signal();
-	ttyfd = fopen("/dev/ttys001", "w");
+	ttyfd = fopen("/dev/ttys004", "w");
 	if (init_shell(env))
 		return (1);
 	line = readline(-1);

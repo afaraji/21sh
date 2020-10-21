@@ -1195,7 +1195,7 @@ char		*here_doc_string(char *word)
 	{
 		if (!ft_strcmp(buff, word))
 		{
-			tmp[ft_strlen(tmp) - 1] = '\0';
+			// tmp[ft_strlen(tmp) - 1] = '\0';
 			return (tmp);
 		}
 		str = ft_strjoin(tmp, buff);
@@ -1204,7 +1204,7 @@ char		*here_doc_string(char *word)
 		free(str);
 		ft_prompt("heredoc> ");
 	}
-	tmp[ft_strlen(tmp) - 1] = '\0';
+	// tmp[ft_strlen(tmp) - 1] = '\0';
 	return (tmp);
 }
 
