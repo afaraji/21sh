@@ -240,123 +240,170 @@ char			**var_search(char *str)
 	return (var_tab);
 }
 
+int				matched_f_d(DIR *d, char *str, t_simple_lst **files_dirs_list)
+{
+	struct dirent	*dir;
+	char			*tmp;
+
+	while ((dir = readdir(d)))
+	{
+		tmp = ft_strjoin("./", dir->d_name);
+		if (verify_type(tmp) == 1)
+		{
+			free(tmp);
+			tmp = ft_strjoin(dir->d_name, "/");
+		}
+		else
+		{
+			free(tmp);
+			tmp = ft_strdup(dir->d_name);
+		}
+		if (!ft_strcmp("", str)
+		|| !ft_strncmp(dir->d_name, str, ft_strlen(str)))
+			*files_dirs_list = names_list(tmp, *files_dirs_list);
+	}
+	return (0);
+}
+
 t_simple_lst	*matched_files_dirs(char *str, t_simple_lst *head)
 {
 	DIR				*d;
-	struct dirent	*dir;
 	t_simple_lst	*files_dirs_list;
-	char			*tmp;
 
 	files_dirs_list = NULL;
 	d = opendir(".");
 	if (d != NULL)
 	{
-		while ((dir = readdir(d)))
-		{
-			tmp = ft_strjoin("./", dir->d_name);
-			if (verify_type(tmp) == 1)
-			{
-				free(tmp);
-				tmp = ft_strjoin(dir->d_name, "/");
-			}
-			else
-			{
-				free(tmp);
-				tmp = ft_strdup(dir->d_name);
-			}
-			if (!ft_strcmp("", str)
-			|| !ft_strncmp(dir->d_name, str, ft_strlen(str)))
-				files_dirs_list = names_list(tmp, files_dirs_list);
-		}
+		matched_f_d(d, str, &files_dirs_list);
 	}
 	closedir(d);
 	return (files_dirs_list);
 }
 
+int				f_d_search(char *path, char *d_name, char *cmp, char *f_d, t_simple_lst **list)
+{
+	if (path[0] == '.')
+	{
+		if (ft_strcmp(d_name, ".") && ft_strcmp(d_name, ".."))
+		{
+			if ((!ft_strcmp("", cmp)
+			|| !ft_strncmp(d_name, cmp, ft_strlen(cmp))))
+				*list = names_list(f_d, *list);
+			free(f_d);
+			return (1);
+		}
+	}
+	else
+	{
+		if ((!ft_strcmp("", cmp)
+		|| !ft_strncmp(d_name, cmp, ft_strlen(cmp)))
+		&& d_name[0] != '.')
+			*list = names_list(f_d, *list);
+		free(f_d);
+		return (1);
+	}
+	return (0);
+}
+
+char			*files_dirs_search_3(char *d_name, char *path)
+{
+	char	*tmp1;
+	char	*tmp2;
+
+	tmp1 = NULL;
+	tmp2 = NULL;
+	if (!(ft_strcmp(path, ".")))
+	{
+		tmp1 = ft_strjoin(path, "/");
+		tmp2 = ft_strjoin(tmp1, d_name);
+		free(tmp1);
+	}
+	else
+		tmp2 = ft_strjoin(path, d_name);
+	if (verify_type(tmp2) == 1)
+	{
+		free(tmp2);
+		tmp2 = ft_strjoin(d_name, "/");
+	}
+	else
+	{
+		free(tmp2);
+		tmp2 = ft_strdup(d_name);
+	}
+	return (tmp2);
+}
+
+char			**files_dirs_search_2(char *path)
+{
+	char			**dir_tab;
+	t_simple_lst	*files_dirs_list;
+
+	files_dirs_list = matched_files_dirs(path, files_dirs_list);
+	if (files_dirs_list)
+	{
+		dir_tab = tab_from_list(sort_list(files_dirs_list));
+		ft_free_list(files_dirs_list);
+	}
+	else
+	{
+		dir_tab = (char **)malloc(sizeof(char *) * 1);
+		dir_tab[0] = NULL;
+	}
+	return (dir_tab);
+}
+
+char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
+{
+	struct dirent	*dir;
+	char			*file_dir;
+	char			**dir_tab;
+	t_simple_lst	*files_dirs_list;
+
+	files_dirs_list = NULL;
+	file_dir = NULL;
+	while ((dir = readdir(d)))
+	{
+		file_dir = files_dirs_search_3(dir->d_name, path);
+		f_d_search(path, dir->d_name, to_cmp, file_dir, &files_dirs_list);
+	}
+	closedir(d);
+	if (files_dirs_list)
+	{
+		dir_tab = tab_from_list(sort_list(files_dirs_list));
+		ft_free_list(files_dirs_list);
+	}
+	else
+	{
+		dir_tab = (char **)malloc(sizeof(char *) * 1);
+		dir_tab[0] = NULL;
+	}
+	return (dir_tab);
+}
+
 char			**files_dirs_search(char *str, int i)
 {
 	DIR				*d;
-	struct dirent	*dir;
 	char			*to_cmp;
 	char			*path;
 	t_simple_lst	*files_dirs_list;
 	char			**dir_tab;
-	struct stat		sb;
-	char			*tmp1;
-	char			*tmp2;
 
-	//fprintf(ttyfd, "*********\nstr : |%s|\n",str);
 	path = get_path(str);
-	//fprintf(ttyfd, "path : |%s|\n",path);
 	to_cmp = get_to_cmp(str);
 	files_dirs_list = NULL;
 	d = opendir(path);
 	if (d != NULL)
 	{
-		while ((dir = readdir(d)))
-		{
-			if (!(ft_strcmp(path, ".")))
-			{
-				tmp1 = ft_strjoin(path, "/");
-				tmp2 = ft_strjoin(tmp1, dir->d_name);
-				free(tmp1);
-			}
-			else
-				tmp2 = ft_strjoin(path, dir->d_name);
-			if (verify_type(tmp2) == 1)
-			{
-				free(tmp2);
-				tmp2 = ft_strjoin(dir->d_name, "/");
-			}
-			else
-			{
-				free(tmp2);
-				tmp2 = ft_strdup(dir->d_name);
-			}
-			if (path[0] == '.')
-			{
-				if (ft_strcmp(dir->d_name, ".") && ft_strcmp(dir->d_name, ".."))
-				{
-					if ((!ft_strcmp("", to_cmp)
-					|| !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))))
-						files_dirs_list = names_list(tmp2, files_dirs_list);
-				}
-			}
-			else
-			{
-				if ((!ft_strcmp("", to_cmp)
-				|| !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp)))
-				&& dir->d_name[0] != '.')
-					files_dirs_list = names_list(tmp2, files_dirs_list);
-			}
-			free(tmp2);
-		}
-		closedir(d);
-		if (files_dirs_list)
-			dir_tab = tab_from_list(sort_list(files_dirs_list));
-		else
-		{
-			dir_tab = (char **)malloc(sizeof(char *) * 1);
-			dir_tab[0] = NULL;
-		}
+		return (files_dirs_search_1(path, to_cmp, d));
 	}
 	else if (d == NULL)
 	{
-		files_dirs_list = matched_files_dirs(path, files_dirs_list);
-		if (files_dirs_list)
-			dir_tab = tab_from_list(sort_list(files_dirs_list));
-		else
-		{
-			dir_tab = (char **)malloc(sizeof(char *) * 1);
-			dir_tab[0] = NULL;
-		}
+		return (files_dirs_search_2(path));
 	}
-	if (files_dirs_list)
-		ft_free_list(files_dirs_list);
-	return (dir_tab);
+	return (NULL);
 }
 
-t_simple_lst	*get_cmd_list(char *str, t_simple_lst *head)
+t_simple_lst	*get_cmd_list_1(char *str, t_simple_lst *head)
 {
 	t_simple_lst	*node;
 
@@ -389,57 +436,78 @@ t_simple_lst	*search_builtin(char *str)
 	while (builtins_list[i])
 	{
 		if (!ft_strncmp(builtins_list[i], str, ft_strlen(str)))
-			head = get_cmd_list(builtins_list[i], head);
+			head = get_cmd_list_1(builtins_list[i], head);
 		i++;
 	}
 	return (head);
 }
 
-char			**cmd_search(char *str)
+int				get_path_value(char ***str)
 {
-	t_variable		*var;
-	char			**cmd_paths;
-	char			**tmp;
-	int				i;
-	DIR				*d;
-	struct dirent	*dir;
-	t_simple_lst	*cmd_list;
-	char			**cmd_tab;
+	t_variable	*var;
 
-	cmd_tab = NULL;
-	tmp = NULL;
-	cmd_list = search_builtin(str);
 	var = g_var.var;
 	while (var)
 	{
 		if (!ft_strcmp(var->key, "PATH"))
 		{
-			tmp = ft_strsplit(var->value, ':');
-			break ;
+			*str = ft_strsplit(var->value, ':');
+			return (1);
 		}
 		var = var->next;
 	}
+	return (0);
+}
+
+void			get_cmd_path_1(char **tmp, char ***cmd_paths)
+{
+	int	i;
+
+	i = 0;
+	while (tmp[i])
+		i++;
+	*cmd_paths = (char **)malloc(sizeof(char *) * (i + 1));
+	i = 0;
+	while (tmp[i])
+	{
+		(*cmd_paths)[i] = ft_strjoin(tmp[i], "/");
+		free(tmp[i]);
+		i++;
+	}
+	(*cmd_paths)[i] = NULL;
+}
+
+int				get_cmd_path(t_simple_lst *cmd_list, char ***cmd_tab, char ***cmd_paths)
+{
+	char	**tmp;
+
+	tmp = NULL;
+	get_path_value(&tmp);
 	if (tmp == NULL)
 	{
-		cmd_tab = tab_from_list(sort_list(cmd_list));
-		free(cmd_list);
-		return (cmd_tab);
+		if (cmd_list)
+			*cmd_tab = tab_from_list(sort_list(cmd_list));
+		else
+		{
+			*cmd_tab = (char **)malloc(sizeof(char *) * 1);
+			(*cmd_tab)[0] = NULL;
+		}
+		return (1);
 	}
 	else if (tmp != NULL)
 	{
-		i = 0;
-		while (tmp[i])
-			i++;
-		cmd_paths = (char **)malloc(sizeof(char *) * (i + 1));
-		i = 0;
-		while (tmp[i])
-		{
-			cmd_paths[i] = ft_strjoin(tmp[i], "/");
-			free(tmp[i]);
-			i++;
-		}
-		cmd_paths[i] = NULL;
+		get_cmd_path_1(tmp, cmd_paths);
+		return (2);
 	}
+	return (0);
+}
+
+void			get_cmd_list(t_simple_lst	**cmd_list, char **cmd_paths, char *str)
+{
+	int				i;
+	DIR				*d;
+	struct dirent	*dir;
+
 	i = 0;
 	while (cmd_paths[i])
 	{
@@ -452,13 +520,27 @@ char			**cmd_search(char *str)
 				&& ft_strcmp(dir->d_name, ".")
 				&& ft_strcmp(dir->d_name, ".."))
 				{
-					cmd_list = get_cmd_list(dir->d_name, cmd_list);
+					*cmd_list = get_cmd_list_1(dir->d_name, *cmd_list);
 				}
 			}
 		}
 		i++;
 	}
-	closedir(d);
+	if (d)
+		closedir(d);
+}
+
+char			**cmd_search(char *str)
+{
+	char			**cmd_paths;
+	t_simple_lst	*cmd_list;
+	char			**cmd_tab;
+
+	cmd_tab = NULL;
+	cmd_list = search_builtin(str);
+	if (get_cmd_path(cmd_list, &cmd_tab, &cmd_paths) == 1)
+		return (cmd_tab);
+	get_cmd_list(&cmd_list, cmd_paths, str);
 	if (!cmd_list)
 	{
 		cmd_tab = (char **)malloc(sizeof(char *) * 1);
