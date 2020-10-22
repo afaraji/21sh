@@ -12,8 +12,6 @@
 
 #include "parse.h"
 
-FILE	*ttt;
-
 void	exit_status(int status)// src: 0 form exit, 1 from return
 {
 	t_variable *tmp;
@@ -49,17 +47,29 @@ int		is_alldigit(char *str)
 
 int		check_fd(int fd, int io)
 {
-	int tmpfd;
+	struct stat	buffer;
+	int			status;
+	long		ret;
 
-	tmpfd = dup(fd);
-	if (tmpfd < 0 || (io == 0 && read(fd, NULL, 0) < 0) || (io == 1 && write(fd, NULL, 0) < 0))
+	status = fstat(fd, &buffer);
+	if (io == 0)
+	{
+		ret = read(fd, NULL, 0);
+		fprintf(ttt, "from read [%zd]\n",ret);
+	}
+	else
+	{
+		write(fd, NULL, 0);
+		fprintf(ttt, "from write [%zd]\n",ret);
+	}
+	fprintf(ttt, "fd[%d]-->[%d:%zd]\n", fd, status, ret);
+	if (status < 0 || ret < 0)
 	{
 		ft_putstr_fd("shell: ", STDERR);
 		ft_putnbr_fd(fd, STDERR);
 		ft_putstr_fd(": Bad file descriptor.\n", STDERR);
 		return (0);
 	}
-	close(tmpfd);
 	return (1);
 }
 
@@ -266,7 +276,7 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 int		do_prefix(t_cmd_prefix *prefix, t_variable *var, int env)
 {
 	t_cmd_prefix	*node;
-	int				ret;
+	int				ret = 0;
 
 	do_assignement(prefix, var, env);
 	node = prefix;
@@ -315,7 +325,8 @@ char	*get_cmdpath(char *str)
 	{
 		return (ft_strdup(str));
 	}
-	paths = paths_from_env();
+	if (!(paths = paths_from_env()))
+		return(NULL);
 	i = 0;
 	while (paths[i])
 	{
@@ -380,7 +391,7 @@ int		do_suffix(t_cmd_suffix *suffix)
 	t_cmd_suffix	*node;
 	t_simple_lst	*args;
 	t_simple_lst	*tmp;
-	int				ret;
+	int				ret = 0;
 
 	node = suffix;
 	while (node)
@@ -396,7 +407,7 @@ int		do_suffix(t_cmd_suffix *suffix)
 
 int		do_simpleCmd(t_simple_cmd *cmd)
 {
-	int		ret;
+	int		ret = 0;
 	char	*command;
 
 	if (cmd->prefix)
@@ -658,9 +669,9 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 	int			child;
 	t_variable	*tmp;
 	int			status;
-	int in = dup(STDIN);
-	int out = dup(STDOUT);
-	int err = dup(STDERR);
+	// int in = dup(STDIN);
+	// int out = dup(STDOUT);
+	// int err = dup(STDERR);
 
 	if (cmd->right == NULL && !bg)
 	{
@@ -681,7 +692,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			//free(tmp);
 			//free(av);
 			status = builtins(av[0], av, env);
-			reset_in_out(in, out, err);
+			// reset_in_out(in, out, err);
 			// free(env);
 			// free(av);
 			return (status);
@@ -689,7 +700,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 		if (!(cmd->left->name) && !(cmd->left->word))
 		{
 			status = do_prefix(cmd->left->prefix, g_var.var, 1);
-			reset_in_out(in, out, err);
+			// reset_in_out(in, out, err);
 			return (status);
 		}
 	}
@@ -709,7 +720,6 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 
 int		execute(t_and_or *cmd, int bg)
 {
-	ttt = fopen("/dev/ttys003", "w");
 	int dp;
 	int ret = 0;
 

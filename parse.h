@@ -43,7 +43,7 @@
 
 # define _OR(m,a,b,c,d,e) (m==a||m==b||m==c||m==d||m==e) ? 1 : 0
 
-// FILE			*ttyfd;
+FILE	*ttt;
 
 // <& (fd or file name) check if number => fd or string => filename only in aggr
 // ' and " WORDs

@@ -109,14 +109,14 @@ char		*readline(int prompt)
 	else if (prompt == -1)
 		prmt = "$> ";
 	else if (prompt == QUOTE)
-		prmt = "\nquote> ";
+		prmt = "quote> ";
 	else if (prompt == DQUOTE)
-		prmt = "\ndquote> ";
+		prmt = "dquote> ";
 	else if (prompt == SMLSML)
-		prmt = "\nheredoc> ";
+		prmt = "heredoc> ";
 	else if (prompt == PIP)
-		prmt = "\npipe> ";
+		prmt = "pipe> ";
 	else
-		prmt = "\n> ";
+		prmt = "> ";
 	return (manage_line(prmt, &(g_var.history), prompt));
 }

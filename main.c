@@ -26,7 +26,6 @@
 // 		node = node->next;
 // 	}
 // }
-char	*line = NULL;
 
 t_hist	*create_history(void)
 {
@@ -35,7 +34,7 @@ t_hist	*create_history(void)
 	int fd;
 	int i;
 
-	if (!(fd = open("./.myshell_history", O_RDONLY | O_CREAT, 0700)))
+	if (!(fd = open("./.myshell_history", O_RDONLY | O_CREAT, 0600)))
 		return (NULL);
 	i = 1;
 	while (get_next_line(fd, &file_str) == 1)
@@ -144,7 +143,8 @@ void	signal_callback_handler(int signum)
 	if (signum == 2)
 	{
 		// printf("ctrl-c received\n");
-		ft_prompt("\n&> ");
+		// ft_prompt("\n&> ");
+		ft_putchar('\n');
 		g_var.sig = signum;
 		ft_set_attr(0);
 		// free(line);
@@ -184,10 +184,12 @@ void	ft_signal(void)
 int		main(int ac, char **av, char **env)
 {
 	
+	char	*line = NULL;
 	int		ret = 0;
 
 	ft_signal();
 	ttyfd = fopen("/dev/ttys004", "w");
+	ttt = fopen("/dev/ttys003", "w");
 	if (init_shell(env))
 		return (1);
 	line = readline(-1);
