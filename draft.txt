@@ -484,8 +484,13 @@ void    test_parse()
 **************************************/
 more tests https://github.com/cbcercas/21sh-42sh/edit/master/tests/tests_bats/create.txt
 open fd in shel https://bash.cyberciti.biz/guide/Opening_the_file_descriptors_for_reading_and_writing
+how bash handl heredoc https://www.oilshell.org/blog/2016/10/18.html
 ***************************************
 
 top/htop
 ls -la /proc/pid/fd
+ls /dev/fd
+lsof -c processname
+lsof -p PID
+exec [n]<> /tmp/file ==> open file on fd=[n]
 dtruss? strace ??

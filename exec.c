@@ -16,8 +16,7 @@ void	exit_status(int status)// src: 0 form exit, 1 from return
 {
 	t_variable *tmp;
 
-	// if (!src)
-		g_var.exit_status = WEXITSTATUS(status);
+	g_var.exit_status = WEXITSTATUS(status);
 	tmp = g_var.var;
 	while (tmp)
 	{
@@ -599,31 +598,31 @@ int		exec_pipe(t_pipe_seq *cmd)
 	if(pipe(pfd) != 0)
 		return (1);
 
-	if ((pid_r = fork()) == -1)
+	if ((pid_l = fork()) == -1)
 		return (2);//should set errno
-	if (pid_r == 0)
+	if (pid_l == 0)
 	{
-		close(pfd[1]);
-		dup2(pfd[0],STDIN);
-		if (cmd->right->right)
-		{
-			exec_pipe(cmd->right);
-		}
-		else
-		{
-			exit(exec_simple_cmd(cmd->right->left));
-		}
+		//left child
+		close(pfd[0]);
+		dup2(pfd[1],STDOUT);
+		exit(exec_simple_cmd(cmd->left));
 	}
 	else
 	{
-		if ((pid_l = fork()) == -1)
+		if ((pid_r = fork()) == -1)
 			return (2);//should set errno
-		if (pid_l == 0)
+		if (pid_r == 0)
 		{
-			//left child
-			close(pfd[0]);
-			dup2(pfd[1],STDOUT);
-			exit(exec_simple_cmd(cmd->left));
+			close(pfd[1]);
+			dup2(pfd[0],STDIN);
+			if (cmd->right->right)
+			{
+				exec_pipe(cmd->right);
+			}
+			else
+			{
+				exit(exec_simple_cmd(cmd->right->left));
+			}
 		}
 		close(pfd[0]);
 		close(pfd[1]);
@@ -669,9 +668,9 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 	int			child;
 	t_variable	*tmp;
 	int			status;
-	// int in = dup(STDIN);
-	// int out = dup(STDOUT);
-	// int err = dup(STDERR);
+	int in = dup(STDIN);
+	int out = dup(STDOUT);
+	int err = dup(STDERR);
 
 	if (cmd->right == NULL && !bg)
 	{
@@ -692,7 +691,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			//free(tmp);
 			//free(av);
 			status = builtins(av[0], av, env);
-			// reset_in_out(in, out, err);
+			reset_in_out(in, out, err);
 			// free(env);
 			// free(av);
 			return (status);
@@ -700,7 +699,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 		if (!(cmd->left->name) && !(cmd->left->word))
 		{
 			status = do_prefix(cmd->left->prefix, g_var.var, 1);
-			// reset_in_out(in, out, err);
+			reset_in_out(in, out, err);
 			return (status);
 		}
 	}

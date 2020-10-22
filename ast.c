@@ -554,7 +554,7 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 			if (is_valid_file((*cmd)->data, (*cmd)->next))
 			{
 				file = ft_strdup((*cmd)->data);
-				if (*r_type == SMLAND && !is_all_digits(file))
+				if (*r_type == SMLAND && !is_all_digits(file) && ft_strcmp(file, "-"))
 				{
 					g_var.errno = 125;
 					*cmd = NULL;
