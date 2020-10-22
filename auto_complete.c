@@ -64,10 +64,13 @@ char			*get_path(char *str)
 	int		i;
 
 	i = get_path_1(str);
-	if (i == -1 && (!ft_strcmp(str, "")))
+	if (i == -1)
 	{
-		free(str);
-		return (ft_strdup("./"));
+		if (!ft_strcmp(str, ""))
+		{
+			free(str);
+			return (ft_strdup("./"));
+		}
 	}
 	else if (i != -1)
 		return (get_path_2(&str, i));
@@ -242,6 +245,7 @@ t_simple_lst	*matched_files_dirs(char *str, t_simple_lst *head)
 	DIR				*d;
 	struct dirent	*dir;
 	t_simple_lst	*files_dirs_list;
+	char			*tmp;
 
 	files_dirs_list = NULL;
 	d = opendir(".");
@@ -249,9 +253,20 @@ t_simple_lst	*matched_files_dirs(char *str, t_simple_lst *head)
 	{
 		while ((dir = readdir(d)))
 		{
+			tmp = ft_strjoin("./", dir->d_name);
+			if (verify_type(tmp) == 1)
+			{
+				free(tmp);
+				tmp = ft_strjoin(dir->d_name, "/");
+			}
+			else
+			{
+				free(tmp);
+				tmp = ft_strdup(dir->d_name);
+			}
 			if (!ft_strcmp("", str)
 			|| !ft_strncmp(dir->d_name, str, ft_strlen(str)))
-				files_dirs_list = names_list(dir->d_name, files_dirs_list);
+				files_dirs_list = names_list(tmp, files_dirs_list);
 		}
 	}
 	closedir(d);
@@ -270,7 +285,9 @@ char			**files_dirs_search(char *str, int i)
 	char			*tmp1;
 	char			*tmp2;
 
+	//fprintf(ttyfd, "*********\nstr : |%s|\n",str);
 	path = get_path(str);
+	//fprintf(ttyfd, "path : |%s|\n",path);
 	to_cmp = get_to_cmp(str);
 	files_dirs_list = NULL;
 	d = opendir(path);
@@ -303,9 +320,6 @@ char			**files_dirs_search(char *str, int i)
 					if ((!ft_strcmp("", to_cmp)
 					|| !ft_strncmp(dir->d_name, to_cmp, ft_strlen(to_cmp))))
 						files_dirs_list = names_list(tmp2, files_dirs_list);
-					else if (i == 0 && (stat(dir->d_name, &sb) == 0
-					&& sb.st_mode & S_IXUSR))
-						files_dirs_list = names_list(tmp2, files_dirs_list);
 				}
 			}
 			else
@@ -328,7 +342,7 @@ char			**files_dirs_search(char *str, int i)
 	}
 	else if (d == NULL)
 	{
-		files_dirs_list = matched_files_dirs(str, files_dirs_list);
+		files_dirs_list = matched_files_dirs(path, files_dirs_list);
 		if (files_dirs_list)
 			dir_tab = tab_from_list(sort_list(files_dirs_list));
 		else
