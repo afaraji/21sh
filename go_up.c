@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-void	go_up_2(t_line *line, char **table)
+void	go_up_1(t_line *line, char **table)
 {
 	int	len;
 	int i;
@@ -46,7 +46,7 @@ void	go_up(t_line *line)
 
 	table = ft_strsplit_2(line->str, '\n');
 	if (line->curs > 0)
-		go_up_2(line, table);
+		go_up_1(line, table);
 	i = 0;
 	while (table[i])
 	{

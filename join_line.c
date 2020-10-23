@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-char	*join_line_2(char *str, char *s1, int i, int j)
+char	*join_line_1(char *str, char *s1, int i, int j)
 {
 	while (j < (int)ft_strlen(str))
 	{
@@ -46,5 +46,5 @@ char	*join_line(char *str, char c, int curs)
 	}
 	s1[i] = c;
 	j = curs;
-	return (join_line_2(str, s1, i, j));
+	return (join_line_1(str, s1, i, j));
 }

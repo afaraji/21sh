@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-void	go_down_3(t_line *line)
+void	go_down_2(t_line *line)
 {
 	if (line->str[line->curs] == '\n')
 	{
@@ -33,7 +33,7 @@ void	go_down_3(t_line *line)
 	}
 }
 
-void	go_down_2(t_line *line, char **table)
+void	go_down_1(t_line *line, char **table)
 {
 	int	len_2;
 	int i;
@@ -51,7 +51,7 @@ void	go_down_2(t_line *line, char **table)
 				go_right(line);
 		}
 		else
-			go_down_3(line);
+			go_down_2(line);
 	}
 }
 
@@ -62,7 +62,7 @@ void	go_down(t_line *line)
 
 	table = ft_strsplit_2(line->str, '\n');
 	if (line->curs < (int)ft_strlen(line->str))
-		go_down_2(line, table);
+		go_down_1(line, table);
 	i = 0;
 	while (table[i])
 	{

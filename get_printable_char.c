@@ -71,6 +71,7 @@ char	*history_search(char *str, t_hist **his_head)
 		cmd = history_search_word(str);
 	return (cmd);
 }
+
 void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 {
 	char	*tmp;
@@ -107,7 +108,7 @@ void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 	}
 }
 
-void	printable_2(t_terminal *term)
+void	printable_1(t_terminal *term)
 {
 	term->select->on = 0;
 	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
@@ -122,7 +123,7 @@ int		printable(t_terminal *term, t_hist **his_head, int mult_line)
 	if ((ft_isprint(term->buff) || term->buff == ENTER))
 	{
 		if (term->select->on == 1)
-			printable_2(term);
+			printable_1(term);
 		else
 		{
 			get_cmd(term, his_head, mult_line);

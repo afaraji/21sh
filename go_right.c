@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-void	go_right_2(t_line *line)
+void	go_right_1(t_line *line)
 {
 	int len;
 
@@ -37,7 +37,7 @@ void	go_right(t_line *line)
 	if (line->curs < (int)ft_strlen(line->str))
 	{
 		if (is_multline(line->str))
-			go_right_2(line);
+			go_right_1(line);
 		else
 		{
 			if ((line->curs + line->pmt_s) % line->col == 0)

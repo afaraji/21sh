@@ -12,7 +12,7 @@
 
 #include "readline.h"
 
-void	move_by_word_2(t_line *line)
+void	move_by_word_1(t_line *line)
 {
 	if (line->curs == (int)ft_strlen(line->str))
 	{
@@ -61,5 +61,5 @@ void	move_by_word(t_line *line, int buff)
 			go_left(line);
 	}
 	else if (buff == LFTWORD && !(ft_isspace(line->str[line->curs])))
-		move_by_word_2(line);
+		move_by_word_1(line);
 }

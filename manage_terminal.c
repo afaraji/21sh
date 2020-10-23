@@ -48,7 +48,7 @@ int		termtype(void)
 	return (1);
 }
 
-void	copy_attr_set_icanon(struct termios *src, struct termios *dst)
+void	cpy_set_atr_ican(struct termios *src, struct termios *dst)
 {
 	ft_memcpy(dst->c_cc, src->c_cc, NCCS);
 	dst->c_cflag = src->c_cflag;
@@ -100,7 +100,7 @@ int		ft_set_attr(int index)
 		}
 		if (termtype() && check_termcap())
 		{
-			copy_attr_set_icanon(&old_termios, &s_termios);
+			cpy_set_atr_ican(&old_termios, &s_termios);
 			if (tcsetattr(0, 0, &s_termios) == -1)
 				return (1);
 		}
