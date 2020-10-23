@@ -160,20 +160,40 @@ typedef struct				s_io_list
 
 /*	-----------------------------------------------------------	*/
 
-int 		main_parse(char *line);
-int			ft_exit(int status);// aka exit();
-void		exit_status(int status); // for commands
-int			is_dollar(char *str);
-char		*str_dollar_sub(char *str);
-char		**env_to_tab(t_variable *var, int all);
-char		*fetch_variables(char *key, int typ);
-char		**paths_from_env(void);
-int			run_cmd(char **cmd);
-int			builtins(char *cmd, char **av, char **env);
-int			cd_builtin(char **av, char **env);
-t_variable	*get_env(char *s, int typ);
-int			dollar_sub(t_list_token **cmd_token);
-char		*get_var_from_tab(char **env, char *str);
+int 			main_parse(char *line);
+int				ft_exit(int status);// aka exit();
+void			exit_status(int status); // for commands
+int				is_dollar(char *str);
+char			*str_dollar_sub(char *str);
+char			**env_to_tab(t_variable *var, int all);
+char			*fetch_variables(char *key, int typ);
+char			**paths_from_env(void);
+int				run_cmd(char **cmd);
+int				builtins(char *cmd, char **av, char **env);
+int				cd_builtin(char **av, char **env);
+t_variable		*get_env(char *s, int typ);
+int				dollar_sub(t_list_token **cmd_token);
+char			*get_var_from_tab(char **env, char *str);
+char			*ft_appendstr(char *s1, char *s2);
+char			*ft_strsub_delimit(char *s, char c);
+int				alias_infinit_loop(char *str, t_alias *aliases);
+int				alias_sub(t_list_token *word, t_alias *aliases);
+int				is_reserved(char *str);
+void			insert_alias(char *key, char *sub);
+void			get_aliases(void);
+t_list_token	*__tokenize(char *str);
+void			token_print(t_list_token *node);
+void			parse_and_replace(t_list_token **cmd_token, t_list_token *node);
+int				keywords_alias_sub(t_list_token **cmd_token);
+char			*fetch_variables(char *key, int typ);
+int				is_assword(char *str);
+int				tilde_sub(t_list_token **cmd_token);
+int				is_dollar(char *s);
+int				end_dollar_word(char *s, int start);
+char			*get_dollar_var(char *s, int start, int end);
+char			*str_dollar_sub(char *str);
+int				dollar_sub(t_list_token **cmd_token);
+int				lexer(t_list_token **cmd_token);
 
 // ******************************************
 // https://github.com/xopxop/21sh/blob/master/src/executor/redirects_great.c
