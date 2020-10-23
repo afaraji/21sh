@@ -85,7 +85,7 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 			break ;
 		else if (!(ft_isprint(term->buff)))
 		{
-			unprint_ret = unprintable(term, his_head, &to_past, prompt);
+			unprint_ret = unprintable(term, his_head, &to_past);
 			if (unprint_ret == 1)
 				continue;
 			else if (unprint_ret == 2)

@@ -95,13 +95,13 @@ char			*get_to_cmp(char *str)
 	return (file_to_find);
 }
 
-t_simple_lst	*names_list(char *str, t_simple_lst *head)
+t_l	*names_list(char *str, t_l *head)
 {
-	t_simple_lst	*node;
+	t_l	*node;
 
 	if (!head)
 	{
-		head = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+		head = (t_l *)malloc(sizeof(t_l));
 		head->data = ft_strdup(str);
 		head->next = NULL;
 		return (head);
@@ -109,21 +109,21 @@ t_simple_lst	*names_list(char *str, t_simple_lst *head)
 	node = head;
 	while (node->next)
 		node = node->next;
-	node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+	node->next = (t_l *)malloc(sizeof(t_l));
 	node = node->next;
 	node->data = ft_strdup(str);
 	node->next = NULL;
 	return (head);
 }
 
-t_simple_lst	*get_var_list(char *str, t_simple_lst *head)
+t_l	*get_var_list(char *str, t_l *head)
 {
-	t_simple_lst	*node;
+	t_l	*node;
 	char			*tmp;
 
 	if (!head)
 	{
-		head = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+		head = (t_l *)malloc(sizeof(t_l));
 		tmp = ft_strdup(str);
 		head->data = ft_strjoin("$", tmp);
 		free(tmp);
@@ -133,7 +133,7 @@ t_simple_lst	*get_var_list(char *str, t_simple_lst *head)
 	node = head;
 	while (node->next)
 		node = node->next;
-	node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+	node->next = (t_l *)malloc(sizeof(t_l));
 	node = node->next;
 	tmp = ft_strdup(str);
 	node->data = ft_strjoin("$", tmp);
@@ -142,10 +142,10 @@ t_simple_lst	*get_var_list(char *str, t_simple_lst *head)
 	return (head);
 }
 
-int				get_node_sum(t_simple_lst *head)
+int				get_node_sum(t_l *head)
 {
 	int				sum;
-	t_simple_lst	*node;
+	t_l	*node;
 
 	sum = 0;
 	node = head;
@@ -157,10 +157,10 @@ int				get_node_sum(t_simple_lst *head)
 	return (sum);
 }
 
-t_simple_lst	*sort_list(t_simple_lst *head)
+t_l	*sort_list(t_l *head)
 {
-	t_simple_lst	*node1;
-	t_simple_lst	*node2;
+	t_l	*node1;
+	t_l	*node2;
 	char			*tmp;
 
 	node1 = head;
@@ -182,9 +182,9 @@ t_simple_lst	*sort_list(t_simple_lst *head)
 	return (head);
 }
 
-char			**tab_from_list(t_simple_lst *head)
+char			**tab_from_list(t_l *head)
 {
-	t_simple_lst	*node;
+	t_l	*node;
 	char			**tabl;
 	int				sum;
 
@@ -206,10 +206,10 @@ char			**tab_from_list(t_simple_lst *head)
 	return (tabl);
 }
 
-void			ft_free_list(t_simple_lst *head)
+void			ft_free_list(t_l *head)
 {
-	t_simple_lst	*tmp1;
-	t_simple_lst	*tmp2;
+	t_l	*tmp1;
+	t_l	*tmp2;
 
 	tmp1 = head;
 	while (tmp1)
@@ -224,7 +224,7 @@ void			ft_free_list(t_simple_lst *head)
 char			**var_search(char *str)
 {
 	t_variable		*var;
-	t_simple_lst	*var_list;
+	t_l	*var_list;
 	char			**var_tab;
 
 	var = g_var.var;
@@ -240,7 +240,7 @@ char			**var_search(char *str)
 	return (var_tab);
 }
 
-int				matched_f_d(DIR *d, char *str, t_simple_lst **files_dirs_list)
+int				matched_f_d(DIR *d, char *str, t_l **f_d_list)
 {
 	struct dirent	*dir;
 	char			*tmp;
@@ -260,15 +260,15 @@ int				matched_f_d(DIR *d, char *str, t_simple_lst **files_dirs_list)
 		}
 		if (!ft_strcmp("", str)
 		|| !ft_strncmp(dir->d_name, str, ft_strlen(str)))
-			*files_dirs_list = names_list(tmp, *files_dirs_list);
+			*f_d_list = names_list(tmp, *f_d_list);
 	}
 	return (0);
 }
 
-t_simple_lst	*matched_files_dirs(char *str, t_simple_lst *head)
+t_l	*matched_files_dirs(char *str, t_l *head)
 {
 	DIR				*d;
-	t_simple_lst	*files_dirs_list;
+	t_l	*files_dirs_list;
 
 	files_dirs_list = NULL;
 	d = opendir(".");
@@ -280,7 +280,7 @@ t_simple_lst	*matched_files_dirs(char *str, t_simple_lst *head)
 	return (files_dirs_list);
 }
 
-int				f_d_search(char *path, char *d_name, char *cmp, char *f_d, t_simple_lst **list)
+int				f_d_search(char *path, char *d_name, char *cmp, char *f_d, t_l **list)
 {
 	if (path[0] == '.')
 	{
@@ -336,7 +336,7 @@ char			*files_dirs_search_3(char *d_name, char *path)
 char			**files_dirs_search_2(char *path)
 {
 	char			**dir_tab;
-	t_simple_lst	*files_dirs_list;
+	t_l	*files_dirs_list;
 
 	files_dirs_list = matched_files_dirs(path, files_dirs_list);
 	if (files_dirs_list)
@@ -357,7 +357,7 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 	struct dirent	*dir;
 	char			*file_dir;
 	char			**dir_tab;
-	t_simple_lst	*files_dirs_list;
+	t_l	*files_dirs_list;
 
 	files_dirs_list = NULL;
 	file_dir = NULL;
@@ -385,7 +385,7 @@ char			**files_dirs_search(char *str, int i)
 	DIR				*d;
 	char			*to_cmp;
 	char			*path;
-	t_simple_lst	*files_dirs_list;
+	t_l	*files_dirs_list;
 	char			**dir_tab;
 
 	path = get_path(str);
@@ -403,13 +403,13 @@ char			**files_dirs_search(char *str, int i)
 	return (NULL);
 }
 
-t_simple_lst	*get_cmd_list_1(char *str, t_simple_lst *head)
+t_l	*get_cmd_list_1(char *str, t_l *head)
 {
-	t_simple_lst	*node;
+	t_l	*node;
 
 	if (!head)
 	{
-		head = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+		head = (t_l *)malloc(sizeof(t_l));
 		head->data = ft_strdup(str);
 		head->next = NULL;
 		return (head);
@@ -417,17 +417,17 @@ t_simple_lst	*get_cmd_list_1(char *str, t_simple_lst *head)
 	node = head;
 	while (node->next)
 		node = node->next;
-	node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+	node->next = (t_l *)malloc(sizeof(t_l));
 	node = node->next;
 	node->data = ft_strdup(str);
 	node->next = NULL;
 	return (head);
 }
 
-t_simple_lst	*search_builtin(char *str)
+t_l	*search_builtin(char *str)
 {
 	int				i;
-	t_simple_lst	*head;
+	t_l	*head;
 	char			*builtins_list[] = {"cd", "echo", "export", "env",
 						"exit", "setenv", "unsetenv", NULL};
 
@@ -459,7 +459,7 @@ int				get_path_value(char ***str)
 	return (0);
 }
 
-void			get_cmd_path_1(char **tmp, char ***cmd_paths)
+void			cmd_path_1(char **tmp, char ***cmd_paths)
 {
 	int	i;
 
@@ -477,7 +477,7 @@ void			get_cmd_path_1(char **tmp, char ***cmd_paths)
 	(*cmd_paths)[i] = NULL;
 }
 
-int				get_cmd_path(t_simple_lst *cmd_list, char ***cmd_tab, char ***cmd_paths)
+int				cmd_path(t_l *cmd_list, char ***cmd_tab, char ***cmd_paths)
 {
 	char	**tmp;
 
@@ -496,13 +496,13 @@ int				get_cmd_path(t_simple_lst *cmd_list, char ***cmd_tab, char ***cmd_paths)
 	}
 	else if (tmp != NULL)
 	{
-		get_cmd_path_1(tmp, cmd_paths);
+		cmd_path_1(tmp, cmd_paths);
 		return (2);
 	}
 	return (0);
 }
 
-void			get_cmd_list(t_simple_lst	**cmd_list, char **cmd_paths, char *str)
+void			get_cmd_list(t_l **cmd_list, char **cmd_paths, char *str)
 {
 	int				i;
 	DIR				*d;
@@ -533,12 +533,12 @@ void			get_cmd_list(t_simple_lst	**cmd_list, char **cmd_paths, char *str)
 char			**cmd_search(char *str)
 {
 	char			**cmd_paths;
-	t_simple_lst	*cmd_list;
+	t_l	*cmd_list;
 	char			**cmd_tab;
 
 	cmd_tab = NULL;
 	cmd_list = search_builtin(str);
-	if (get_cmd_path(cmd_list, &cmd_tab, &cmd_paths) == 1)
+	if (cmd_path(cmd_list, &cmd_tab, &cmd_paths) == 1)
 		return (cmd_tab);
 	get_cmd_list(&cmd_list, cmd_paths, str);
 	if (!cmd_list)
@@ -625,47 +625,59 @@ char			*completed_line(char *line, char *str)
 	return (tmp);
 }
 
-void			print_result(char **t, t_line *line)
+t_completion	*get_completion_var(void)
 {
-	int	space;
-	int i;
-	int	total_words;
-	int str_max_len;
-	int word_per_line;
-	int	lines_to_print;
-	int	words_to_print;
+	t_completion	*compl;
 
-	total_words = 0;
-	str_max_len = 0;
-	while (t[total_words])
-	{
-		if (ft_strlen(t[total_words]) > str_max_len)
-		{
-			str_max_len = ft_strlen(t[total_words]) + 3;
-			total_words++;
-		}
-		else
-			total_words++;
-	}
-	word_per_line = line->col / str_max_len;
-	lines_to_print = total_words / word_per_line;
-	words_to_print = (line->nline - 1) * word_per_line;
+	if (!(compl = (t_completion *)malloc(sizeof(t_completion))))
+		return (NULL);
+	compl->total_words = 0;
+	compl->str_max_len = 0;
+	return (compl);
+}
+
+void			print_result_1(t_completion *compl, char **t, t_line *line)
+{
+	int i;
+
+	compl->word_per_line = line->col / compl->str_max_len;
+	compl->lines_to_print = compl->total_words / compl->word_per_line;
+	compl->words_to_print = (line->nline - 1) * compl->word_per_line;
 	i = 0;
-	while (total_words)
+	while (compl->total_words)
 	{
 		ft_putstr(t[i]);
-		space = str_max_len - ft_strlen(t[i]);
-		while (space)
+		compl->space = compl->str_max_len - ft_strlen(t[i]);
+		while (compl->space)
 		{
 			ft_putchar(' ');
-			space--;
+			compl->space--;
 		}
-		total_words--;
-		words_to_print--;
-		if (total_words && (words_to_print % word_per_line == 0))
+		compl->total_words--;
+		compl->words_to_print--;
+		if (compl->total_words
+		&& (compl->words_to_print % compl->word_per_line == 0))
 			ft_putchar('\n');
 		(i)++;
 	}
+}
+
+void			print_result(char **t, t_line *line)
+{
+	t_completion	*compl;
+
+	compl = get_completion_var();
+	while (t[compl->total_words])
+	{
+		if (ft_strlen(t[compl->total_words]) > compl->str_max_len)
+		{
+			compl->str_max_len = ft_strlen(t[compl->total_words]) + 3;
+			compl->total_words++;
+		}
+		else
+			compl->total_words++;
+	}
+	print_result_1(compl, t, line);
 }
 
 int				get_home_path(char **str)

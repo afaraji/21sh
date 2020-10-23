@@ -14,7 +14,6 @@
 # define PARSE_H
 # include "21sh.h"
 # include "readline.h"
-
 # define STDIN	 0
 # define STDOUT  1
 # define STDERR  2
@@ -159,12 +158,6 @@ typedef struct				s_io_list
 	struct s_io_list		*next;
 }							t_io_list;
 
-typedef struct					s_simple_lst
-{
-	char						*data;
-	struct s_simple_lst				*next;
-}                               t_simple_lst;
-
 /*	-----------------------------------------------------------	*/
 
 int 		main_parse(char *line);
@@ -172,7 +165,7 @@ int			ft_exit(int status);// aka exit();
 void		exit_status(int status); // for commands
 int			is_dollar(char *str);
 char		*str_dollar_sub(char *str);
-char		**env_to_tab(t_variable *var);
+char		**env_to_tab(t_variable *var, int all);
 char		*fetch_variables(char *key, int typ);
 char		**paths_from_env(void);
 int			run_cmd(char **cmd);
