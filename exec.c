@@ -388,8 +388,8 @@ char	**env_to_tab(t_variable *var, int all)
 int		do_suffix(t_cmd_suffix *suffix)
 {
 	t_cmd_suffix	*node;
-	t_simple_lst	*args;
-	t_simple_lst	*tmp;
+	t_l	*args;
+	t_l	*tmp;
 	int				ret = 0;
 
 	node = suffix;
@@ -422,9 +422,9 @@ int		do_simpleCmd(t_simple_cmd *cmd)
 	return (ret);
 }
 
-char	**list_to_tab(t_simple_lst *list)
+char	**list_to_tab(t_l *list)
 {
-	t_simple_lst	*node;
+	t_l	*node;
 	int		i;
 	char	**args;
 
@@ -451,15 +451,15 @@ char	**list_to_tab(t_simple_lst *list)
 	return (args);
 }
 
-t_simple_lst	*get_args(t_simple_cmd	*cmd)
+t_l	*get_args(t_simple_cmd	*cmd)
 {
-	t_simple_lst			*head;
-	t_simple_lst			*node;
+	t_l			*head;
+	t_l			*node;
 	t_cmd_suffix	*tmp;
 
 	if (!(cmd->name) && !(cmd->word))
 		return (NULL);
-	head = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+	head = (t_l *)malloc(sizeof(t_l));
 	if (cmd->name)
 		head->data = ft_strdup(cmd->name);
 	else
@@ -473,7 +473,7 @@ t_simple_lst	*get_args(t_simple_cmd	*cmd)
 		{
 			if (tmp->word)
 			{
-				node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+				node->next = (t_l *)malloc(sizeof(t_l));
 				node->next->data = ft_strdup(tmp->word);
 				node->next->next = NULL;
 				node = node->next;
@@ -499,10 +499,10 @@ int		is_builtin(char *str)
 	return (0);
 }
 
-t_simple_lst	*var_sub(t_simple_lst *head)
+t_l	*var_sub(t_l *head)
 {
-	t_simple_lst	*node;
-	t_simple_lst	*next_node;
+	t_l	*node;
+	t_l	*next_node;
 	char			*tmp;
 	char			**t;
 	int				i;
@@ -521,7 +521,7 @@ t_simple_lst	*var_sub(t_simple_lst *head)
 	node = head;
 	while (t[i])
 	{
-		node->next = (t_simple_lst *)malloc(sizeof(t_simple_lst));
+		node->next = (t_l *)malloc(sizeof(t_l));
 		node->next->data = ft_strdup(t[i]);
 		node->next->next = NULL;
 		node = node->next;
@@ -533,8 +533,8 @@ t_simple_lst	*var_sub(t_simple_lst *head)
 
 char	**get_arg_var_sub(t_simple_cmd *cmd)
 {
-	t_simple_lst	*list;
-	t_simple_lst	*node;
+	t_l	*list;
+	t_l	*node;
 
 	list = get_args(cmd);
 	node = list;
@@ -554,7 +554,7 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	char	**args;
 	char	**env;
 	char	*cmd_path;
-	t_simple_lst	*args_list;
+	t_l	*args_list;
 	t_variable	*vars;
 fprintf(ttt,"---------[simpleCmd]------------\n");
 	if (!cmd)

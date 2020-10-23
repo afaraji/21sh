@@ -69,7 +69,7 @@ int		unprintable_1(t_terminal *term, char **to_past)
 	return (0);
 }
 
-int	unprintable(t_terminal *term, t_hist **his_head, char **to_past, char *prompt)
+int	unprintable(t_terminal *term, t_hist **his_head, char **to_past)
 {
 	int tab_ret;
 
