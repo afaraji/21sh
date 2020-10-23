@@ -646,11 +646,12 @@ t_io_redirect	*io_redirect(t_list_token **cmd, t_list_token **end)
 	io_r->filename = io_here(cmd, end, &(io_r->redirect_type));
 	if (io_r->filename)
 	{
+		fprintf(ttyfd,"###2=>[%s]\n", io_r->filename);
 		return (io_r);
 	}
 	if (*cmd && (*cmd)->type == WORD)
 	{
-		if (is_all_digits((*cmd)->data))
+		if (is_all_digits((*cmd)->data) && (*cmd)->next->type != SPACE)
 		{
 			node = *cmd;
 			io_r->io_num = ft_atoi((*cmd)->data);
@@ -1219,6 +1220,10 @@ void	here_doc(t_list_token *head)
 	{
 		if (node->type == SMLSML)
 		{
+			while (node->next && node->next->type == SPACE)
+				node = node->next;
+			if (!node)
+				return;
 			ft_set_attr(1);
 			if (node->next->type == WORD)
 			{
@@ -1258,13 +1263,10 @@ int main_parse(char *line)
 	if (need_append(tokens))
 		return (100);
 	join_words(tokens);
-	fprintf(ttyfd,"----*+*A+*+---------");
 	token_print(tokens);
-	fprintf(ttyfd,"----*+*+*.+*+*+---------\n");
+	fprintf(ttyfd,"----+++++++------\n");
+	token_print(tokens);
 	here_doc(tokens);
-	fprintf(ttyfd,"----+++++++------");
-	token_print(tokens);
-	fprintf(ttyfd,"----+++++++-----\n");
 	cmdlist = token_split_sep_op(tokens);
 	if (!cmdlist || g_var.errno)
 		return (42);
@@ -1272,7 +1274,8 @@ int main_parse(char *line)
 	node = cmdlist;
 	while (node)
 	{
-		// print_andor(node);
+		fprintf(ttyfd,"----*+*A+*+---------\n");
+		print_andor(node);
 		ret = execute(node->and_or, node->bg);
 		// print_tokenlist(node->and_or->ast);
 		node = node->next;

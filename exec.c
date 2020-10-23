@@ -340,7 +340,7 @@ char	*get_cmdpath(char *str)
 	return(NULL);
 }
 
-int		env_tab_count(void)
+int		env_tab_count(int all)
 {
 	t_variable	*node;
 	int			count;
@@ -349,14 +349,14 @@ int		env_tab_count(void)
 	count = 0;
 	while (node)
 	{
-		if (node->env == 0)
+		if (node->env == 0 || all)
 			count++;
 		node = node->next;
 	}
 	return (count);
 }
 
-char	**env_to_tab(t_variable *var)
+char	**env_to_tab(t_variable *var, int all)
 {
 	t_variable	*node;
 	char		**argv;
@@ -364,13 +364,13 @@ char	**env_to_tab(t_variable *var)
 	int			i;
 	
 	node = var;
-	i = env_tab_count();	
+	i = env_tab_count(all);	
 	if (!(argv = (char **)malloc(sizeof(char *) * (i + 1))))
 		return (NULL);
 	i = 0;
 	while (node)
 	{
-		if (node->env == 0)
+		if (node->env == 0 || all)
 		{
 			tmp = ft_strjoin(node->key, "=");
 			argv[i] = ft_strjoin(tmp, node->value);
@@ -564,7 +564,7 @@ fprintf(ttt,"---------[simpleCmd]------------\n");
 	args = get_arg_var_sub(cmd);
 	if (!args)
 		exit (0);
-	env = env_to_tab(g_var.var);
+	env = env_to_tab(g_var.var, 0);
 	// if builtin exec builtin
 	if (is_builtin(args[0]))
 	{
@@ -657,8 +657,11 @@ t_variable	*var_list_dup(t_variable *src)
 void	reset_in_out(int in, int out, int err)
 {
 	dup2(in, STDIN);
+	close(in);
 	dup2(out, STDOUT);
+	close(out);
 	dup2(err, STDERR);
+	close(err);
 }
 
 int		exec_ast(t_pipe_seq *cmd, int bg)
@@ -668,23 +671,25 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 	int			child;
 	t_variable	*tmp;
 	int			status;
-	int in = dup(STDIN);
-	int out = dup(STDOUT);
-	int err = dup(STDERR);
+	int			in;
+	int			out;
+	int			err;
 
 	if (cmd->right == NULL && !bg)
 	{
 		av = get_arg_var_sub(cmd->left);
 		if (av && is_builtin(av[0]))
 		{
-			
+			in = dup(STDIN);
+			out = dup(STDOUT);
+			err = dup(STDERR);
 			tmp = var_list_dup(g_var.var);
 			if (do_prefix(cmd->left->prefix, tmp, 0) || do_suffix(cmd->left->suffix))
 				return (1);
 			// fprintf(ttyfd, "--------------------------\n");
 			// for (t_variable *ll=tmp; ll; ll=ll->next)
 			// 	fprintf(ttyfd, "[%d|%s:%s]\n", ll->env,ll->key,ll->value);
-			env = env_to_tab(tmp);
+			env = env_to_tab(tmp, 0);
 			// fprintf(ttt, "-+--+-+-+-+-+-+-+-+-+-+-+-\n");
 			// for (int i = 0; env[i];i++)
 			// 	fprintf(ttt, "%s\n", env[i]);
@@ -698,6 +703,9 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 		}
 		if (!(cmd->left->name) && !(cmd->left->word))
 		{
+			in = dup(STDIN);
+			out = dup(STDOUT);
+			err = dup(STDERR);
 			status = do_prefix(cmd->left->prefix, g_var.var, 1);
 			reset_in_out(in, out, err);
 			return (status);

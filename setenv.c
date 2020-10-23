@@ -87,7 +87,7 @@ int		ft_setenv(char **flag)
 	else
 	{
 		if (flag[1] == NULL)
-			print_env(env_to_tab(g_var.var));
+			print_env(env_to_tab(g_var.var, 1));
 		else
 		{
 			if (!(ft_isalpha(flag[1][0])) && flag[1][0] != '_')
