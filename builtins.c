@@ -68,10 +68,10 @@ int     cd_builtin(char **av, char **env)
             else if (av[1][1] == 'P')
                 return (ft_cd_1(av[2]));
             else if (av[1][1] == 'L')
-                return (ft_cd(av[2]));
+                return (ft_cd(av[2], env));
         }
         else
-            return (ft_cd(av[1]));
+            return (ft_cd(av[1], env));
     }
     return (1);
 }

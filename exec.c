@@ -411,7 +411,7 @@ int		do_simpleCmd(t_simple_cmd *cmd)
 
 	if (cmd->prefix)
 	{
-		ret = do_prefix(cmd->prefix, g_var.var, 1); // 1? to verifie
+		ret = do_prefix(cmd->prefix, g_var.var, 0);
 	}
 	if (ret != 0)
 		return (ret);

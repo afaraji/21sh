@@ -117,6 +117,7 @@ char	*ft_get_ld(char *cwd, char *flag)
 	int i;
 	int j;
 	char	*tmp;
+	char	*path;
 	
 	i = 0;
 	while (cwd[i])
@@ -131,47 +132,57 @@ char	*ft_get_ld(char *cwd, char *flag)
 	while (j >= 0 && flag[j] != '/')
 		j--;
 	tmp = ft_strsub (cwd,0, i + 1);
-	// free(cwd); // free if getcwd allocate mem
-	cwd = ft_strjoin(tmp, &flag[j + 1]);
+	path = ft_strjoin(tmp, &flag[j + 1]);
 	free(tmp);
-	return (cwd);
+	return (path);
 }
 
-int	ft_cd_3(char *flag)
+int	ft_cd_3(char *flag, char **env)
 {
 	char	*cwd;
+	char	*oldcwd;
 
 	if (ft_pdenied(flag))
 		return (1) ;
-	if (getcwd(NULL, 0))
-		change_pwd("OLDPWD", getcwd(NULL, 0));
+	oldcwd = get_var_from_tab(env, "PWD");
+	if (!oldcwd)
+		oldcwd = getcwd(NULL, 0);
 	if (chdir(flag))
 		return (1);
-	cwd = getcwd(NULL, 0);
-	cwd = ft_get_ld(cwd, flag);
+	if (!oldcwd)
+		oldcwd = ft_strdup("");;
+	change_pwd("OLDPWD", oldcwd);
+	if (flag[0] == '/')
+		cwd = ft_strdup(flag);
+	else
+		cwd = ft_get_ld(oldcwd, flag);
 	change_pwd("PWD", cwd);
 	ft_putstr(cwd);
 	ft_putchar('\n');
 	free(cwd);
+	free(oldcwd);
 	return (0);
 }
 
-int	    ft_cd(char *flag)
+int	    ft_cd(char *flag, char **env)
 {
+	int typ;
+
+	typ = verify_type(flag);
 	if (ft_strcmp(flag, ".") == 0)
 		return(0);
-	if (verify_type(flag) == 1)
+	if (typ == 1)
 		return (ft_cd_1(flag));
-	else if (verify_type(flag) == -1)
+	else if (typ == -1)
 		return (ft_cd_2(flag));
-	else if (verify_type(flag) == 2)
+	else if (typ == 2)
 	{
 		ft_putstr("cd: not a directory: ");
 		ft_putstr(flag);
 		ft_putchar('\n');
         return (1);
 	}
-	else if (verify_type(flag) == 3)
-		return (ft_cd_3(flag));
+	else if (typ == 3)
+		return (ft_cd_3(flag, env));
     return (0);
 }

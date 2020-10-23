@@ -1222,7 +1222,7 @@ void	here_doc(t_list_token *head)
 		{
 			while (node->next && node->next->type == SPACE)
 				node = node->next;
-			if (!node)
+			if (!node->next)
 				return;
 			ft_set_attr(1);
 			if (node->next->type == WORD)
