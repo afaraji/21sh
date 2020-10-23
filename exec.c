@@ -576,7 +576,8 @@ fprintf(ttt,"---------[simpleCmd]------------\n");
 		printf("shell: command not found: %s\n",args[0]);
 		return (127);
 	}
-	ft_set_attr(1);
+	// ft_set_attr(1);
+	fprintf(ttt,"---------[simpleCmd -> execve]------------\n");
 	execve(cmd_path, args, env);//error handling
 	printf("shell: permission denied: %s\n", args[0]);
 	return (126);
@@ -711,6 +712,8 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			return (status);
 		}
 	}
+	fprintf(ttt, "==+++++++++++++++++++++++++=>bg:[%d]\n", bg);
+	status = 0;
 	child = fork();
 	if (child == 0)
 	{
@@ -722,6 +725,11 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 		exit_status(status);
 		fprintf(ttt,"P_child:[%d] exit(%d) - (%d)\n", child, WEXITSTATUS(status) , g_var.exit_status);
 	}
+	else
+	{
+		fprintf(ttt, "==++++++not waiting++++++\n");
+	}
+	
 	return (status);
 }
 

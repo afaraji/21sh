@@ -188,8 +188,9 @@ int		main(int ac, char **av, char **env)
 	int		ret = 0;
 
 	ft_signal();
-	ttyfd = fopen("/dev/ttys004", "w");
-	ttt = fopen("/dev/ttys003", "w");
+	ttyfd = fopen("/dev/ttys001", "w");
+	ttt = fopen("/dev/ttys002", "w");
+
 	if (init_shell(env))
 		return (1);
 	line = readline(-1);
@@ -198,7 +199,9 @@ int		main(int ac, char **av, char **env)
 		if (ft_strncmp(line, "exit", 4) == 0)
 			ft_exit(ft_atoi(&line[4]));
 		printf("\n");
-		if ((ret = main_parse(line)))
+		if (ft_set_attr(1))
+			return (1);
+		if (ft_strcmp(line, "") && (ret = main_parse(line)))
 			exit_status(ret << 8);
 		if (line)
 			ft_strdel(&line);

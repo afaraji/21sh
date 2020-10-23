@@ -646,10 +646,9 @@ t_io_redirect	*io_redirect(t_list_token **cmd, t_list_token **end)
 	io_r->filename = io_here(cmd, end, &(io_r->redirect_type));
 	if (io_r->filename)
 	{
-		fprintf(ttyfd,"###2=>[%s]\n", io_r->filename);
 		return (io_r);
 	}
-	if (*cmd && (*cmd)->type == WORD)
+	if (*cmd && (*cmd)->type == WORD && (*cmd)->next)
 	{
 		if (is_all_digits((*cmd)->data) && (*cmd)->next->type != SPACE)
 		{
@@ -1249,7 +1248,7 @@ int main_parse(char *line)
 	t_cmdlist		*cmdlist = NULL;
 	t_cmdlist		*node;
 	int				ret;
-
+fprintf(ttt, "------ going to exec ------\n");
     tokens = __tokenize(line);
 	// fprintf(ttyfd,"----*+*1+*+---------\n");
 	// token_print(tokens);
@@ -1280,6 +1279,7 @@ int main_parse(char *line)
 		// print_tokenlist(node->and_or->ast);
 		node = node->next;
 	}
+	fprintf(ttt, "------ back from exec ------\n");
 	return (0);
 }
 

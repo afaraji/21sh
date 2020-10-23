@@ -104,13 +104,11 @@ int		ft_set_attr(int index)
 			if (tcsetattr(0, 0, &s_termios) == -1)
 				return (1);
 		}
-		else
-			return (1);
 	}
 	else
 	{
-		tcsetattr(0, 0, &old_termios);
-		return (1);
+		if (tcsetattr(0, 0, &old_termios) == -1)
+			return (1);
 	}
 	return (0);
 }

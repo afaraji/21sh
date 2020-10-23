@@ -85,6 +85,14 @@ typedef struct				s_variable
 	struct s_variable		*next;
 }							t_variable;
 
+typedef struct					s_proc
+{
+	pid_t						ppid;
+	int							index;
+	int							status;
+	struct s_proc				*next;
+}                               t_proc;
+
 typedef struct					s_shell_var
 {
 	int							errno;
@@ -93,6 +101,7 @@ typedef struct					s_shell_var
 	t_alias						*aliases;
 	t_variable					*var;
 	t_hist						*history;
+	t_proc						*proc;
 }								t_shell_var;
 
 t_shell_var						g_var;
