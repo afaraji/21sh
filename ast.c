@@ -1154,11 +1154,14 @@ int		need_append(t_list_token *tokens)
 	typ = node->type;
 	if (typ == PIP || typ == ESCAPE || ((typ == QUOTE || typ == DQUOTE) && node->is_ok == 0))
 	{
+		tmp = readline(typ);
+		if (!ft_strcmp(tmp, "\030") || !ft_strcmp(tmp, "\033"))
+			return (1);
 		if (typ == QUOTE || typ == DQUOTE)
 		{
 			toappend = ft_strjoin(node->data, "\n");
-			toappend = ft_strjoin(toappend, readline(typ));
-			ft_putchar('\n');//shouldn t be here , should be in readline
+			toappend = ft_strjoin(toappend, tmp);
+			// ft_putchar('\n');//shouldn t be here , should be in readline
 			toappend = ft_strjoin(tokentoa(typ), toappend);
 			ttt = __tokenize(toappend);
 			token_print(ttt);
@@ -1171,7 +1174,7 @@ int		need_append(t_list_token *tokens)
 		}
 		else
 		{
-			toappend = readline(typ);
+			toappend = tmp;
 			node->next = __tokenize(toappend);
 		}
 		free(toappend);
@@ -1190,23 +1193,35 @@ char		*here_doc_string(char *word)
 	char	*tmp;
 	char	*buff;
 	
-	ft_prompt("heredoc> ");
-	tmp = ft_strdup("");
-	while (get_next_line(0, &buff))
+	str = ft_strdup("");
+	while (1)
 	{
+		buff = readline(SMLSML);
+		fprintf(ttyfd,"heredoc==>[%s]\n", buff);
+		if (!ft_strcmp(buff, "\033"))
+		{
+			g_var.errno = 1;
+			return (ft_strdup(""));
+		}
+		if (!ft_strcmp(buff, "\030"))
+		{
+			free(buff);
+			return (str);
+		}
 		if (!ft_strcmp(buff, word))
 		{
-			// tmp[ft_strlen(tmp) - 1] = '\0';
-			return (tmp);
+			free(buff);
+			break;
 		}
-		str = ft_strjoin(tmp, buff);
-		free(tmp);
-		tmp = ft_strjoin(str, "\n");
+		tmp = ft_strjoin(str, buff);
 		free(str);
-		ft_prompt("heredoc> ");
+		str = ft_strjoin(tmp, "\n");
+		free(tmp);
+		free(buff);
 	}
-	// tmp[ft_strlen(tmp) - 1] = '\0';
-	return (tmp);
+	// tmp = ft_strjoin(str, "\n");
+	// free(str);
+	return (str);
 }
 
 void	here_doc(t_list_token *head)
@@ -1223,7 +1238,7 @@ void	here_doc(t_list_token *head)
 				node = node->next;
 			if (!node->next)
 				return;
-			ft_set_attr(1);
+			// ft_set_attr(1);
 			if (node->next->type == WORD)
 			{
 				str = str_dollar_sub(here_doc_string(node->next->data));
@@ -1236,7 +1251,7 @@ void	here_doc(t_list_token *head)
 			node->next->data = str;
 			node->next->type = QUOTE;
 			node->next->is_ok = 1;
-			ft_set_attr(0);
+			// ft_set_attr(0);
 		}
 		node = node->next;
 	}
@@ -1339,8 +1354,6 @@ fprintf(ttt, "------ going to exec ------\n");
 	if (need_append(tokens))
 		return (100);
 	join_words(tokens);
-	token_print(tokens);
-	token_print(tokens);
 	here_doc(tokens);
 	cmdlist = token_split_sep_op(tokens);
 	if (!cmdlist || g_var.errno)

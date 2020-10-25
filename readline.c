@@ -66,15 +66,19 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 		//******** neeed to be in a func *********
 		if (term->buff == CTRL_C)
 		{
-			ft_putstr_fd("^C", 1);
+			ft_putstr_fd("^C\n", 1);
+			if (mult_line != 0)
+				return(ft_strdup("\033"));
 			return (ft_strdup(""));
+			
 		}
 		if (term->buff == CTRL_D && !ft_strcmp(term->line->str, ""))
 		{
-			if (mult_line == 0 | mult_line == -1)
+			if (mult_line == 0)
 				ft_exit(-1);
+			return(ft_strdup("\030"));
 		}
-		if (term->buff == CTRL_L)
+		if (term->buff == CTRL_L && mult_line == 0)
 		{
 			ft_putstr_fd("\033[H\033[2J", 1);
 			ft_prompt("$> ");

@@ -51,6 +51,8 @@ void	add_cmd_to_his_list(char *cmd, t_hist **his_head, int mult_line)
 	int		i;
 	char	*tmp;
 
+	if (mult_line == SMLSML)
+		return;
 	if (!(*his_head))
 	{
 		i = 1;

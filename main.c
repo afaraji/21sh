@@ -222,15 +222,14 @@ int		main(int ac, char **av, char **env)
 	ft_signal();
 	ttyfd = fopen("/dev/ttys001", "w");
 	ttt = fopen("/dev/ttys002", "w");
-
 	if (init_shell(env))
 		return (1);
-	line = readline(-1);
+	line = readline(0);
 	while (1)
 	{
 		if (ft_strncmp(line, "exit", 4) == 0)
 			ft_exit(ft_atoi(&line[4]));
-		printf("\n");// shouldn't be here should be from readline(0)
+		// printf("\n");// shouldn't be here should be from readline(0)
 		if (ft_strcmp(line, "") && (ret = main_parse(line)))
 			exit_status(ret << 8);
 		if (line)
