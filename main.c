@@ -231,8 +231,6 @@ int		main(int ac, char **av, char **env)
 		if (ft_strncmp(line, "exit", 4) == 0)
 			ft_exit(ft_atoi(&line[4]));
 		printf("\n");
-		if (ft_set_attr(1))
-			return (1);
 		if (ft_strcmp(line, "") && (ret = main_parse(line)))
 			exit_status(ret << 8);
 		if (line)

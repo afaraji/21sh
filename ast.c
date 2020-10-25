@@ -1340,7 +1340,6 @@ fprintf(ttt, "------ going to exec ------\n");
 		return (100);
 	join_words(tokens);
 	token_print(tokens);
-	fprintf(ttt,"----+++++++------\n");
 	token_print(tokens);
 	here_doc(tokens);
 	cmdlist = token_split_sep_op(tokens);
