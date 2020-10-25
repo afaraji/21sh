@@ -1158,7 +1158,7 @@ int		need_append(t_list_token *tokens)
 		{
 			toappend = ft_strjoin(node->data, "\n");
 			toappend = ft_strjoin(toappend, readline(typ));
-			ft_putchar('\n');
+			ft_putchar('\n');//shouldn t be here , should be in readline
 			toappend = ft_strjoin(tokentoa(typ), toappend);
 			ttt = __tokenize(toappend);
 			token_print(ttt);

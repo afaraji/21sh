@@ -71,7 +71,8 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 		}
 		if (term->buff == CTRL_D && !ft_strcmp(term->line->str, ""))
 		{
-			ft_exit(-1);
+			if (mult_line == 0 | mult_line == -1)
+				ft_exit(-1);
 		}
 		if (term->buff == CTRL_L)
 		{
