@@ -36,12 +36,12 @@ void	history_up(t_terminal *term, t_hist **current)
 {
 	if (term->index == 0)
 	{
-		navigate_hist(&term, current);
+		hist_up_down(&term, current);
 	}
 	else if (term->index - 1 > 0)
 	{
 		(term->index)--;
-		navigate_hist(&term, current);
+		hist_up_down(&term, current);
 	}
 }
 
@@ -53,7 +53,7 @@ void	history_down(t_terminal *term, t_hist **current, char *old_line)
 	if (term->index + 1 <= last && term->index)
 	{
 		(term->index)++;
-		navigate_hist(&term, current);
+		hist_up_down(&term, current);
 	}
 	else if (term->index == last)
 	{
