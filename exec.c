@@ -687,9 +687,9 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			tmp = var_list_dup(g_var.var);
 			if (do_prefix(cmd->left->prefix, tmp, 0) || do_suffix(cmd->left->suffix))
 				return (1);
-			// fprintf(ttyfd, "--------------------------\n");
+			// fprintf(ttt, "--------------------------\n");
 			// for (t_variable *ll=tmp; ll; ll=ll->next)
-			// 	fprintf(ttyfd, "[%d|%s:%s]\n", ll->env,ll->key,ll->value);
+			// 	fprintf(ttt, "[%d|%s:%s]\n", ll->env,ll->key,ll->value);
 			env = env_to_tab(tmp, 0);
 			// fprintf(ttt, "-+--+-+-+-+-+-+-+-+-+-+-+-\n");
 			// for (int i = 0; env[i];i++)
@@ -728,6 +728,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 	else
 	{
 		fprintf(ttt, "==++++++not waiting++++++\n");
+		add_proc(child);
 	}
 	
 	return (status);

@@ -90,6 +90,8 @@ typedef struct					s_proc
 	pid_t						ppid;
 	int							index;
 	int							status;
+	int							done;
+	char						*str;
 	struct s_proc				*next;
 }                               t_proc;
 
@@ -203,6 +205,8 @@ char			*get_dollar_var(char *s, int start, int end);
 char			*str_dollar_sub(char *str);
 int				dollar_sub(t_list_token **cmd_token);
 int				lexer(t_list_token **cmd_token);
+void			add_proc(pid_t pid);
+void			bg_jobs(void);
 
 // ******************************************
 // https://github.com/xopxop/21sh/blob/master/src/executor/redirects_great.c

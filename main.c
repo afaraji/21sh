@@ -93,13 +93,13 @@ void	print_set_with_typ(void)
 	t_variable	*node;
 
 	node = g_var.var;
-	fprintf(ttyfd, "\n++++++++++++++++++++++++\n");
+	fprintf(ttt, "\n++++++++++++++++++++++++\n");
 	while (node)
 	{
-		fprintf(ttyfd, "%d:%s=%s\n", node->env, node->key, node->value);
+		fprintf(ttt, "%d:%s=%s\n", node->env, node->key, node->value);
 		node = node->next;
 	}
-	fprintf(ttyfd, "++++++++++++++++++++++++\n");
+	fprintf(ttt, "++++++++++++++++++++++++\n");
 		
 }
 
@@ -125,6 +125,17 @@ t_variable	*get_set(char **env)
 
 void	get_aliases(void);
 
+void	get_ppid_list(void)
+{
+	g_var.proc = (t_proc *)malloc(sizeof(t_proc));
+	g_var.proc->ppid = getpid();
+	g_var.proc->index = 0;
+	g_var.proc->done = 0;
+	g_var.proc->status = 0;
+	g_var.proc->str = NULL;
+	g_var.proc->next = NULL;
+}
+
 int		init_shell(char **env)
 {
 	if (ft_set_attr(0))
@@ -132,6 +143,7 @@ int		init_shell(char **env)
 	g_var = (t_shell_var){0, 0, 0, NULL, NULL};
 	g_var.var = get_set(env);
 	g_var.history = create_history();
+	get_ppid_list();
 	get_aliases();// should be removed from here (no aliases at program start)
 	// print_set_with_typ();
 	return (0);
@@ -153,9 +165,29 @@ void	signal_callback_handler(int signum)
 		ft_exit(signum);
 }
 
+void	child_handler(int signum)
+{
+	pid_t	pid;
+	int		status;
+	t_proc	*proc;
+
+	proc = g_var.proc;
+	pid = wait(&status);
+	while (proc)
+	{
+		if (proc->ppid == pid)
+		{
+			proc->status = status;
+			proc->done = 1;
+		}
+		proc = proc->next;
+	}
+}
+
 void	ft_signal(void)
 {
 	signal(SIGINT, &signal_callback_handler);
+	signal(SIGCHLD, &child_handler);// this new should I ?
 	// signal(SIGQUIT, &signal_callback_handler);
 	// signal(SIGILL, &signal_callback_handler);
 	// signal(SIGABRT, &signal_callback_handler);
@@ -208,7 +240,8 @@ int		main(int ac, char **av, char **env)
 		if (ft_set_attr(0))
 			return (1);
 		line = readline(0);
-		// fprintf(ttyfd, "------------->(%d) - (%s)\n", ret, line);
+		bg_jobs();
+		// fprintf(ttt, "------------->(%d) - (%s)\n", ret, line);
 	}
 	(void)ac;
 	(void)av;

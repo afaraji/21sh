@@ -58,121 +58,121 @@ int		is_op(char *str, int i)
 
 void	token_print(t_list_token *node)
 {
-	fprintf(ttyfd, "\n");
+	fprintf(ttt, "\n");
 	while (node)
 	{
 		if(node->type == WORD)
-			fprintf(ttyfd, "[%s:%d]", node->data, node->type);
+			fprintf(ttt, "[%s:%d]", node->data, node->type);
 		else if(node->type == QUOTE || node->type == DQUOTE)
-			fprintf(ttyfd, "{%d:%s}", node->is_ok, node->data);
+			fprintf(ttt, "{%d:%s}", node->is_ok, node->data);
 		else
 		{
-			//fprintf(ttyfd, "(%d)", node->type);
+			//fprintf(ttt, "(%d)", node->type);
 			switch (node->type)
 			{
 			case -1:
-				fprintf(ttyfd, "_");
+				fprintf(ttt, "_");
 				break;
 			case -4:
-				fprintf(ttyfd, ";");
+				fprintf(ttt, ";");
 				break;
 			case -5:
-				fprintf(ttyfd, "(&&)");
+				fprintf(ttt, "(&&)");
 				break;
 			case -6:
-				fprintf(ttyfd, "||");
+				fprintf(ttt, "||");
 				break;
 			case -10:
-				fprintf(ttyfd, "|");
+				fprintf(ttt, "|");
 				break;
 			case -11:
-				fprintf(ttyfd, "&");
+				fprintf(ttt, "&");
 				break;
 			case -12:
-				fprintf(ttyfd, "[%s:%d]", node->data, node->type);
+				fprintf(ttt, "[%s:%d]", node->data, node->type);
 				break;
 			case -20:
-				fprintf(ttyfd, ">");
+				fprintf(ttt, ">");
 				break;
 			case -21:
-				fprintf(ttyfd, ">>");
+				fprintf(ttt, ">>");
 				break;
 			case -22:
-				fprintf(ttyfd, "<");
+				fprintf(ttt, "<");
 				break;
 			case -30:
-				fprintf(ttyfd, "<<");
+				fprintf(ttt, "<<");
 				break;
 			
 			default:
-				fprintf(ttyfd, "[%d]", node->type);
+				fprintf(ttt, "[%d]", node->type);
 				break;
 			}
 		}
 		node = node->next;
 	}
-	fprintf(ttyfd, "\n");
+	fprintf(ttt, "\n");
 }
 
 void	token_print_inverse(t_list_token *node)
 {
-	fprintf(ttyfd, "\n");
+	fprintf(ttt, "\n");
 	while (node->next)
 		node = node->next;
 	
 	while (node)
 	{
 		if(node->type == WORD)
-			fprintf(ttyfd, "[%s]", node->data);
+			fprintf(ttt, "[%s]", node->data);
 		else if(node->type == QUOTE || node->type == DQUOTE)
-			fprintf(ttyfd, "{%d:%s}", node->is_ok, node->data);
+			fprintf(ttt, "{%d:%s}", node->is_ok, node->data);
 		else
 		{
-			//fprintf(ttyfd, "(%d)", node->type);
+			//fprintf(ttt, "(%d)", node->type);
 			switch (node->type)
 			{
 			case -1:
-				fprintf(ttyfd, "_");
+				fprintf(ttt, "_");
 				break;
 			case -4:
-				fprintf(ttyfd, ";");
+				fprintf(ttt, ";");
 				break;
 			case -5:
-				fprintf(ttyfd, "(&&)");
+				fprintf(ttt, "(&&)");
 				break;
 			case -6:
-				fprintf(ttyfd, "||");
+				fprintf(ttt, "||");
 				break;
 			case -10:
-				fprintf(ttyfd, "|");
+				fprintf(ttt, "|");
 				break;
 			case -11:
-				fprintf(ttyfd, "&");
+				fprintf(ttt, "&");
 				break;
 			case -12:
-				fprintf(ttyfd, "[%s]", node->data);
+				fprintf(ttt, "[%s]", node->data);
 				break;
 			case -20:
-				fprintf(ttyfd, ">");
+				fprintf(ttt, ">");
 				break;
 			case -21:
-				fprintf(ttyfd, ">>");
+				fprintf(ttt, ">>");
 				break;
 			case -22:
-				fprintf(ttyfd, "<");
+				fprintf(ttt, "<");
 				break;
 			case -30:
-				fprintf(ttyfd, "<<");
+				fprintf(ttt, "<<");
 				break;
 			
 			default:
-				fprintf(ttyfd, "[%d]", node->type);
+				fprintf(ttt, "[%d]", node->type);
 				break;
 			}
 		}
 		node = node->prec;
 	}
-	fprintf(ttyfd, "\n");
+	fprintf(ttt, "\n");
 }
 
 char	*tokentoa(int token)
@@ -429,25 +429,25 @@ void	print_io_redirect(t_io_redirect *head)
 {
 	t_io_redirect *node;
 
-	fprintf(ttyfd,"IO_redirect: ");
+	fprintf(ttt,"IO_redirect: ");
 	if (!head)
 		return;
 	node = head;
-	fprintf(ttyfd,"[type:%s|%d|%s]\n", tokentoa(node->redirect_type), node->io_num, node->filename);
+	fprintf(ttt,"[type:%s|%d|%s]\n", tokentoa(node->redirect_type), node->io_num, node->filename);
 }
 
 void	print_cmdprefix(t_cmd_prefix *head)
 {
 	t_cmd_prefix *node;
 
-	fprintf(ttyfd,"------- prefix: ------\n");
+	fprintf(ttt,"------- prefix: ------\n");
 	if (!head)
 		return;
 	node = head;
 	if (node->io_redirect)
 		print_io_redirect(head->io_redirect);
 	if (node->ass_word)
-		fprintf(ttyfd, "assWord [env = %d, %s=%s]\n", node->ass_word->env, node->ass_word->key, node->ass_word->value);
+		fprintf(ttt, "assWord [env = %d, %s=%s]\n", node->ass_word->env, node->ass_word->key, node->ass_word->value);
 	if (node->prefix)
 		print_cmdprefix(node->prefix);
 }
@@ -456,14 +456,14 @@ void	print_cmdsuffix(t_cmd_suffix *head)
 {
 	if (!head)
 		return;
-	fprintf(ttyfd,"------- suffix: ------\n");
+	fprintf(ttt,"------- suffix: ------\n");
 	if (head->io_redirect)
 	{
 		print_io_redirect(head->io_redirect);
 	}
 	if (head->word)
 	{
-		fprintf(ttyfd, "WORD:[%s]\n", head->word);
+		fprintf(ttt, "WORD:[%s]\n", head->word);
 	}
 	if (head->suffix)
 		print_cmdsuffix(head->suffix);
@@ -477,17 +477,17 @@ void	print_simple_cmd(t_simple_cmd *cmd)
 	if (cmd->prefix)
 	{
 		print_cmdprefix(cmd->prefix);
-		fprintf(ttyfd,"cmdWord ==>[%s]\n", cmd->word);
+		fprintf(ttt,"cmdWord ==>[%s]\n", cmd->word);
 		print_cmdsuffix(cmd->suffix);
 	}
 	else if (cmd->name)
 	{
-		fprintf(ttyfd,"cmdName ==>[%s]\n", cmd->name);
+		fprintf(ttt,"cmdName ==>[%s]\n", cmd->name);
 		print_cmdsuffix(cmd->suffix);
 	}
 	else
 	{
-		fprintf(ttyfd,"naaaaaaaaaaaaaallllll\n");
+		fprintf(ttt,"naaaaaaaaaaaaaallllll\n");
 	}
 	
 }
@@ -925,7 +925,7 @@ void	print_andor(t_cmdlist *list)
 	node = list->and_or;
 	while (node)
 	{
-		fprintf(ttyfd,"+-+-+-+-+-+-+-+-+-+-+---+-+\ndependent ===>[%d]\n", node->dependent);
+		fprintf(ttt,"+-+-+-+-+-+-+-+-+-+-+---+-+\ndependent ===>[%d]\n", node->dependent);
 		print_tokenlist(node->ast);
 		node = node->next;
 	}
@@ -962,13 +962,13 @@ void	join_words(t_list_token *token)
 	node = token;
 	while (node->next)
 	{
-		// fprintf(ttyfd,"====[%d:%s]===\n", node->type, node->data);
+		// fprintf(ttt,"====[%d:%s]===\n", node->type, node->data);
 		if (node->type == WORD || node->type == QUOTE || node->type == DQUOTE)
 		{
 			tmp = node->next;
 			if (tmp->type == WORD || tmp->type == QUOTE || tmp->type == DQUOTE)
 			{
-				// fprintf(ttyfd,"joining [%s]-[%s]\n", node->data, tmp->data);
+				// fprintf(ttt,"joining [%s]-[%s]\n", node->data, tmp->data);
 				join_nodes(node, tmp);
 				node = token;
 				// continue;
@@ -1242,17 +1242,94 @@ void	here_doc(t_list_token *head)
 	}
 }
 
-int main_parse(char *line)
+char			*last_in_hist(void)
+{
+	t_hist	*node;
+
+	node = g_var.history;
+	while (node->next)
+		node = node->next;
+	if (node)
+	{
+		return (ft_strdup(node->hist_str));
+	}
+	return (NULL);
+	
+}
+
+void			add_proc(pid_t pid)
+{
+	t_proc	*node;
+
+	node = g_var.proc;
+	while (node->next)
+		node = node->next;
+	node->next = (t_proc *)malloc(sizeof(t_proc));
+	node->next->ppid = pid;
+	node->next->index = node->index + 1;
+	node->next->done = 0;
+	node->next->status = -1;
+	node->next->str = last_in_hist();
+	node->next->next = NULL;
+	ft_putstr("[");
+	ft_putnbr(node->next->index);
+	ft_putstr("] ");
+	ft_putnbr(pid);
+	ft_putstr("\n");
+}
+
+void	delet_proc(pid_t pid)
+{
+	t_proc	*node;
+	t_proc	*old_node;
+
+	node = g_var.proc;
+	old_node = NULL;
+	while (node)
+	{
+		if (pid == node->ppid)
+		{
+			free(node->str);
+			old_node->next = node->next;
+			free(node);
+			break;
+		}
+		old_node = node;
+		node = node->next;
+	}
+}
+
+void	bg_jobs(void)
+{
+	t_proc	*proc;
+
+	proc = g_var.proc;
+	while (proc)
+	{
+		if (proc->done == 1)
+		{
+			ft_putstr("\n[");
+			ft_putnbr(proc->index);
+			ft_putstr("]\tDone\t\t\t");
+			ft_putstr(proc->str);
+			delet_proc(proc->ppid);
+		}
+		proc = proc->next;
+	}
+}
+
+int 	main_parse(char *line)
 {
 	t_list_token    *tokens;
 	t_cmdlist		*cmdlist = NULL;
 	t_cmdlist		*node;
 	int				ret;
+
 fprintf(ttt, "------ going to exec ------\n");
     tokens = __tokenize(line);
-	// fprintf(ttyfd,"----*+*1+*+---------\n");
+	// fprintf(ttt,"----*+*1+*+---------\n");
 	// token_print(tokens);
-	// fprintf(ttyfd,"----*+*+*1+*+*+---------\n");
+	// fprintf(ttt,"----*+*+*1+*+*+---------\n");
 	
 	g_var.errno = 0;
 	if (lexer(&tokens) || verify_tokens(tokens))
@@ -1263,7 +1340,7 @@ fprintf(ttt, "------ going to exec ------\n");
 		return (100);
 	join_words(tokens);
 	token_print(tokens);
-	fprintf(ttyfd,"----+++++++------\n");
+	fprintf(ttt,"----+++++++------\n");
 	token_print(tokens);
 	here_doc(tokens);
 	cmdlist = token_split_sep_op(tokens);
@@ -1273,7 +1350,7 @@ fprintf(ttt, "------ going to exec ------\n");
 	node = cmdlist;
 	while (node)
 	{
-		fprintf(ttyfd,"----*+*A+*+---------\n");
+		fprintf(ttt,"----*+*A+*+---------\n");
 		print_andor(node);
 		ret = execute(node->and_or, node->bg);
 		// print_tokenlist(node->and_or->ast);
