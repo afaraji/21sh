@@ -129,13 +129,13 @@ int		printable(t_terminal *term, t_hist **his_head, int mult_line)
 			get_cmd(term, his_head, mult_line);
 			if (term->buff == ENTER)
 			{
-				ft_putchar('\n');
 				curs = term->line->curs;
 				while (curs <= (int)ft_strlen(term->line->str))
 				{
 					go_right(term->line);
 					curs++;
 				}
+				ft_putchar('\n');
 				return (1);
 			}
 		}
