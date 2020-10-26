@@ -344,14 +344,25 @@ int		is_dollar(char *s)
 int		end_dollar_word(char *s, int start)
 {
 	int i;
+	int bracket;
 
-	i = start + 1;
+	bracket = 0;
+	if (s[start + 1] == '{')
+		bracket = 1;
+	i = start + bracket + 1;
 	if (s[i] == '!' || s[i] == '#' || s[i] == '$' || s[i] == '?')
 		return(i + 1);
 	if (s[i] != '_' && !ft_isalpha(s[i]))
 		return (i);
 	while (s[i] && (s[i] == '_' || ft_isalnum(s[i])))
 		i++;
+	if (bracket)
+	{
+		if (s[i] == '}')
+			return (i + 1);
+		else
+			return (-1);
+	}
 	return (i);
 }
 
@@ -359,10 +370,19 @@ char	*get_dollar_var(char *s, int start, int end)
 {
 	char	*tmp;
 	char	*var;
+	int		index;
+	int		len;
 
 	if (start == end - 1)
 		return (ft_strdup("$"));
-	tmp = ft_strsub(s, start + 1, end - start - 1);
+	index = start + 1;
+	len = end - start - 1;
+	if (s[index] == '{' && s[index + len - 1] == '}')
+	{
+		index++;
+		len -= 2;
+	}
+	tmp = ft_strsub(s, index, len);
 	var = fetch_variables(tmp, -1);
 	if (!var)
 		return(ft_strdup(""));
@@ -378,9 +398,9 @@ char		*str_dollar_sub(char *str)
 	char	*var;
 
 	start = is_dollar(str);
-	if (start < 0)
-		return (str);
 	end = end_dollar_word(str, start);
+	if (start < 0 || end < 0)
+		return (str);
 	prefix = ft_strsub(str, 0, start);
 	var = get_dollar_var(str, start, end);
 	suffix = ft_strjoin(var, &(str[end]));
