@@ -215,7 +215,10 @@ int		do_redirect(t_io_redirect *io)
 		else
 		{
 			if (close(fd_io))
+			{
 				ft_putstr_fd("error closing fd [bad fd]\n", STDERR);
+				return (-1);
+			}
 		}
 	}
 	return (0);

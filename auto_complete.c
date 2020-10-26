@@ -95,25 +95,14 @@ char			*get_to_cmp(char *str)
 	return (file_to_find);
 }
 
-t_l	*names_list(char *str, t_l *head)
+t_l				*names_list(char *str)
 {
 	t_l	*node;
 
-	if (!head)
-	{
-		head = (t_l *)malloc(sizeof(t_l));
-		head->data = ft_strdup(str);
-		head->next = NULL;
-		return (head);
-	}
-	node = head;
-	while (node->next)
-		node = node->next;
-	node->next = (t_l *)malloc(sizeof(t_l));
-	node = node->next;
+	node = (t_l *)malloc(sizeof(t_l));
 	node->data = ft_strdup(str);
 	node->next = NULL;
-	return (head);
+	return (node);
 }
 
 t_l	*get_var_list(char *str, t_l *head)
@@ -240,10 +229,12 @@ char			**var_search(char *str)
 	return (var_tab);
 }
 
-int				matched_f_d(DIR *d, char *str, t_l **f_d_list)
+t_l				*matched_f_d(DIR *d, char *str)
 {
 	struct dirent	*dir;
 	char			*tmp;
+	t_l				*f_d_list = NULL;
+	t_l				*node;
 
 	while ((dir = readdir(d)))
 	{
@@ -258,51 +249,63 @@ int				matched_f_d(DIR *d, char *str, t_l **f_d_list)
 			free(tmp);
 			tmp = ft_strdup(dir->d_name);
 		}
-		if (!ft_strcmp("", str)
-		|| !ft_strncmp(dir->d_name, str, ft_strlen(str)))
-			*f_d_list = names_list(tmp, *f_d_list);
+		if (!ft_strcmp("", str) || !ft_strncmp(dir->d_name, str, ft_strlen(str)))
+		{
+			if (!f_d_list)
+			{
+				f_d_list = names_list(tmp);
+				node = f_d_list;
+			}
+			else
+			{
+				node->next = names_list(tmp);
+			}
+		}
 	}
-	return (0);
+	return (f_d_list);
 }
 
-t_l	*matched_files_dirs(char *str, t_l *head)
+t_l	*matched_files_dirs(char *str)
 {
-	DIR				*d;
+	DIR	*d;
 	t_l	*files_dirs_list;
 
 	files_dirs_list = NULL;
 	d = opendir(".");
 	if (d != NULL)
 	{
-		matched_f_d(d, str, &files_dirs_list);
+		files_dirs_list = matched_f_d(d, str);
 	}
 	closedir(d);
 	return (files_dirs_list);
 }
 
-int				f_d_search(char *path, char *d_name, char *cmp, char *f_d, t_l **list)
+t_l				*f_d_search(char *path, char *d_name, char *cmp, char *f_d)
 {
+	t_l		*list;
+
+	list = NULL;
 	if (path[0] == '.')
 	{
 		if (ft_strcmp(d_name, ".") && ft_strcmp(d_name, ".."))
 		{
-			if ((!ft_strcmp("", cmp)
-			|| !ft_strncmp(d_name, cmp, ft_strlen(cmp))))
-				*list = names_list(f_d, *list);
+			if ((!ft_strcmp("", cmp) ||
+			!ft_strncmp(d_name, cmp, ft_strlen(cmp))))
+			{
+				list = names_list(f_d);
+			}
 			free(f_d);
-			return (1);
+			return (list);
 		}
 	}
 	else
 	{
-		if ((!ft_strcmp("", cmp)
-		|| !ft_strncmp(d_name, cmp, ft_strlen(cmp)))
-		&& d_name[0] != '.')
-			*list = names_list(f_d, *list);
+		if ((!ft_strcmp("", cmp) || !ft_strncmp(d_name, cmp, ft_strlen(cmp))) && d_name[0] != '.')
+			list = names_list(f_d);
 		free(f_d);
-		return (1);
+		return (list);
 	}
-	return (0);
+	return (NULL);
 }
 
 char			*files_dirs_search_3(char *d_name, char *path)
@@ -338,7 +341,7 @@ char			**files_dirs_search_2(char *path)
 	char			**dir_tab;
 	t_l	*files_dirs_list;
 
-	files_dirs_list = matched_files_dirs(path, files_dirs_list);
+	files_dirs_list = matched_files_dirs(path);
 	if (files_dirs_list)
 	{
 		dir_tab = tab_from_list(sort_list(files_dirs_list));
@@ -357,14 +360,27 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 	struct dirent	*dir;
 	char			*file_dir;
 	char			**dir_tab;
-	t_l	*files_dirs_list;
+	t_l				*files_dirs_list;
+	t_l				*node;
 
 	files_dirs_list = NULL;
 	file_dir = NULL;
 	while ((dir = readdir(d)))
 	{
 		file_dir = files_dirs_search_3(dir->d_name, path);
-		f_d_search(path, dir->d_name, to_cmp, file_dir, &files_dirs_list);
+		if (!files_dirs_list)
+		{
+			files_dirs_list = f_d_search(path, dir->d_name, to_cmp, file_dir);
+			node = files_dirs_list;
+		}
+		else
+		{
+			node->next = f_d_search(path, dir->d_name, to_cmp, file_dir);
+			if (node->next)
+			{
+				node = node->next;
+			}
+		}
 	}
 	closedir(d);
 	if (files_dirs_list)
@@ -642,7 +658,7 @@ void			print_result_1(t_completion *compl, char **t, t_line *line)
 
 	compl->word_per_line = line->col / compl->str_max_len;
 	compl->lines_to_print = compl->total_words / compl->word_per_line;
-	compl->words_to_print = (line->nline - 1) * compl->word_per_line;
+	compl->words_to_print = (line->row - 1) * compl->word_per_line;
 	i = 0;
 	while (compl->total_words)
 	{
