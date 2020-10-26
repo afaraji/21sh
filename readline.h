@@ -41,6 +41,7 @@
 typedef	struct		s_line
 {
 	char			*str;
+	int 			init_pos;
 	int				curs;
 	int				col;
 	int				row;
