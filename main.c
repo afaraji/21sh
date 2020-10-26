@@ -13,6 +13,7 @@
 #include "readline.h"
 #include "parse.h"
 #include "builtins.h"
+#include "ast.h"
 
 // void	print_list(t_hist *his_head)
 // {
@@ -43,14 +44,31 @@ t_hist	*create_history(void)
 	return (his_list);
 }
 
-int		ft_exit(int status)
+int		ft_exit(char **av)
 {
+	int		status;
+
+
 	ft_set_attr(1);
 	save_list();
-	if (!status)
-		ft_putstr("\nexit\n");
-	if (status == -1)
-		ft_putstr("exit\n");
+	if (av[1])
+	{
+		if (ft_strlen(av[1]) < 10 && is_all_digits(av[1]))
+		{
+			status = ft_atoi(av[1]);
+			if (av[2])
+				ft_putstr_fd("exit\nshell: exit: too many arguments.\n", 2);
+		}
+		else
+		{
+			status = 255;
+			ft_putstr_fd("exit\nshell: exit:", 2);
+			ft_putstr_fd(av[1], 2);
+			ft_putstr_fd(": numeric argument required.\n", 2);
+		}
+	}
+	else
+		status = 0;
 	exit(status);
 }
 
@@ -162,7 +180,7 @@ void	signal_callback_handler(int signum)
 		// free(line);
 	}
 	else
-		ft_exit(signum);
+		ft_exit(NULL);//??? char **av
 }
 
 void	child_handler(int signum)
@@ -179,15 +197,17 @@ void	child_handler(int signum)
 		{
 			proc->status = status;
 			proc->done = 1;
+			return;
 		}
 		proc = proc->next;
 	}
+	exit_status(status);
 }
 
 void	ft_signal(void)
 {
-	signal(SIGINT, &signal_callback_handler);
-	signal(SIGCHLD, &child_handler);// this new should I ?
+	// signal(SIGINT, &signal_callback_handler);
+	// signal(SIGCHLD, &child_handler);// this new should I ?
 	// signal(SIGQUIT, &signal_callback_handler);
 	// signal(SIGILL, &signal_callback_handler);
 	// signal(SIGABRT, &signal_callback_handler);
@@ -220,16 +240,13 @@ int		main(int ac, char **av, char **env)
 	int		ret = 0;
 
 	ft_signal();
-	ttyfd = fopen("/dev/ttys001", "w");
-	ttt = fopen("/dev/ttys002", "w");
+	ttyfd = fopen("/dev/ttys003", "w");
+	ttt = fopen("/dev/ttys004", "w");
 	if (init_shell(env))
 		return (1);
 	line = readline(0);
 	while (1)
 	{
-		if (ft_strncmp(line, "exit", 4) == 0)
-			ft_exit(ft_atoi(&line[4]));
-		// printf("\n");// shouldn't be here should be from readline(0)
 		if (ft_strcmp(line, "") && (ret = main_parse(line)))
 			exit_status(ret << 8);
 		if (line)

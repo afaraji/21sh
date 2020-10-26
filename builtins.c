@@ -78,7 +78,9 @@ int     cd_builtin(char **av, char **env)
 
 int     builtins(char *cmd, char **av, char **env)
 {// need verification !! n oublie pas return value
-    if (ft_strcmp(cmd, "echo") == 0)
+    if (ft_strcmp(cmd, "exit") == 0)
+		return (ft_exit(av));
+    else if (ft_strcmp(cmd, "echo") == 0)
         return (ft_echo(av));
     else if (ft_strcmp(cmd, "cd") == 0)
         return (cd_builtin(av, env));

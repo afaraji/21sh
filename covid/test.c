@@ -85,9 +85,6 @@
 
 int main(int ac, char **av)
 {
-	char *tmp;
-	int len;
-	free()
-	tmp = (char *)malloc(sizeof(char) * len);
+	printf("==>[%d]\n", ft_atoi(""));
 
 }

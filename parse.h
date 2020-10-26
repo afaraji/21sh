@@ -172,7 +172,7 @@ typedef struct				s_io_list
 /*	-----------------------------------------------------------	*/
 
 int 			main_parse(char *line);
-int				ft_exit(int status);// aka exit();
+int				ft_exit(char **av);// aka exit();
 void			exit_status(int status); // for commands
 int				is_dollar(char *str);
 char			*str_dollar_sub(char *str);

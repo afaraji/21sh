@@ -489,7 +489,7 @@ t_l	*get_args(t_simple_cmd	*cmd)
 
 int		is_builtin(char *str)
 {
-	char	*b_in_list[] = {"echo", "export", "cd", "setenv", "unsetenv", "env", NULL};
+	char	*b_in_list[] = {"echo", "export", "cd", "setenv", "unsetenv", "env", "exit", NULL};
 	int		i;
 
 	i = 0;
