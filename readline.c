@@ -20,12 +20,34 @@ void	ft_prompt(char *prompt)
 	ft_putstr("\x1b[39m");
 }
 
+int get_current_row(void)
+{
+	char buf[30];
+	int row = 0;
+	int ch = 0;
+	int i = 0;
+	write(1, "\033[6n", 4);
+	while(ch !='R')
+	{
+		read(0, &ch, 1);
+		buf[i] = ch;
+		fprintf(ttyfd, "|%c|", buf[i]);
+		i++;
+	}
+	if((buf[3]) >= '0' && (buf[3] <= '9'))
+		row = ((buf[2] - '0') * 10 ) + (buf[3] - '0');
+	else
+		row =  buf[2] - '0';
+	return(row);
+}
+
 t_line	*init_line(char *prompt)
 {
 	t_line	*line;
 
 	if (!(line = (t_line *)malloc(sizeof(t_line))))
 		return (NULL);
+	line->init_pos = get_current_row();
 	line->curs = 0;
 	line->str = ft_strdup("");
 	line->pmt_s = ft_strlen(prompt) + 1;

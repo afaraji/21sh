@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "readline.h"
+#include "parse.h"
 
 void	freeleak_down_2(t_terminal *term, char *old_line)
 {
@@ -35,7 +36,19 @@ void	freeleak_up_down(t_terminal *term, t_hist *to_print)
 void	move_curs_right(t_line *line)
 {
 	while (line->str[line->curs])
-		go_right(line);
+	{
+		//sleep(1);
+		//line->curs++;
+		//if (/*???*/1)
+		fprintf(ttyfd, "line->curs : |%d|\n", line->curs);
+		if (line->init_pos < line->row)
+			go_right(line);
+		else
+		{
+			line->curs++;
+		}
+		
+	}
 }
 
 void	history_up(t_terminal *term, t_hist **current)
@@ -48,7 +61,10 @@ void	history_up(t_terminal *term, t_hist **current)
 		del_line(term->line);
 		term->index = to_print->index;
 		freeleak_up_down(term, to_print);
-		display_line(term->line);
+		if (term->line->init_pos == term->line->row)
+			display_line_from_begin(term->line);
+		else
+			display_line(term->line);
 		move_curs_right(term->line);
 		term->line->curs = ft_strlen(to_print->hist_str);
 	}
