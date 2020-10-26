@@ -37,17 +37,10 @@ void	move_curs_right(t_line *line)
 {
 	while (line->str[line->curs])
 	{
-		//sleep(1);
-		//line->curs++;
-		//if (/*???*/1)
-		fprintf(ttyfd, "line->curs : |%d|\n", line->curs);
 		if (line->init_pos < line->row)
 			go_right(line);
 		else
-		{
 			line->curs++;
-		}
-		
 	}
 }
 

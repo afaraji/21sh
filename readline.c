@@ -31,7 +31,6 @@ int get_current_row(void)
 	{
 		read(0, &ch, 1);
 		buf[i] = ch;
-		fprintf(ttyfd, "|%c|", buf[i]);
 		i++;
 	}
 	if((buf[3]) >= '0' && (buf[3] <= '9'))
