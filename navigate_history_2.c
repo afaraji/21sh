@@ -67,7 +67,10 @@ void	history_up(t_terminal *term, t_hist **current)
 		to_print = get_node_index(current, term->index);
 		del_line(term->line);
 		freeleak_up_down(term, to_print);
-		display_line(term->line);
+		if (term->line->init_pos == term->line->row)
+			display_line_from_begin(term->line);
+		else
+			display_line(term->line);
 		move_curs_right(term->line);
 		term->line->curs = ft_strlen(to_print->hist_str);
 	}
@@ -86,7 +89,10 @@ void	history_down(t_terminal *term, t_hist **current, char *old_line)
 		to_print = get_node_index(current, term->index);
 		del_line(term->line);
 		freeleak_up_down(term, to_print);
-		display_line(term->line);
+		if (term->line->init_pos == term->line->row)
+			display_line_from_begin(term->line);
+		else
+			display_line(term->line);
 		move_curs_right(term->line);
 		term->line->curs = ft_strlen(to_print->hist_str);
 	}
@@ -94,7 +100,10 @@ void	history_down(t_terminal *term, t_hist **current, char *old_line)
 	{
 		del_line(term->line);
 		freeleak_down_2(term, old_line);
-		display_line(term->line);
+		if (term->line->init_pos == term->line->row)
+			display_line_from_begin(term->line);
+		else
+			display_line(term->line);
 		move_curs_right(term->line);
 		term->line->curs = ft_strlen(old_line);
 		(term->index)++;
