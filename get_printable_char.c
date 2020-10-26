@@ -122,6 +122,7 @@ int		printable(t_terminal *term, t_hist **his_head, int mult_line)
 
 	if ((ft_isprint(term->buff) || term->buff == ENTER))
 	{
+		term->tab_on = 0;
 		if (term->select->on == 1)
 			printable_1(term);
 		else

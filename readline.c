@@ -62,6 +62,7 @@ t_terminal	*initiate_unprint_var(void)
 	if (!(term = (t_terminal *)malloc(sizeof(t_terminal))))
 		return (NULL);
 	term->index = 0;
+	term->tab_on = 0;
 	if (!(term->select = (t_select *)malloc(sizeof(t_select))))
 		return (NULL);
 	term->select->on = 0;
@@ -95,9 +96,10 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 		}
 		if (term->buff == CTRL_D && !ft_strcmp(term->line->str, ""))
 		{
-			if (mult_line == 0)
-				ft_exit(-1);
-			return(ft_strdup("\030"));
+			ft_putchar('\n'); // it may invoc other bugs
+            if (mult_line == 0)
+                return (ft_strdup("exit"));
+            return(ft_strdup("\030"));
 		}
 		if (term->buff == CTRL_L && mult_line == 0)
 		{

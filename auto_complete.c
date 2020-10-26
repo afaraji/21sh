@@ -758,7 +758,10 @@ int				auto_completion(t_line *line)
 	if (j == 0)
 	{
 		line->str = completed_line(line->str, result[0]);
-		display_line(line);
+		if (line->init_pos == line->row)
+			display_line_from_begin(line);
+		else
+			display_line(line);
 		move_curs_right(line);
 		return (1);
 	}

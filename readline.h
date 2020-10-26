@@ -67,6 +67,7 @@ typedef struct		s_terminal
 {
 	t_line			*line;
 	t_select		*select;
+	int				tab_on;
 	int				index;
 	int				buff;
 }					t_terminal;
@@ -204,7 +205,6 @@ t_completion		*get_completion_var(void);
 void				print_result(char **t, t_line *line);
 void				print_result_1(t_completion *complete, char **t, t_line *line);
 int					get_home_path(char **str);
-int					auto_completion(t_line *line);
 char				**auto_completion_1(t_line *line);
 
 #endif
