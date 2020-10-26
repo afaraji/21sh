@@ -377,6 +377,7 @@ char	*get_dollar_var(char *s, int start, int end)
 		return (ft_strdup("$"));
 	index = start + 1;
 	len = end - start - 1;
+	fprintf(ttyfd, "======[%c][%c]\n", s[index], s[index + len - 1]);
 	if (s[index] == '{' && s[index + len - 1] == '}')
 	{
 		index++;
