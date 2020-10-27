@@ -233,14 +233,38 @@ void	ft_signal(void)
 	// signal(SIGUSR2, &signal_callback_handler);
 }
 
+int		interactive_mode(char **env)
+{
+	char	buff[BUFF_SIZE + 1];
+	char	*line;
+	char	*tmp;
+	int		ret;
+	printf("-----3-----\n");
+	ret = 0;
+	tmp = ft_strdup("");
+	while ((ret = read(STDIN, buff, BUFF_SIZE)) > 0)
+	{
+		buff[ret] = '\0';
+		printf("-----33---[%s]-[%d]-\n", buff, ret);
+		line = ft_strjoin(tmp, buff);
+		free(tmp);
+		tmp = line;
+	}
+	printf("-----4---[%s]--\n", line);
+	ret = main_parse(line);
+	return (ret);
+}
+
 int		main(int ac, char **av, char **env)
 {
 	
 	char	*line = NULL;
 	int		ret = 0;
 
+	printf("-----0-----\n");
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
-		return 0;
+		return (interactive_mode(env));
+	printf("-----2-----\n");
 	ft_signal();
 	ttyfd = fopen("/dev/ttys003", "w");
 	ttt = fopen("/dev/ttys004", "w");

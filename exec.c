@@ -137,7 +137,8 @@ int		do_redirect(t_io_redirect *io)
 			return (-1);
 		}
 		dup2(filefd, fd_io);
-		close(filefd);
+		if (filefd != fd_io)
+			close(filefd);
 	}
 	if (io->redirect_type == GRTGRT)
 	{
@@ -149,10 +150,12 @@ int		do_redirect(t_io_redirect *io)
 			return (-1);
 		}
 		dup2(filefd, fd_io);
-		close(filefd);
+		if (filefd != fd_io)
+			close(filefd);
 	}
 	if (io->redirect_type == GRTAND)
 	{
+		fprintf(ttyfd, "----- here >&- ------\n");
 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);		
 		if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
 		{
@@ -173,7 +176,8 @@ int		do_redirect(t_io_redirect *io)
 		}
 		else
 		{
-			close(fd_io);
+			fprintf(ttyfd,"----> closing[%d]----> close[%d]---\n", fd_io, close(fd_io));
+			fprintf(ttyfd,"----> ttyname [%s]---\n", ttyname(fd_io));
 		}
 	}
 	if (io->redirect_type == SML)
@@ -193,7 +197,8 @@ int		do_redirect(t_io_redirect *io)
 			fprintf(ttyfd, "-------*--->[%d][%s]\n", fd_io, ttyname(fd_io));
 		}
 		dup2(filefd, fd_io);
-		close(filefd);
+			// if (filefd != fd_io)
+		// close(filefd);
 	}
 	if (io->redirect_type == SMLSML)
 	{
@@ -212,7 +217,8 @@ int		do_redirect(t_io_redirect *io)
 				return (-1);
 			}
 			dup2(filefd, fd_io);
-			close(filefd);
+			if (filefd != fd_io)
+				close(filefd);
 		}
 		else if (is_alldigit(io->filename))
 		{
@@ -573,12 +579,11 @@ fprintf(ttt,"---------[simpleCmd]------------\n");
 		return (404);
 	if (do_simpleCmd(cmd))//does prefix and suffix
 		return (1);
+	fprintf(ttt,"---------[back from redirect(0)]------------\n");
 	args = get_arg_var_sub(cmd);
 	if (!args)
 		exit (0);
 	env = env_to_tab(g_var.var, 0);
-	for (int i = 0; env[i]; i++)
-		fprintf(ttyfd, "env[%d]=[%s]\n", i, env[i]);
 	// if builtin exec builtin
 	if (is_builtin(args[0]))
 	{
@@ -593,6 +598,8 @@ fprintf(ttt,"---------[simpleCmd]------------\n");
 	// ft_set_attr(1);
 	fprintf(ttt,"---------[simpleCmd -> execve]------------\n");
 	ft_set_attr(1);
+	fprintf(ttyfd,"===> ttyname [%s][%s][%s]\n", ttyname(0), ttyname(1), ttyname(2));
+	// close(0);close(1);
 	execve(cmd_path, args, env);//error handling
 	printf("shell: permission denied: %s\n", args[0]);
 	return (126);

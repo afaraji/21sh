@@ -85,6 +85,9 @@
 
 int main(int ac, char **av)
 {
-	printf("==>[%d]\n", ft_atoi(""));
+	FILE	*fd;
 
+	fd = fopen("/tmp/closed_fd", "w");
+	fprintf(fd,"===> main [%s][%s][%s]\n", ttyname(0), ttyname(1), ttyname(2));
+	return (0);
 }
