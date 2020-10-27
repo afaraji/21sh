@@ -174,16 +174,12 @@ typedef struct				s_io_list
 int 			main_parse(char *line);
 int				ft_exit(char **av);// aka exit();
 void			exit_status(int status); // for commands
-int				is_dollar(char *str);
-char			*str_dollar_sub(char *str);
 char			**env_to_tab(t_variable *var, int all);
-char			*fetch_variables(char *key, int typ);
 char			**paths_from_env(void);
 int				run_cmd(char **cmd);
 int				builtins(char *cmd, char **av, char **env);
 int				cd_builtin(char **av, char **env);
 t_variable		*get_env(char *s, int typ);
-int				dollar_sub(t_list_token **cmd_token);
 char			*get_var_from_tab(char **env, char *str);
 char			*ft_appendstr(char *s1, char *s2);
 char			*ft_strsub_delimit(char *s, char c);
@@ -204,6 +200,7 @@ int				end_dollar_word(char *s, int start);
 char			*get_dollar_var(char *s, int start, int end);
 char			*str_dollar_sub(char *str);
 int				dollar_sub(t_list_token **cmd_token);
+char			*get_pwd(char **env);
 int				lexer(t_list_token **cmd_token);
 void			add_proc(pid_t pid);
 void			bg_jobs(void);

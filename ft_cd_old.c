@@ -21,16 +21,16 @@ int	ft_cd_old(char **env)
 	tmp = get_var_from_tab(env, "OLDPWD");
 	if (!tmp)
 		return(1);
-	cwd = NULL;
-	cwd = getcwd(NULL, 0);
-	if (cwd)
-		change_pwd("OLDPWD", cwd);
+	cwd = get_pwd(env);
 	if (!chdir(tmp))
 	{
 		change_pwd("PWD", tmp);
-		ft_putstr(getcwd(NULL, 0));
+		ft_putstr(tmp);
 		ft_putchar('\n');
+		if (cwd)
+			change_pwd("OLDPWD", cwd);
 		free(tmp);
+		free(cwd);
 		return (0);
 	}
 	ft_putstr_fd("cd: ", STDERR);

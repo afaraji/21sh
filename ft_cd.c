@@ -61,17 +61,26 @@ char	*get_var_from_tab(char **env, char *str)
 	return (NULL);
 }
 
+char	*get_pwd(char **env)
+{
+	char	*pwd;
+
+	pwd = get_var_from_tab(env, "PWD");
+	if (!pwd)
+		pwd = getcwd(NULL, 0);
+	return (pwd);
+}
+
 int 	ft_cd_home(char **env)
 {
 	int		i;
 	char	*path;
+	char	*oldpwd;
 
-	
 	path = get_var_from_tab(env, "HOME");
 	if (!path)
-		return (1);		
-	if (getcwd(NULL, 0))
-		change_pwd("OLDPWD", getcwd(NULL, 0));
+		return (1);	
+	oldpwd = get_pwd(env);
 	if (chdir(path))
 	{
 		ft_putstr("cd: ");
@@ -80,13 +89,14 @@ int 	ft_cd_home(char **env)
 		free(path);
     	return (1);
 	}
+	if (oldpwd)
+		change_pwd("OLDPWD", oldpwd);
+	change_pwd("PWD", path);
+	ft_putstr(path);
+	ft_putchar('\n');
 	free(path);
-	if (getcwd(NULL, 0))
-	{
-		change_pwd("PWD", getcwd(NULL, 0));
-		ft_putstr(getcwd(NULL, 0));
-		ft_putchar('\n');
-	}
+	if (oldpwd)
+		free(oldpwd);
 	return (0);
 }
 
@@ -144,14 +154,15 @@ int	ft_cd_3(char *flag, char **env)
 
 	if (ft_pdenied(flag))
 		return (1) ;
-	oldcwd = get_var_from_tab(env, "PWD");
-	if (!oldcwd)
-		oldcwd = getcwd(NULL, 0);
+	oldcwd = get_pwd(env);
 	if (chdir(flag))
+	{
+		if (oldcwd)
+			free(oldcwd);
 		return (1);
-	if (!oldcwd)
-		oldcwd = ft_strdup("");;
-	change_pwd("OLDPWD", oldcwd);
+	}
+	if (oldcwd)
+		change_pwd("OLDPWD", oldcwd);
 	if (flag[0] == '/')
 		cwd = ft_strdup(flag);
 	else
@@ -160,7 +171,8 @@ int	ft_cd_3(char *flag, char **env)
 	ft_putstr(cwd);
 	ft_putchar('\n');
 	free(cwd);
-	free(oldcwd);
+	if (oldcwd)
+		free(oldcwd);
 	return (0);
 }
 
