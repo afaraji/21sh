@@ -142,16 +142,11 @@ char	*ft_get_ld(char *cwd, char *flag)
 	while (cwd[i])
 		i++;
 	i--;
-	while (cwd[i] != '/')
-		i--;
-	j = 0;
-	while (flag[j])
-		j++;
-	j--;
-	while (j >= 0 && flag[j] != '/')
-		j--;
-	tmp = ft_strsub (cwd,0, i + 1);
-	path = ft_strjoin(tmp, &flag[j + 1]);
+	if (cwd[i] != '/')
+		tmp = ft_strjoin(cwd, "/");
+	else
+		tmp = ft_strdup(cwd);
+	path = ft_strjoin(tmp, flag);
 	free(tmp);
 	return (path);
 }
@@ -173,14 +168,13 @@ int	ft_cd_3(char *flag, char **env)
 	if (oldcwd)
 		change_pwd("OLDPWD", oldcwd);
 	if (flag[0] == '/')
-	{fprintf(ttyfd, "----------a--------\n");
+	{
 		cwd = ft_strdup(flag);
 	}
 	else
-	{fprintf(ttyfd, "----------b--------\n");
+	{
 		cwd = ft_get_ld(oldcwd, flag);
 	}
-	fprintf(ttyfd, "---------[%s]-------\n", cwd);
 	change_pwd("PWD", cwd);
 	ft_putstr(cwd);
 	ft_putchar('\n');
@@ -196,7 +190,7 @@ int	    ft_cd(char *flag, char **env)
 
 	if (ft_strcmp(flag, ".") == 0)
 		return(0);
-	typ = verify_type(flag);fprintf(ttyfd, "type=%d\n", typ);
+	typ = verify_type(flag);
 	if (typ == 1)
 		return (ft_cd_1(flag, env));
 	else if (typ == -1)
