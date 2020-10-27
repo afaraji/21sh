@@ -100,17 +100,26 @@ int 	ft_cd_home(char **env)
 	return (0);
 }
 
-int	    ft_cd_1(char *flag)
+int	    ft_cd_1(char *flag, char **env)
 {
+	char	*oldpwd;
+	char	*pwd;
+	
 	if (ft_pdenied(flag))
 		return (1);
-	if (getcwd(NULL, 0))
-		change_pwd("OLDPWD", getcwd(NULL, 0));
+	oldpwd = get_pwd(env);
 	if (chdir(flag))
+	{
+		free(oldpwd);
 		return (1);
-	change_pwd("PWD", getcwd(NULL, 0));
-	ft_putstr(getcwd(NULL, 0));
+	}
+	change_pwd("OLDPWD", oldpwd);
+	pwd = getcwd(NULL, 0);
+	change_pwd("PWD", pwd);
+	ft_putstr(pwd);
 	ft_putchar('\n');
+	free(oldpwd);
+	free(pwd);
     return (0);
 }
 
@@ -164,9 +173,14 @@ int	ft_cd_3(char *flag, char **env)
 	if (oldcwd)
 		change_pwd("OLDPWD", oldcwd);
 	if (flag[0] == '/')
+	{fprintf(ttyfd, "----------a--------\n");
 		cwd = ft_strdup(flag);
+	}
 	else
+	{fprintf(ttyfd, "----------b--------\n");
 		cwd = ft_get_ld(oldcwd, flag);
+	}
+	fprintf(ttyfd, "---------[%s]-------\n", cwd);
 	change_pwd("PWD", cwd);
 	ft_putstr(cwd);
 	ft_putchar('\n');
@@ -180,11 +194,11 @@ int	    ft_cd(char *flag, char **env)
 {
 	int typ;
 
-	typ = verify_type(flag);
 	if (ft_strcmp(flag, ".") == 0)
 		return(0);
+	typ = verify_type(flag);fprintf(ttyfd, "type=%d\n", typ);
 	if (typ == 1)
-		return (ft_cd_1(flag));
+		return (ft_cd_1(flag, env));
 	else if (typ == -1)
 		return (ft_cd_2(flag));
 	else if (typ == 2)

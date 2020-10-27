@@ -18,6 +18,8 @@ int		verify_type(char *file)
 	int					ret;
 	DIR					*dir;
 
+	if (file[ft_strlen(file) - 1] == '/')
+		file[ft_strlen(file) - 1] = '\0';
 	if ((ret = lstat(file, &st)) == 0)
 	{
 		if (S_ISDIR(st.st_mode))
@@ -35,7 +37,5 @@ int		verify_type(char *file)
 		else
 			return (2);
 	}
-	if (ret == -1)
-		return (-1);
-	return (0);
+	return (-1);
 }

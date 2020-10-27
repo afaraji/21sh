@@ -577,6 +577,8 @@ fprintf(ttt,"---------[simpleCmd]------------\n");
 	if (!args)
 		exit (0);
 	env = env_to_tab(g_var.var, 0);
+	for (int i = 0; env[i]; i++)
+		fprintf(ttyfd, "env[%d]=[%s]\n", i, env[i]);
 	// if builtin exec builtin
 	if (is_builtin(args[0]))
 	{

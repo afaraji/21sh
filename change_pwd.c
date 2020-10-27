@@ -17,7 +17,7 @@ int	change_pwd(char *str1, char *str2)
 {
 	t_variable	*node;
 
-	if (!g_var.var)
+	if (!g_var.var || !str2)
 		return (1);
 	node = g_var.var;
 	while (node)
