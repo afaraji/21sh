@@ -12,6 +12,8 @@
 
 #include "parse.h"
 
+int		def_io;
+
 void	exit_status(int status)// src: 0 form exit, 1 from return
 {
 	t_variable *tmp;
@@ -58,7 +60,7 @@ int		check_fd(int fd, int io)
 	}
 	else
 	{
-		write(fd, NULL, 0);
+		ret = write(fd, NULL, 0);
 		fprintf(ttt, "from write [%zd]\n",ret);
 	}
 	fprintf(ttt, "fd[%d]-->[%d:%zd]\n", fd, status, ret);
@@ -182,6 +184,13 @@ int		do_redirect(t_io_redirect *io)
 		{
 			ft_putstr_fd("error at open file [fd<0]\n", STDERR);
 			return (-1);
+		}
+		int tmp = check_fd(fd_io, 0);
+		fprintf(ttyfd, "====12321321===[%d]==fd_io=[%d][%s]\n", tmp, fd_io, ttyname(fd_io));
+		if (fd_io == STDIN && !ttyname(fd_io))
+		{
+			fd_io = dup(def_io);
+			fprintf(ttyfd, "-------*--->[%d][%s]\n", fd_io, ttyname(fd_io));
 		}
 		dup2(filefd, fd_io);
 		close(filefd);
@@ -581,6 +590,7 @@ fprintf(ttt,"---------[simpleCmd]------------\n");
 	}
 	// ft_set_attr(1);
 	fprintf(ttt,"---------[simpleCmd -> execve]------------\n");
+	ft_set_attr(1);
 	execve(cmd_path, args, env);//error handling
 	printf("shell: permission denied: %s\n", args[0]);
 	return (126);
@@ -720,6 +730,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 	child = fork();
 	if (child == 0)
 	{
+		def_io = dup(STDIN);
 		exec_pipe(cmd);
 	}
 	else if (!bg)

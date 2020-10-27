@@ -351,9 +351,13 @@ int		end_dollar_word(char *s, int start)
 		bracket = 1;
 	i = start + bracket + 1;
 	if (s[i] == '!' || s[i] == '#' || s[i] == '$' || s[i] == '?')
-		return(i + 1);
+		return(i + 1 + bracket);
 	if (s[i] != '_' && !ft_isalpha(s[i]))
-		return (i);
+	{
+		if (!bracket)
+			return (i);
+		return (-1);
+	}
 	while (s[i] && (s[i] == '_' || ft_isalnum(s[i])))
 		i++;
 	if (bracket)
@@ -377,7 +381,6 @@ char	*get_dollar_var(char *s, int start, int end)
 		return (ft_strdup("$"));
 	index = start + 1;
 	len = end - start - 1;
-	fprintf(ttyfd, "======[%c][%c]\n", s[index], s[index + len - 1]);
 	if (s[index] == '{' && s[index + len - 1] == '}')
 	{
 		index++;

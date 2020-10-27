@@ -206,7 +206,7 @@ void	child_handler(int signum)
 
 void	ft_signal(void)
 {
-	// signal(SIGINT, &signal_callback_handler);
+	signal(SIGINT, &signal_callback_handler);
 	// signal(SIGCHLD, &child_handler);// this new should I ?
 	// signal(SIGQUIT, &signal_callback_handler);
 	// signal(SIGILL, &signal_callback_handler);
@@ -239,6 +239,8 @@ int		main(int ac, char **av, char **env)
 	char	*line = NULL;
 	int		ret = 0;
 
+	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
+		return 0;
 	ft_signal();
 	ttyfd = fopen("/dev/ttys003", "w");
 	ttt = fopen("/dev/ttys004", "w");
