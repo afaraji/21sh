@@ -14,7 +14,7 @@
 
 int		def_io;
 
-void	exit_status(int status)// src: 0 form exit, 1 from return
+void	exit_status(int status)
 {
 	t_variable *tmp;
 
@@ -713,7 +713,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 			reset_in_out(in, out, err);
 			// free(env);
 			// free(av);
-			return (status);
+			return (status << 8);
 		}
 		if (!(cmd->left->name) && !(cmd->left->word))
 		{
