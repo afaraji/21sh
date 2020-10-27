@@ -32,6 +32,43 @@ t_hist	*get_node_index(t_hist **current, int index)
 	return (NULL);
 }
 
+void	history_up(t_terminal *term, t_hist **current)
+{
+	if (term->index == 0)
+	{
+		navigate_hist(&term, current);
+	}
+	else if (term->index - 1 > 0)
+	{
+		(term->index)--;
+		navigate_hist(&term, current);
+	}
+}
+
+void	history_down(t_terminal *term, t_hist **current, char *old_line)
+{
+	int		last;
+
+	last = (get_node_index(current, 0))->index;
+	if (term->index + 1 <= last && term->index)
+	{
+		(term->index)++;
+		navigate_hist(&term, current);
+	}
+	else if (term->index == last)
+	{
+		del_line(term->line);
+		freeleak_down_2(term, old_line);
+		if (term->line->init_pos == term->line->row)
+			display_line_from_begin(term->line);
+		else
+			display_line(term->line);
+		move_curs_right(term->line);
+		term->line->curs = ft_strlen(old_line);
+		(term->index)++;
+	}
+}
+
 void	navigate_history(t_terminal *term, t_hist **current)
 {
 	static char *old_line = NULL;

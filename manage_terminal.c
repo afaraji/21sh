@@ -59,33 +59,6 @@ void	cpy_set_atr_ican(struct termios *src, struct termios *dst)
 	dst->c_lflag = src->c_lflag & ~(ECHO | ICANON | ISIG);
 }
 
-// int		ft_set_attr(int index)
-// {
-// 	static struct termios	old_termios;
-// 	struct termios			s_termios;
-
-// 	if (index == 0)
-// 	{
-// 		tcgetattr(0, &old_termios);
-// 		if (termtype() && check_termcap())
-// 		{
-// 			if (tcgetattr(0, &s_termios) == -1)
-// 				return (1);
-// 			s_termios.c_lflag &= ~(ECHO | ICANON);
-// 			if (tcsetattr(0, 0, &s_termios) == -1)
-// 				return (1);
-// 		}
-// 		else
-// 			return (1);
-// 	}
-// 	else
-// 	{
-// 		tcsetattr(0, 0, &old_termios);
-// 		return (1);
-// 	}
-// 	return (0);
-// }
-
 int		ft_set_attr(int index)
 {
 	static struct termios	old_termios;
@@ -116,7 +89,7 @@ int		ft_set_attr(int index)
 void	free_term(t_terminal **term)
 {
 	if (*term == NULL)
-		return;
+		return ;
 	free((*term)->line);
 	free((*term)->select);
 	free(*term);

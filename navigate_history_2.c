@@ -44,68 +44,18 @@ void	move_curs_right(t_line *line)
 	}
 }
 
-void	history_up(t_terminal *term, t_hist **current)
+void	hist_up_down(t_terminal **term, t_hist **current)
 {
 	t_hist	*to_print;
 
-	if (term->index == 0)
-	{
-		to_print = get_node_index(current, term->index);
-		del_line(term->line);
-		term->index = to_print->index;
-		freeleak_up_down(term, to_print);
-		if (term->line->init_pos == term->line->row)
-			display_line_from_begin(term->line);
-		else
-			display_line(term->line);
-		move_curs_right(term->line);
-		term->line->curs = ft_strlen(to_print->hist_str);
-	}
-	else if (term->index - 1 > 0)
-	{
-		(term->index)--;
-		to_print = get_node_index(current, term->index);
-		del_line(term->line);
-		freeleak_up_down(term, to_print);
-		if (term->line->init_pos == term->line->row)
-			display_line_from_begin(term->line);
-		else
-			display_line(term->line);
-		move_curs_right(term->line);
-		term->line->curs = ft_strlen(to_print->hist_str);
-	}
-}
-
-void	history_down(t_terminal *term, t_hist **current, char *old_line)
-{
-	t_hist	*to_print;
-	int		last;
-	char	*tmp;
-
-	last = (get_node_index(current, 0))->index;
-	if (term->index + 1 <= last && term->index)
-	{
-		(term->index)++;
-		to_print = get_node_index(current, term->index);
-		del_line(term->line);
-		freeleak_up_down(term, to_print);
-		if (term->line->init_pos == term->line->row)
-			display_line_from_begin(term->line);
-		else
-			display_line(term->line);
-		move_curs_right(term->line);
-		term->line->curs = ft_strlen(to_print->hist_str);
-	}
-	else if (term->index == last)
-	{
-		del_line(term->line);
-		freeleak_down_2(term, old_line);
-		if (term->line->init_pos == term->line->row)
-			display_line_from_begin(term->line);
-		else
-			display_line(term->line);
-		move_curs_right(term->line);
-		term->line->curs = ft_strlen(old_line);
-		(term->index)++;
-	}
+	to_print = get_node_index(current, (*term)->index);
+	del_line((*term)->line);
+	(*term)->index = to_print->index;
+	freeleak_up_down(*term, to_print);
+	if ((*term)->line->init_pos == (*term)->line->row)
+		display_line_from_begin((*term)->line);
+	else
+		display_line((*term)->line);
+	move_curs_right((*term)->line);
+	(*term)->line->curs = ft_strlen(to_print->hist_str);
 }

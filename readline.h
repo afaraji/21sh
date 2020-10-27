@@ -101,6 +101,7 @@ void				ft_prompt(char *prompt);
 int					printable(t_terminal *term, t_hist **his_head, int m_line);
 void				printable_1(t_terminal *term);
 void				get_cmd(t_terminal *term, t_hist **his_head, int mult_line);
+int					get_cmd_1(char **str1, char **str2);
 int					unprintable(t_terminal *term, t_hist **his, char **to_past);
 int					unprintable_1(t_terminal *term, char **to_past);
 int					unprintable_2(t_terminal *term);
@@ -137,6 +138,8 @@ int					get_next_line(const int fd, char **line);
 t_hist				*get_his_node(char *file_str, t_hist *prec, int index);
 void				get_his_list(char *file_str, t_hist **head, int index);
 void				add_cmd_to_his_list(char *cmd, t_hist **his_head, int ml);
+void				add_cmd_to_hislist_1(char *cmd, int mult_line,
+					t_hist **his_head);
 int					save_list(void);
 void				navigate_history(t_terminal *term, t_hist **current);
 char				*history_search(char *str, t_hist **his_head);
@@ -144,6 +147,7 @@ char				*history_search_word(char *str);
 char				*history_search_num(int index);
 void				history_up(t_terminal *term, t_hist **current);
 void				history_down(t_terminal *term, t_hist **curr, char *old);
+void				hist_up_down(t_terminal **term, t_hist **current);
 void				move_by_word(t_line *line, int buff);
 void				move_by_word_1(t_line *line);
 char				*trim_cmd(char *s);
@@ -206,5 +210,6 @@ void				print_result(char **t, t_line *line);
 void				print_result_1(t_completion *complete, char **t, t_line *line);
 int					get_home_path(char **str);
 char				**auto_completion_1(t_line *line);
+int					is_all_digits(char *s);
 
 #endif

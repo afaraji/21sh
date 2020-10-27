@@ -45,6 +45,25 @@ void	get_his_list(char *file_str, t_hist **head, int index)
 	}
 }
 
+void	add_cmd_to_hislist_1(char *cmd, int mult_line, t_hist **his_head)
+{
+	t_hist	*node;
+	char	*tmp;
+
+	node = *his_head;
+	while (node->next)
+		node = node->next;
+	if (mult_line == 0 || mult_line == -1)
+		node->next = get_his_node(cmd, node, node->index + 1);
+	else
+	{
+		tmp = ft_strjoin(node->hist_str, "\n");
+		free(node->hist_str);
+		node->hist_str = ft_strjoin(tmp, cmd);
+		free(tmp);
+	}
+}
+
 void	add_cmd_to_his_list(char *cmd, t_hist **his_head, int mult_line)
 {
 	t_hist	*node;
@@ -52,7 +71,7 @@ void	add_cmd_to_his_list(char *cmd, t_hist **his_head, int mult_line)
 	char	*tmp;
 
 	if (mult_line == SMLSML)
-		return;
+		return ;
 	if (!(*his_head))
 	{
 		i = 1;
@@ -60,18 +79,7 @@ void	add_cmd_to_his_list(char *cmd, t_hist **his_head, int mult_line)
 	}
 	else
 	{
-		node = *his_head;
-		while (node->next)
-			node = node->next;
-		if (mult_line == 0 || mult_line == -1)
-			node->next = get_his_node(cmd, node, node->index + 1);
-		else
-		{
-			tmp = ft_strjoin(node->hist_str, "\n");
-			free(node->hist_str);
-			node->hist_str = ft_strjoin(tmp, cmd);
-			free(tmp);
-		}
+		add_cmd_to_hislist_1(cmd, mult_line, his_head);
 	}
 }
 

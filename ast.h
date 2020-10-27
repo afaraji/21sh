@@ -59,5 +59,6 @@ int		        need_append(t_list_token *tokens);
 char		    *here_doc_string(char *word);
 void        	here_doc(t_list_token *head);
 int             main_parse(char *line);
+int				is_all_digits(char *s);
 
 #endif

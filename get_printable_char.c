@@ -13,63 +13,23 @@
 #include "readline.h"
 #include "parse.h"
 
-int				is_all_digits(char *s); // put it in parse.h
-
-char	*history_search_num(int index)
+int		get_cmd_1(char **str1, char **str2)
 {
-	t_hist	*node;
-
-	node = g_var.history;
-	while (node->next)
-		node = node->next;//get the max value
-	if (index < 0)
-		index = node->index + index + 1;
-	if (index < 1 || index > node->index)
-		return (NULL);
-	node = g_var.history;
-	while (node)
+	if (*str1)
 	{
-		if (node->index == index)
-			return (ft_strdup(node->hist_str));
-		node = node->next;
+		free(*str2);
+		*str2 = ft_strdup(*str1);
+		free(*str1);
+		return (1);
 	}
-	return (NULL);	
-}
-
-char	*history_search_word(char *str)
-{
-	int len;
-	t_hist	*node;
-
-	if (!str || !*str)
-		return (NULL);
-	node = g_var.history;
-	len = ft_strlen(str);
-	while (node->next)
-		node = node->next;
-	while (node)
-	{
-		if (!(ft_strncmp(str, node->hist_str, len)))
-			return (ft_strdup(node->hist_str));
-		node = node->prec;
-	}
-	return (NULL);	
-}
-
-char	*history_search(char *str, t_hist **his_head)
-{
-	char	*cmd;
-	char	*tmp;
-
-	if (!str || !(*his_head))
-		return (NULL);
-	if (ft_strcmp(str, "!") == 0)
-		cmd = history_search_num(-1);
-	else if ((is_all_digits(str) || (str[0] == '-' && is_all_digits(str + 1))))
-		cmd = history_search_num(atoi(str));
 	else
-		cmd = history_search_word(str);
-	return (cmd);
+	{
+		ft_putstr_fd("\n21sh: ", STDERR);
+		ft_putstr_fd(*str2, STDERR);
+		ft_putstr_fd(": event not found\n", STDERR);
+		return (2);
+	}
+	return (0);
 }
 
 void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
@@ -87,21 +47,11 @@ void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 		if (term->line->str[0] == '!' && term->line->str[1])
 		{
 			tmp = history_search(term->line->str + 1, his_head);
-			if (tmp)
-			{
-				free(term->line->str);
-				term->line->str = ft_strdup(tmp);
-				free(tmp);
-			}
-			else
-			{
-				ft_putstr_fd("\n21sh: ", STDERR);
-				ft_putstr_fd(term->line->str, STDERR);
-				ft_putstr_fd(": event not found\n", STDERR);
-				return;
-			}
+			if (get_cmd_1(&tmp, &(term->line->str)) == 2)
+				return ;
 		}
-		if (ft_strcmp(term->line->str, "") != 0 || (mult_line != 0 && mult_line != -1))
+		if (ft_strcmp(term->line->str, "") != 0
+		|| (mult_line != 0 && mult_line != -1))
 			add_cmd_to_his_list(term->line->str, his_head, mult_line);
 		else
 			free(term->line->str);

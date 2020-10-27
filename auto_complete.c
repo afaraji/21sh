@@ -107,8 +107,8 @@ t_l				*names_list(char *str)
 
 t_l	*get_var_list(char *str, t_l *head)
 {
-	t_l	*node;
-	char			*tmp;
+	t_l		*node;
+	char	*tmp;
 
 	if (!head)
 	{
@@ -133,7 +133,7 @@ t_l	*get_var_list(char *str, t_l *head)
 
 int				get_node_sum(t_l *head)
 {
-	int				sum;
+	int	sum;
 	t_l	*node;
 
 	sum = 0;
@@ -148,9 +148,9 @@ int				get_node_sum(t_l *head)
 
 t_l	*sort_list(t_l *head)
 {
-	t_l	*node1;
-	t_l	*node2;
-	char			*tmp;
+	t_l		*node1;
+	t_l		*node2;
+	char	*tmp;
 
 	node1 = head;
 	while (node1->next)
@@ -173,9 +173,9 @@ t_l	*sort_list(t_l *head)
 
 char			**tab_from_list(t_l *head)
 {
-	t_l	*node;
-	char			**tabl;
-	int				sum;
+	t_l		*node;
+	char	**tabl;
+	int		sum;
 
 	node = head;
 	sum = get_node_sum(head);
@@ -212,9 +212,9 @@ void			ft_free_list(t_l *head)
 
 char			**var_search(char *str)
 {
-	t_variable		*var;
-	t_l	*var_list;
-	char			**var_tab;
+	t_variable	*var;
+	t_l			*var_list;
+	char		**var_tab;
 
 	var = g_var.var;
 	var_list = NULL;
@@ -229,27 +229,37 @@ char			**var_search(char *str)
 	return (var_tab);
 }
 
+int			matched_f_d_1(char **tmp, struct dirent	*dir)
+{
+	*tmp = ft_strjoin("./", dir->d_name);
+	if (verify_type(*tmp) == 1)
+	{
+		free(*tmp);
+		*tmp = ft_strjoin(dir->d_name, "/");
+		return (1);
+	}
+	else
+	{
+		free(*tmp);
+		*tmp = ft_strdup(dir->d_name);
+		return (2);
+	}
+	return (0);
+}
+
 t_l				*matched_f_d(DIR *d, char *str)
 {
 	struct dirent	*dir;
 	char			*tmp;
-	t_l				*f_d_list = NULL;
+	t_l				*f_d_list;
 	t_l				*node;
 
+	f_d_list = NULL;
 	while ((dir = readdir(d)))
 	{
-		tmp = ft_strjoin("./", dir->d_name);
-		if (verify_type(tmp) == 1)
-		{
-			free(tmp);
-			tmp = ft_strjoin(dir->d_name, "/");
-		}
-		else
-		{
-			free(tmp);
-			tmp = ft_strdup(dir->d_name);
-		}
-		if (!ft_strcmp("", str) || !ft_strncmp(dir->d_name, str, ft_strlen(str)))
+		matched_f_d_1(&tmp, dir);
+		if (!ft_strcmp("", str)
+		|| !ft_strncmp(dir->d_name, str, ft_strlen(str)))
 		{
 			if (!f_d_list)
 			{
@@ -259,6 +269,7 @@ t_l				*matched_f_d(DIR *d, char *str)
 			else
 			{
 				node->next = names_list(tmp);
+				node = node->next;
 			}
 		}
 	}
@@ -300,12 +311,30 @@ t_l				*f_d_search(char *path, char *d_name, char *cmp, char *f_d)
 	}
 	else
 	{
-		if ((!ft_strcmp("", cmp) || !ft_strncmp(d_name, cmp, ft_strlen(cmp))) && d_name[0] != '.')
+		if ((!ft_strcmp("", cmp) || !ft_strncmp(d_name, cmp, ft_strlen(cmp)))
+		&& d_name[0] != '.')
 			list = names_list(f_d);
 		free(f_d);
 		return (list);
 	}
 	return (NULL);
+}
+
+char			**files_dirs_search_4(t_l *files_dirs_list)
+{
+	char	**dir_tab;
+
+	if (files_dirs_list)
+	{
+		dir_tab = tab_from_list(sort_list(files_dirs_list));
+		ft_free_list(files_dirs_list);
+	}
+	else
+	{
+		dir_tab = (char **)malloc(sizeof(char *) * 1);
+		dir_tab[0] = NULL;
+	}
+	return (dir_tab);
 }
 
 char			*files_dirs_search_3(char *d_name, char *path)
@@ -338,8 +367,8 @@ char			*files_dirs_search_3(char *d_name, char *path)
 
 char			**files_dirs_search_2(char *path)
 {
-	char			**dir_tab;
-	t_l	*files_dirs_list;
+	char	**dir_tab;
+	t_l		*files_dirs_list;
 
 	files_dirs_list = matched_files_dirs(path);
 	if (files_dirs_list)
@@ -359,7 +388,6 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 {
 	struct dirent	*dir;
 	char			*file_dir;
-	char			**dir_tab;
 	t_l				*files_dirs_list;
 	t_l				*node;
 
@@ -377,32 +405,20 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 		{
 			node->next = f_d_search(path, dir->d_name, to_cmp, file_dir);
 			if (node->next)
-			{
 				node = node->next;
-			}
 		}
 	}
 	closedir(d);
-	if (files_dirs_list)
-	{
-		dir_tab = tab_from_list(sort_list(files_dirs_list));
-		ft_free_list(files_dirs_list);
-	}
-	else
-	{
-		dir_tab = (char **)malloc(sizeof(char *) * 1);
-		dir_tab[0] = NULL;
-	}
-	return (dir_tab);
+	return (files_dirs_search_4(files_dirs_list));
 }
 
 char			**files_dirs_search(char *str, int i)
 {
-	DIR				*d;
-	char			*to_cmp;
-	char			*path;
-	t_l	*files_dirs_list;
-	char			**dir_tab;
+	DIR		*d;
+	char	*to_cmp;
+	char	*path;
+	t_l		*files_dirs_list;
+	char	**dir_tab;
 
 	path = get_path(str);
 	to_cmp = get_to_cmp(str);
@@ -442,9 +458,9 @@ t_l	*get_cmd_list_1(char *str, t_l *head)
 
 t_l	*search_builtin(char *str)
 {
-	int				i;
-	t_l	*head;
-	char			*builtins_list[] = {"cd", "echo", "export", "env",
+	int		i;
+	t_l		*head;
+	char	*builtins_list[] = {"cd", "echo", "export", "env",
 						"exit", "setenv", "unsetenv", NULL};
 
 	i = 0;
@@ -548,9 +564,9 @@ void			get_cmd_list(t_l **cmd_list, char **cmd_paths, char *str)
 
 char			**cmd_search(char *str)
 {
-	char			**cmd_paths;
-	t_l	*cmd_list;
-	char			**cmd_tab;
+	char	**cmd_paths;
+	t_l		*cmd_list;
+	char	**cmd_tab;
 
 	cmd_tab = NULL;
 	cmd_list = search_builtin(str);
@@ -744,6 +760,13 @@ char			**auto_completion_1(t_line *line)
 	return (result);
 }
 
+int				auto_completion_2(char **result, t_line *line)
+{
+	ft_putchar('\n');
+	print_result(result, line);
+	return (2);
+}
+
 int				auto_completion(t_line *line)
 {
 	char	**result;
@@ -766,10 +789,6 @@ int				auto_completion(t_line *line)
 		return (1);
 	}
 	else
-	{
-		ft_putchar('\n');
-		print_result(result, line);
-		return (2);
-	}
+		return (auto_completion_2(result, line));
 	return (0);
 }
