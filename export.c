@@ -32,41 +32,41 @@ void	get_last_node(char *key, char *value)
 		node->value = ft_strdup(value);
 }
 
-void    ft_export_2(char *key, char *value)
+void	ft_export_2(char *key, char *value)
 {
-    t_variable *node;
+	t_variable *node;
 
-    node = g_var.var;
-    while (node)
-    {
-        if (ft_strcmp(node->key, key) == 0)
-        {
-            if (value != NULL)
-            {
-                free(node->value);
-                node->value = ft_strdup(value);
-            }
-            node->env = 0;
-			return;
-        }
-        node = node->next;
-    }
+	node = g_var.var;
+	while (node)
+	{
+		if (ft_strcmp(node->key, key) == 0)
+		{
+			if (value != NULL)
+			{
+				free(node->value);
+				node->value = ft_strdup(value);
+			}
+			node->env = 0;
+			return ;
+		}
+		node = node->next;
+	}
 	get_last_node(key, value);
 }
 
-int     check_valid_key(char *key)
+int		check_valid_key(char *key)
 {
-    int i;
+	int i;
 
-    if (!(ft_isalpha(key[0])) && key[0] != '_')
-    {
-        ft_putstr_fd("export: ", STDERR);
+	if (!(ft_isalpha(key[0])) && key[0] != '_')
+	{
+		ft_putstr_fd("export: ", STDERR);
 		ft_putstr_fd(key, STDERR);
 		ft_putstr_fd(": not a valid identifier.\n", STDERR);
-        return (1);
-    }
-    i = 1;
-    while (key[i])
+		return (1);
+	}
+	i = 1;
+	while (key[i])
 	{
 		if (!(ft_isalnum(key[i])) && key[i] != '_')
 		{
@@ -77,45 +77,45 @@ int     check_valid_key(char *key)
 		}
 		i++;
 	}
-    return (0);
+	return (0);
 }
 
-int      search_char(char *str, char c)
+int		search_char(char *str, char c)
 {
-    int i;
+	int i;
 
-    i = 1;
-    while (str[i])
-    {
-        if (str[i] == c)
-            return (i);
-        i++;
-    }
-    return (0);
+	i = 1;
+	while (str[i])
+	{
+		if (str[i] == c)
+			return (i);
+		i++;
+	}
+	return (0);
 }
 
-int     get_key_value(char **key, char **value, char *flag)
+int		get_key_value(char **key, char **value, char *flag)
 {
-    int     ret;
+	int	ret;
 
-    if ((ret = search_char(flag, '=')))
-    {
-        *key = ft_strsub(flag, 0, ret);
-        if (check_valid_key(*key))
-        {
-            ft_strdel(key);
-            return (1);
-        }
-        *value = ft_strdup(&(flag[ret + 1]));
-    }
-    else
-    {
-        *key = ft_strdup(flag);
-        if (check_valid_key(*key))
-        {
-            ft_strdel(key);
-            return (1);
-        }
-    }
-    return (0);
+	if ((ret = search_char(flag, '=')))
+	{
+		*key = ft_strsub(flag, 0, ret);
+		if (check_valid_key(*key))
+		{
+			ft_strdel(key);
+			return (1);
+		}
+		*value = ft_strdup(&(flag[ret + 1]));
+	}
+	else
+	{
+		*key = ft_strdup(flag);
+		if (check_valid_key(*key))
+		{
+			ft_strdel(key);
+			return (1);
+		}
+	}
+	return (0);
 }

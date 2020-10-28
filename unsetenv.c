@@ -44,9 +44,7 @@ int		ft_unsetenv(char **flag)
 			if (!ft_strcmp(node->key, flag[i]))
 			{
 				if (node->env != 2)
-				{
 					delete_node(prec, node, node->next);
-				}
 				else
 				{
 					ft_putstr_fd("unsetenv: read-only variable: ", STDERR);

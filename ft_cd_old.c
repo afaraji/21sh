@@ -20,7 +20,7 @@ int	ft_cd_old(char **env)
 
 	tmp = get_var_from_tab(env, "OLDPWD");
 	if (!tmp)
-		return(1);
+		return (1);
 	cwd = get_pwd(env);
 	if (!chdir(tmp))
 	{

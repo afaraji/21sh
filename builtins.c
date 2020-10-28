@@ -14,11 +14,11 @@
 #include "parse.h"
 #include "builtins.h"
 
-int     ft_export(char **flag, char **env)
+int		ft_export(char **flag, char **env)
 {
-	int     i;
-	char    *key;
-	char    *value;
+	int		i;
+	char	*key;
+	char	*value;
 
 	i = 1;
 	if (flag[1] == NULL)
@@ -29,7 +29,6 @@ int     ft_export(char **flag, char **env)
 	value = NULL;
 	while (flag[i])
 	{
-	   
 		if (get_key_value(&key, &value, flag[i]))
 			return (1);
 		ft_export_2(key, value);
@@ -40,12 +39,12 @@ int     ft_export(char **flag, char **env)
 	return (0);
 }
 
-void    print_env(char **env)
+void	print_env(char **env)
 {
-	int     i;
+	int	i;
 
 	if (!env)
-		return;
+		return ;
 	i = 0;
 	while (env[i])
 	{
@@ -55,13 +54,13 @@ void    print_env(char **env)
 	}
 }
 
-int     cd_builtin(char **av, char **env)
+int		cd_builtin(char **av, char **env)
 {
 	if (av[1] == NULL)
 		return (ft_cd_home(env));
 	else
 	{
-		if (av[1][0] == '-' )
+		if (av[1][0] == '-')
 		{
 			if (av[1][1] == '\0')
 				return (ft_cd_old(env));
@@ -83,8 +82,12 @@ int     cd_builtin(char **av, char **env)
 	return (1);
 }
 
-int     builtins(char *cmd, char **av, char **env)
-{// need verification !! n oublie pas return value
+/*
+**need verification !! n oublie pas return value
+*/
+
+int		builtins(char *cmd, char **av, char **env)
+{
 	if (ft_strcmp(cmd, "exit") == 0)
 		return (ft_exit(av));
 	else if (ft_strcmp(cmd, "echo") == 0)

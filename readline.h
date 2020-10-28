@@ -35,13 +35,11 @@
 # define CTRL_QUIT		0x1C
 # define CTRL_D			0x4
 # define CTRL_L			0xC
-# define COMPL			-7			/* for completion */
-
 
 typedef	struct		s_line
 {
 	char			*str;
-	int 			init_pos;
+	int				init_pos;
 	int				curs;
 	int				col;
 	int				row;
@@ -74,21 +72,21 @@ typedef struct		s_terminal
 
 typedef struct		s_completion
 {
-	int	space;
-	int	total_words;
-	int str_max_len;
-	int word_per_line;
-	int	lines_to_print;
-	int	words_to_print;
+	int				space;
+	int				total_words;
+	int				str_max_len;
+	int				word_per_line;
+	int				lines_to_print;
+	int				words_to_print;
 }					t_completion;
 
-typedef struct					s_l
+typedef struct		s_l
 {
-	char						*data;
-	struct s_l				*next;
-}                               t_l;
+	char			*data;
+	struct s_l		*next;
+}					t_l;
 
-FILE	*ttyfd;
+FILE				*ttyfd;
 
 int					termtype(void);
 int					check_termcap(void);
@@ -207,7 +205,8 @@ char				**completion_split_1(char **table);
 char				*completed_line(char *line, char *str);
 t_completion		*get_completion_var(void);
 void				print_result(char **t, t_line *line);
-void				print_result_1(t_completion *complete, char **t, t_line *line);
+void				print_result_1(t_completion *complete, char **t,
+					t_line *line);
 int					get_home_path(char **str);
 char				**auto_completion_1(t_line *line);
 int					is_all_digits(char *s);
