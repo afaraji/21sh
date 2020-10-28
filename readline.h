@@ -98,7 +98,7 @@ t_line				*init_line(char *prompt);
 void				ft_prompt(char *prompt);
 int					printable(t_terminal *term, t_hist **his_head, int m_line);
 void				printable_1(t_terminal *term);
-void				get_cmd(t_terminal *term, t_hist **his_head, int mult_line);
+int					get_cmd(t_terminal *term, t_hist **his_head, int mult_line);
 int					get_cmd_1(char **str1, char **str2);
 int					unprintable(t_terminal *term, t_hist **his, char **to_past);
 int					unprintable_1(t_terminal *term, char **to_past);

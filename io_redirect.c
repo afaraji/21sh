@@ -49,8 +49,8 @@ int		redirect_sml(t_io_redirect *io)
 	// 	fd_io = dup(def_io);
 	// }
 	dup2(filefd, fd_io);
-		// if (filefd != fd_io)
-	// close(filefd);
+	if (filefd != fd_io)
+		close(filefd);
 	return (0);
 }
 
@@ -103,7 +103,12 @@ int		redirect_grt_and(t_io_redirect *io)
 	{
 		tmpfd = ft_atoi(io->filename);
 		if (!check_fd(tmpfd, STDIN))
+		{
+			ft_putstr_fd("shell: ", STDERR);
+			ft_putnbr_fd(tmpfd, STDERR);
+			ft_putstr_fd(": Bad file descriptor.\n", STDERR);
 			return (-1);
+		}
 		dup2(tmpfd, fd_io);
 	}
 	else
@@ -143,7 +148,12 @@ int		redirect_sml_and(t_io_redirect *io)
 	{
 		tmpfd = ft_atoi(io->filename);
 		if (!check_fd(tmpfd, STDIN))
+		{
+			ft_putstr_fd("shell: ", STDERR);
+			ft_putnbr_fd(tmpfd, STDERR);
+			ft_putstr_fd(": Bad file descriptor.\n", STDERR);
 			return (-1);
+		}
 		dup2(tmpfd, fd_io);
 	}
 	else

@@ -66,12 +66,7 @@ int		check_fd(int fd, int io)
 	}
 	// fprintf(ttt, "fd[%d]-->[%d:%zd]\n", fd, status, ret);
 	if (status < 0 || ret < 0)
-	{
-		ft_putstr_fd("shell: ", STDERR);
-		ft_putnbr_fd(fd, STDERR);
-		ft_putstr_fd(": Bad file descriptor.\n", STDERR);
 		return (0);
-	}
 	return (1);
 }
 

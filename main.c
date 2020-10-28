@@ -272,8 +272,8 @@ int		main(int ac, char **av, char **env)
 		// return (interactive_mode(env));
 		return (-1);
 	ft_signal();
-	ttyfd = fopen("/dev/ttys003", "w");
-	ttt = fopen("/dev/ttys004", "w");
+	ttyfd = fopen("/dev/ttys001", "w");
+	ttt = fopen("/dev/ttys002", "w");
 	if (init_shell(env))
 		return (1);
 	line = readline(0);

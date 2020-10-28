@@ -11,11 +11,17 @@
 /* ************************************************************************** */
 
 #include "builtins.h"
+#include "exec.h"
 
 int	ft_echo(char **av)
 {
 	int	i;
 
+	if (!check_fd(1,1))
+	{
+		ft_putstr_fd("shell: echo: write error: Bad file descriptor\n", 2);
+		return (1);
+	}
 	i = 1;
 	if (av[1] == NULL)
 	{

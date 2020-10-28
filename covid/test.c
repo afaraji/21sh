@@ -83,11 +83,19 @@
 // 	return (data);
 // }
 
+// int main(int ac, char **av)
+// {
+// 	FILE	*fd;
+
+// 	fd = fopen("/tmp/closed_fd", "w");
+// 	fprintf(fd,"===> main [%s][%s][%s]\n", ttyname(0), ttyname(1), ttyname(2));
+// 	return (0);
+// }
+
 int main(int ac, char **av)
 {
-	FILE	*fd;
+	int fd;
 
-	fd = fopen("/tmp/closed_fd", "w");
-	fprintf(fd,"===> main [%s][%s][%s]\n", ttyname(0), ttyname(1), ttyname(2));
+	fd = open("fofo", O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	return (0);
 }
