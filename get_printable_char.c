@@ -19,20 +19,21 @@ int		get_cmd_1(char **str1, char **str2)
 	{
 		free(*str2);
 		*str2 = ft_strdup(*str1);
+		ft_putstr_fd("\n", STDOUT);
+		ft_putstr_fd(*str2, STDOUT);
 		free(*str1);
-		return (1);
+		return (0);
 	}
-	else
-	{
-		ft_putstr_fd("\n21sh: ", STDERR);
-		ft_putstr_fd(*str2, STDERR);
-		ft_putstr_fd(": event not found\n", STDERR);
-		return (2);
-	}
-	return (0);
+	ft_putstr_fd("\n21sh: ", STDERR);
+	ft_putstr_fd(*str2, STDERR);
+	ft_putstr_fd(": event not found", STDERR);
+	free(*str2);
+	free(*str1);
+	*str2 = ft_strdup("");
+	return (1);
 }
 
-void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
+int		get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 {
 	char	*tmp;
 
@@ -47,8 +48,8 @@ void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 		if (term->line->str[0] == '!' && term->line->str[1])
 		{
 			tmp = history_search(term->line->str + 1, his_head);
-			if (get_cmd_1(&tmp, &(term->line->str)) == 2)
-				return ;
+			if (get_cmd_1(&tmp, &(term->line->str)) == 1) // 0=found !nbr
+				return (1);
 		}
 		if (ft_strcmp(term->line->str, "") != 0
 		|| (mult_line != 0 && mult_line != -1))
@@ -56,6 +57,7 @@ void	get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 		else
 			free(term->line->str);
 	}
+	return (0);
 }
 
 void	printable_1(t_terminal *term)

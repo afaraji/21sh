@@ -67,7 +67,7 @@ int		ft_cd_1(char *flag, char **env)
 
 int		ft_cd_2(char *flag)
 {
-	ft_putstr("cd: no such file or directory: ");
+	ft_putstr("cd: no such file or directory: --");
 	ft_putstr(flag);
 	ft_putchar('\n');
 	return (1);
@@ -109,7 +109,7 @@ int		ft_cd(char *flag, char **env)
 	if (ft_strcmp(flag, ".") == 0)
 		return (0);
 	typ = verify_type(flag);
-	if (typ == 1)
+	if (typ == 1 || flag[0])
 		return (ft_cd_1(flag, env));
 	else if (typ == -1)
 		return (ft_cd_2(flag));

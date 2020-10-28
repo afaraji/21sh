@@ -18,7 +18,7 @@ int		verify_type(char *file)
 	int					ret;
 	DIR					*dir;
 
-	if (file[ft_strlen(file) - 1] == '/')
+	if (file[ft_strlen(file) - 1] == '/' && ft_strlen(file) - 1 > 0)
 		file[ft_strlen(file) - 1] = '\0';
 	if ((ret = lstat(file, &st)) == 0)
 	{

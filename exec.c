@@ -322,8 +322,11 @@ char	*get_cmdpath(char *str)
 	char	*tmp;
 
 	if (!access(str, F_OK))
-	{
 		return (ft_strdup(str));
+	if (is_path(str))
+	{
+		printf("shell: %s: No such file or directory\n",str);
+		return (NULL);
 	}
 	if (!(paths = paths_from_env()))
 		return(NULL);
@@ -338,6 +341,7 @@ char	*get_cmdpath(char *str)
 		free(tmp);
 		i++;
 	}
+	printf("shell: command not found: %s\n", str);
 	return(NULL);
 }
 
@@ -574,7 +578,6 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	}
 	if (!(cmd_path = get_cmdpath(args[0])))
 	{
-		printf("shell: command not found: %s\n",args[0]);
 		return (127);
 	}
 	ft_set_attr(1);
