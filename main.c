@@ -163,7 +163,6 @@ int		init_shell(char **env)
 	g_var.history = create_history();
 	get_ppid_list();
 	get_aliases();// should be removed from here (no aliases at program start)
-	// print_set_with_typ();
 	return (0);
 }
 
@@ -238,20 +237,28 @@ int		interactive_mode(char **env)
 	char	buff[BUFF_SIZE + 1];
 	char	*line;
 	char	*tmp;
-	int		ret;
-	printf("-----3-----\n");
+	int		ret, i;
+	char	**cmd_list;
+
 	ret = 0;
 	tmp = ft_strdup("");
+	g_var.var = get_set(env);
 	while ((ret = read(STDIN, buff, BUFF_SIZE)) > 0)
 	{
 		buff[ret] = '\0';
-		printf("-----33---[%s]-[%d]-\n", buff, ret);
 		line = ft_strjoin(tmp, buff);
 		free(tmp);
 		tmp = line;
 	}
-	printf("-----4---[%s]--\n", line);
-	ret = main_parse(line);
+	// line[ft_strlen(line) - 1] = '\0';
+	cmd_list = ft_strsplit(line, '\n');
+	// printf("[%s]\n", line);
+	i = 0;
+	while (cmd_list[i])
+	{
+		ret = main_parse(cmd_list[i]);
+		i++;
+	}
 	return (ret);
 }
 
@@ -261,10 +268,9 @@ int		main(int ac, char **av, char **env)
 	char	*line = NULL;
 	int		ret = 0;
 
-	printf("-----0-----\n");
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
-		return (interactive_mode(env));
-	printf("-----2-----\n");
+		// return (interactive_mode(env));
+		return (-1);
 	ft_signal();
 	ttyfd = fopen("/dev/ttys003", "w");
 	ttt = fopen("/dev/ttys004", "w");
@@ -281,7 +287,6 @@ int		main(int ac, char **av, char **env)
 			return (1);
 		line = readline(0);
 		bg_jobs();
-		// fprintf(ttt, "------------->(%d) - (%s)\n", ret, line);
 	}
 	(void)ac;
 	(void)av;

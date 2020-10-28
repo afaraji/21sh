@@ -64,6 +64,8 @@ int		ft_set_attr(int index)
 	static struct termios	old_termios;
 	struct termios			s_termios;
 
+	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
+		return (2);
 	if (index == 0)
 	{
 		if (!old_termios.c_cflag && !old_termios.c_ospeed)

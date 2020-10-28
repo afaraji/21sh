@@ -19,7 +19,7 @@
 void		exit_status(int status);
 int			is_alldigit(char *str);
 int			check_fd(int fd, int io);
-int			do_heredoc(int fd_out, char *str);
+int			do_heredoc(t_io_redirect *io);
 int			do_redirect(t_io_redirect *io);
 t_variable	*var_dup(t_variable *var);
 int			do_assignement(t_cmd_prefix *pref, t_variable *head, int env);

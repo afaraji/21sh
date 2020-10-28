@@ -962,16 +962,13 @@ void	join_words(t_list_token *token)
 	node = token;
 	while (node->next)
 	{
-		// fprintf(ttt,"====[%d:%s]===\n", node->type, node->data);
 		if (node->type == WORD || node->type == QUOTE || node->type == DQUOTE)
 		{
 			tmp = node->next;
 			if (tmp->type == WORD || tmp->type == QUOTE || tmp->type == DQUOTE)
 			{
-				// fprintf(ttt,"joining [%s]-[%s]\n", node->data, tmp->data);
 				join_nodes(node, tmp);
 				node = token;
-				// continue;
 			}
 		}
 		if (!(node->next))
@@ -1197,7 +1194,6 @@ char		*here_doc_string(char *word)
 	while (1)
 	{
 		buff = readline(SMLSML);
-		fprintf(ttyfd,"heredoc==>[%s]\n", buff);
 		if (!ft_strcmp(buff, "\033"))
 		{
 			g_var.errno = 1;
@@ -1238,7 +1234,6 @@ void	here_doc(t_list_token *head)
 				node = node->next;
 			if (!node->next)
 				return;
-			// ft_set_attr(1);
 			if (node->next->type == WORD)
 			{
 				str = str_dollar_sub(here_doc_string(node->next->data));
@@ -1251,7 +1246,6 @@ void	here_doc(t_list_token *head)
 			node->next->data = str;
 			node->next->type = QUOTE;
 			node->next->is_ok = 1;
-			// ft_set_attr(0);
 		}
 		node = node->next;
 	}
@@ -1340,12 +1334,7 @@ int 	main_parse(char *line)
 	t_cmdlist		*node;
 	int				ret;
 
-fprintf(ttt, "------ going to exec ------\n");
     tokens = __tokenize(line);
-	// fprintf(ttt,"----*+*1+*+---------\n");
-	// token_print(tokens);
-	// fprintf(ttt,"----*+*+*1+*+*+---------\n");
-	
 	g_var.errno = 0;
 	if (lexer(&tokens) || verify_tokens(tokens))
 	{
@@ -1362,13 +1351,10 @@ fprintf(ttt, "------ going to exec ------\n");
 	node = cmdlist;
 	while (node)
 	{
-		fprintf(ttt,"----*+*A+*+---------\n");
-		print_andor(node);
 		ret = execute(node->and_or, node->bg);
 		// print_tokenlist(node->and_or->ast);
 		node = node->next;
 	}
-	fprintf(ttt, "------ back from exec ------\n");
 	return (0);
 }
 
