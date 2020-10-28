@@ -14,128 +14,31 @@
 # define PARSE_H
 # include "21sh.h"
 # include "readline.h"
-# define STDIN	 0
-# define STDOUT  1
-# define STDERR  2
+# define STDIN		0
+# define STDOUT		1
+# define STDERR		2
+# define SETDFL		1
+# define GETDFL		0
 
-# define SPACE	-1
-
-/*
-**white space
-*/
-
-# define QUOTE	-2
-
-/*
-**'
-*/
-
-# define DQUOTE	-3
-
-/*
-**"
-*/
-
-# define SMCLN	-4
-
-/*
-**;
-*/
-
-# define ANDLG	-5
-
-/*
-**&&
-*/
-
-# define ORLG	-6
-
-/*
-**||
-*/
-
-# define PIP	-10
-
-/*
-**|
-*/
-
-# define BGJOB	-11
-
-/*
-**&
-*/
-
-# define ESCAPE	-12
-
-/*
-**\
-*/
-
-# define GRT	-20
-
-/*
-**>
-*/
-
-# define GRTGRT	-21
-
-/*
-**>>
-*/
-
-# define SML	-22
-
-/*
-**<
-*/
-
-# define SMLSML	-30
-
-/*
-**<<
-*/
-
-# define SMLAND	-24
-
-/*
-**<&
-*/
-
-# define GRTAND	-25
-
-/*
-**>&
-*/
-
-/*
-**# define SMLGRT	-26
-*/
-/*
-**<>
-*/
-
-/*
-**# define CLOBBER -27
-*/
-/*
-**>|
-*/
-
-/*
-**# define DSMLDASH -31
-*/
-
-/*
-**<<-
-*/
-
-# define WORD	-42
-
-/*
-**word
-*/
-
+# define SPACE	-1	/* white space */
+# define QUOTE	-2	/*	'	*/
+# define DQUOTE	-3	/* "	*/
+# define SMCLN	-4	/*	;	*/
+# define ANDLG	-5	/*	&&	*/	
+# define ORLG	-6	/*	||	*/
+# define PIP	-10	/*	|	*/
+# define BGJOB	-11	/*	&	*/
+# define ESCAPE	-12	/*	\	*/
+# define GRT	-20	/*	>	*/
+# define GRTGRT	-21	/*	>>	*/
+# define SML	-22	/*	<	*/
+# define SMLSML	-30	/*	<<	*/
+# define SMLAND	-24	/*	<&	*/
+# define GRTAND	-25	/*	>&	*/
+// # define SMLGRT	-26	/*	<>	*/
+// # define CLOBBER -27/*	>|	*/
+// # define DSMLDASH -31	/*	<<-	*/
+# define WORD	-42	/*	word	*/
 # define _OR(m,a,b,c,d,e) (m==a||m==b||m==c||m==d||m==e) ? 1 : 0
 
 FILE	*ttt;
@@ -170,18 +73,8 @@ typedef struct				s_list_token
 	char					*data;
 	struct s_list_token		*next;
 	struct s_list_token		*prec;
-	int						is_ok;
+	int						is_ok;	// ' and " closed or not (1=closed)
 }							t_list_token;
-
-/*
-**int burned;
-*/
-/*
-**if a node is read successful
-*/
-/*
-**or ' and " closed or not (1=closed)
-*/
 
 typedef struct				s_alias
 {
@@ -257,14 +150,9 @@ typedef struct				s_simple_cmd
 
 typedef struct				s_pipe_seq
 {
-	int						dependent;
 	t_simple_cmd			*left;
 	struct s_pipe_seq		*right;
 }							t_pipe_seq;
-
-/*
-**dependent : did i use it ? uselss
-*/
 
 typedef struct				s_and_or
 {
@@ -284,12 +172,9 @@ typedef struct				s_cmdlist
 	t_and_or				*and_or;
 	struct s_cmdlist		*next;
 }							t_cmdlist;
-/*
-**bg : 0 = forground, 1 = background
-*/
 
 /*
-**may change dep on the format needed for exec
+**bg : 0 = forground, 1 = background
 */
 
 typedef struct				s_io_list

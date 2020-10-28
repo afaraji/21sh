@@ -38,7 +38,7 @@ char		**get_arg_var_sub(t_simple_cmd *cmd);
 int			exec_simple_cmd(t_simple_cmd *cmd);
 int			exec_pipe(t_pipe_seq *cmd);
 t_variable	*var_list_dup(t_variable *src);
-void		reset_in_out(int in, int out, int err);
+void		reset_in_out(int set);
 int			exec_ast(t_pipe_seq *cmd, int bg);
 int			execute(t_and_or *cmd, int bg);
 

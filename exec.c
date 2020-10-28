@@ -583,7 +583,7 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	return (126);
 }
 
-int		exec_pipe(t_pipe_seq *cmd)
+int		exec_pipe(t_pipe_seq *cmd)// here !!
 {
 	int		pfd[2];
 	int		status;
@@ -592,18 +592,13 @@ int		exec_pipe(t_pipe_seq *cmd)
 
 
 	if (cmd->right == NULL)
-	{
 		exit(exec_simple_cmd(cmd->left));
-		// exit(return_value) ?? should exit or not ?
-	}
 	if(pipe(pfd) != 0)
 		return (1);
-
 	if ((pid_l = fork()) == -1)
 		return (2);//should set errno
 	if (pid_l == 0)
 	{
-		//left child
 		close(pfd[0]);
 		dup2(pfd[1],STDOUT);
 		exit(exec_simple_cmd(cmd->left));
@@ -617,18 +612,13 @@ int		exec_pipe(t_pipe_seq *cmd)
 			close(pfd[1]);
 			dup2(pfd[0],STDIN);
 			if (cmd->right->right)
-			{
 				exec_pipe(cmd->right);
-			}
 			else
-			{
 				exit(exec_simple_cmd(cmd->right->left));
-			}
 		}
 		close(pfd[0]);
 		close(pfd[1]);
-		int tmp;// to be deleted after testing
-		waitpid(pid_l, &tmp, 0);
+		waitpid(pid_l, NULL, 0);
 		waitpid(pid_r, &status, 0);
 		// fprintf(ttt,"child_l:[%d] exit(%d)\n", pid_l, tmp);
 		// fprintf(ttt,"child_r:[%d] exit(%d)\n", pid_r, status);
@@ -655,62 +645,92 @@ t_variable	*var_list_dup(t_variable *src)
 	return (head);
 }
 
-void	reset_in_out(int in, int out, int err)
+void	reset_in_out(int set)
 {
-	dup2(in, STDIN);
-	close(in);
-	dup2(out, STDOUT);
-	close(out);
-	dup2(err, STDERR);
-	close(err);
+	static int in = -1;
+	static int out = -1;
+	static int err = -1;
+
+	if (set)
+	{
+		in = dup(STDIN);
+		out = dup(STDOUT);
+		err = dup(STDOUT);
+	}
+	else if (in != -1 && out != -1 && err != -1)
+	{
+		dup2(in, STDIN);
+		if (in != STDIN)
+			close(in);
+		dup2(out, STDOUT);
+		if (in != STDOUT)
+			close(out);
+		dup2(err, STDERR);
+		if (in != STDERR)
+			close(err);
+	}
 }
 
-int		exec_ast(t_pipe_seq *cmd, int bg)
+int		exec_no_fork_builtin(t_simple_cmd *cmd, char **av)
+{
+	int			status;
+	t_variable	*tmp;
+	char		**env;
+
+
+	tmp = var_list_dup(g_var.var);
+	reset_in_out(SETDFL);
+	if (do_prefix(cmd->prefix, tmp, 0) || do_suffix(cmd->suffix))
+	{
+		//free(tmp)
+		reset_in_out(GETDFL);
+		return (1);
+	}
+	env = env_to_tab(tmp, 0);
+	//free(tmp);
+	status = builtins(av[0], av, env);
+	reset_in_out(GETDFL);
+	// free(env);
+	// free(av);
+	return (status);
+}
+
+int		exec_no_fork(t_pipe_seq *cmd, int bg)
 {
 	char		**av;
-	char		**env;
-	int			child;
-	t_variable	*tmp;
 	int			status;
-	int			in;
-	int			out;
-	int			err;
 
 	if (cmd->right == NULL && !bg)
 	{
 		av = get_arg_var_sub(cmd->left);
 		if (av && is_builtin(av[0]))
-		{
-			in = dup(STDIN);
-			out = dup(STDOUT);
-			err = dup(STDERR);
-			tmp = var_list_dup(g_var.var);
-			if (do_prefix(cmd->left->prefix, tmp, 0) || do_suffix(cmd->left->suffix))
-				return (1);
-			env = env_to_tab(tmp, 0);
-			//free(tmp);
-			//free(av);
-			status = builtins(av[0], av, env);
-			reset_in_out(in, out, err);
-			// free(env);
-			// free(av);
-			return (status << 8);
-		}
+			return (exec_no_fork_builtin(cmd->left, av));
+		// free(av);
 		if (!(cmd->left->name) && !(cmd->left->word))
 		{
-			in = dup(STDIN);
-			out = dup(STDOUT);
-			err = dup(STDERR);
+			reset_in_out(SETDFL);
 			status = do_prefix(cmd->left->prefix, g_var.var, 1);
-			reset_in_out(in, out, err);
+			reset_in_out(GETDFL);
 			return (status);
 		}
 	}
+	return (-42);
+}
+
+int		exec_ast(t_pipe_seq *cmd, int bg)
+{
+	int			child;
+	int			status;
+
+	if ((status = exec_no_fork(cmd, bg)) != -42)
+		return (status << 8);
 	status = 0;
 	child = fork();
 	if (child == 0)
 	{
-		def_io = dup(STDIN);
+		ft_set_attr(1);
+		signal(SIGINT, SIG_DFL);
+		// def_io = dup(STDIN);
 		exec_pipe(cmd);
 	}
 	else if (!bg)
@@ -724,7 +744,6 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 		// fprintf(ttt, "==++++++not waiting++++++\n");
 		add_proc(child);
 	}
-	
 	return (status);
 }
 
@@ -733,8 +752,6 @@ int		execute(t_and_or *cmd, int bg)
 	int dp;
 	int ret = 0;
 
-	// exec cmdA1 | cmdA2 && cmdB1 | cmdB2 || cmdC
-		// sleep(5);
 	while (cmd)
 	{
 		dp = cmd->dependent;
@@ -746,38 +763,4 @@ int		execute(t_and_or *cmd, int bg)
 		cmd = cmd->next;
 	}	
 	return (ret);
-}//lol=1xxxxxx  env | grep lol
-
-// int		execute(t_and_or *cmd, int bg)
-// {
-// 	ttt = fopen("/dev/ttys004", "w");
-// 	int dp;
-// 	int ret = 0;
-// 	int child_pid;
-
-// 	// need to fork here
-// 	if ((child_pid = fork()) == -1)
-// 		return (10);	// should set g_var.errno
-// 	if (child_pid == 0)
-// 	{// exec cmd | cmd && cmd | cmd || cmd
-// 		// sleep(5);
-// 		while (cmd)
-// 		{
-// 			dp = cmd->dependent;
-// 			if (!dp || (dp == 1 && !g_var.exit_status) || (dp == 2 && g_var.exit_status))
-// 			{
-// 				ret = exec_ast(cmd->ast);// here should go exec_pipe();
-// 				g_var.exit_status = ret;
-// 			}
-// 			cmd = cmd->next;
-// 		}
-// 		exit(0);
-// 	}
-// 	if (child_pid && !bg)
-// 	{
-// 		int status;
-// 		waitpid(child_pid, &status, 0); // should it be &ret instead of NULL to get exitstatus of child ?
-// 		g_var.exit_status = status;
-// 	}
-// 	return (ret);
-// }
+}
