@@ -17,6 +17,7 @@ int     redirect_grt(t_io_redirect *io)
 	int	fd_io;
 	int	filefd;
 
+	io->filename = str_dollar_sub(io->filename);
 	(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
 	if (io->redirect_type == GRT)
 		filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
@@ -36,7 +37,9 @@ int     redirect_grt(t_io_redirect *io)
 int		redirect_sml(t_io_redirect *io)
 {
 	int	fd_io;
-	int	filefd;	
+	int	filefd;
+
+	io->filename = str_dollar_sub(io->filename);
 	(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
 	filefd = open(io->filename, O_RDONLY);
 	if (filefd < 0)
@@ -87,6 +90,7 @@ int		redirect_grt_and(t_io_redirect *io)
 		fd_io = STDOUT;
 	else
 		fd_io = io->io_num;
+	io->filename = str_dollar_sub(io->filename);
 	if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
 	{
 		filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
@@ -132,6 +136,7 @@ int		redirect_sml_and(t_io_redirect *io)
 		fd_io = STDIN;
 	else
 		fd_io = io->io_num;
+	io->filename = str_dollar_sub(io->filename);
 	if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
 	{
 		filefd = open(io->filename, O_RDONLY);
