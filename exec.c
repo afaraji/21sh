@@ -320,7 +320,7 @@ char	*get_cmdpath(char *str)
 		return (ft_strdup(str));
 	if (is_path(str))
 	{
-		printf("shell: %s: No such file or directory\n",str);
+		ft_print(STDERR, "shell: %s: No such file or directory\n",str);
 		return (NULL);
 	}
 	if (!(paths = paths_from_env()))
@@ -434,7 +434,8 @@ char	**list_to_tab(t_l *list)
 	i = 0;
 	while (node)
 	{
-		i++;
+		if (ft_strcmp(node->data, ""))
+			i++;
 		node = node->next;
 	}
 	args = (char **)malloc(sizeof(char *) * (i + 1));
@@ -442,8 +443,11 @@ char	**list_to_tab(t_l *list)
 	i = 0;
 	while(node)
 	{
-		args[i] = ft_strdup(node->data);
-		i++;
+		if (ft_strcmp(node->data, ""))
+		{
+			args[i] = ft_strdup(node->data);
+			i++;
+		}
 		node = node->next;
 	}
 	args[i] = NULL;
@@ -451,10 +455,10 @@ char	**list_to_tab(t_l *list)
 	return (args);
 }
 
-t_l	*get_args(t_simple_cmd	*cmd)
+t_l		*get_args(t_simple_cmd	*cmd)
 {
-	t_l			*head;
-	t_l			*node;
+	t_l				*head;
+	t_l				*node;
 	t_cmd_suffix	*tmp;
 
 	if (!(cmd->name) && !(cmd->word))
@@ -489,6 +493,8 @@ int		is_builtin(char *str)
 	char	*b_in_list[] = {"echo", "export", "cd", "setenv", "unsetenv", "env", "exit", NULL};
 	int		i;
 
+	if (!str || !ft_strcmp(str, ""))
+		return (0);
 	i = 0;
 	while (b_in_list[i])
 	{
@@ -562,7 +568,7 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	if (do_simpleCmd(cmd))//does prefix and suffix
 		return (1);
 	args = get_arg_var_sub(cmd);
-	if (!args)
+	if (!args || !args[0])
 		exit (0);
 	env = env_to_tab(g_var.var, 0);
 	// if builtin exec builtin

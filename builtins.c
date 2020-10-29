@@ -70,10 +70,8 @@ int		cd_builtin(char **av, char **env)
 				return (ft_cd(av[2], env));
 			else
 			{
-				ft_putstr_fd("shell: cd: ", STDERR);
-				ft_putstr_fd(av[1], STDERR);
-				ft_putstr_fd(": invalid option\n", STDERR);
-				ft_putstr_fd("cd: usage: cd [-L|-P] [dir].\n", STDERR);
+				ft_print(STDERR, "shell: cd: %s: invalid option\n",av[1]);
+				ft_print(STDERR, "cd: usage: cd [-L|-P] [dir].\n");
 			}
 		}
 		else
