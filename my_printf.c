@@ -10,10 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parse.h"
+#include "parse.h"
 #include <stdarg.h>
 
-void		handle_percent(int fd, char **format, va_list args, int *i)
+void	handle_percent(int fd, char **format, va_list args, int *i)
 {
 	char	*str;
 	int		nbr;
@@ -34,23 +34,7 @@ void		handle_percent(int fd, char **format, va_list args, int *i)
 	}
 }
 
-int		valid_arg(va_list arguments, char *format)
-{
-	int	i;
-	int	count;
-
-	i = 0;
-	count = 0;
-	while (format[i])
-	{
-		if (format[i] == '%')
-			count++;
-		i++;
-	}
-	
-}
-
-int		my_print(int fd, char *format, ...)
+int		ft_print(int fd, char *format, ...)
 {
 	va_list	arguments;
 	va_list	tmp;
@@ -59,14 +43,6 @@ int		my_print(int fd, char *format, ...)
 
 	count = 0;
 	va_start(arguments, format);
-	va_copy(tmp, arguments);
-	str = ft_strdup(arguments);
-	if (valid_arg(tmp, str))
-	{
-		//error msg
-		return (-1);
-	}
-	printf("===[%s]===\n", format);
 	while (*format)
 	{
 		if (*format == '%')
@@ -78,17 +54,10 @@ int		my_print(int fd, char *format, ...)
 		else if (*format != '%')
 		{
 			write(fd, &(*format), 1);
-			// ft_putchar(*format);
 			count++;
 			format++;
 		}
 	}
 	va_end(arguments);
 	return (count);
-}
-
-int main()
-{
-	my_print(1, "[%s][%d][%s][%d][%s][%s]\n", "lool", 55, "abc",-99999, "samira", "love\nnasser\tpop");
-	return 0;
 }

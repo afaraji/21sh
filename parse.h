@@ -184,6 +184,7 @@ typedef struct				s_io_list
 }							t_io_list;
 
 int							main_parse(char *line);
+int							ft_print(int fd, char *format, ...);
 int							ft_exit(char **av);
 void						exit_status(int status);
 char						**env_to_tab(t_variable *var, int all);
