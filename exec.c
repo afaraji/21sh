@@ -278,6 +278,8 @@ int		do_prefix(t_cmd_prefix *prefix, t_variable *var, int env)
 		if (node->io_redirect)
 		{
 			ret = do_redirect(node->io_redirect);
+			if (ret != 0)
+				return (ret);
 		}
 
 		node = node->prefix;
@@ -398,6 +400,8 @@ int		do_suffix(t_cmd_suffix *suffix)
 		if (node->io_redirect)
 		{
 			ret = do_redirect(node->io_redirect);
+			if (ret != 0)
+				return (ret);
 		}
 		node = node->suffix;
 	}

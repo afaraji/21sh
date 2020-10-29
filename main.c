@@ -269,7 +269,6 @@ int		main(int ac, char **av, char **env)
 	int		ret = 0;
 
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
-		// return (interactive_mode(env));
 		return (-1);
 	ft_signal();
 	ttyfd = fopen("/dev/ttys001", "w");
