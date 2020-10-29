@@ -1,0 +1,94 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afaraji <afaraji@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/10 16:13:41 by afaraji           #+#    #+#             */
+/*   Updated: 2020/02/10 16:14:17 by afaraji          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../parse.h"
+#include <stdarg.h>
+
+void		handle_percent(int fd, char **format, va_list args, int *i)
+{
+	char	*str;
+	int		nbr;
+	char	*ptr;
+
+	ptr = *format;
+	if (*ptr == 's')
+	{
+		str = va_arg(args, char *);
+		ft_putstr_fd(str, fd);
+		*i += ft_strlen(str);
+	}
+	else if (**format == 'd')
+	{
+		nbr = va_arg(args, int);
+		ft_putnbr_fd(nbr, fd);
+		*i += ft_ilen(nbr);
+	}
+}
+
+int		valid_arg(va_list arguments, char *format)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (format[i])
+	{
+		if (format[i] == '%')
+			count++;
+		i++;
+	}
+	
+}
+
+int		my_print(int fd, char *format, ...)
+{
+	va_list	arguments;
+	va_list	tmp;
+	char	*str;
+	int		count;
+
+	count = 0;
+	va_start(arguments, format);
+	va_copy(tmp, arguments);
+	str = ft_strdup(arguments);
+	if (valid_arg(tmp, str))
+	{
+		//error msg
+		return (-1);
+	}
+	printf("===[%s]===\n", format);
+	while (*format)
+	{
+		if (*format == '%')
+		{
+			format++;
+			handle_percent(fd, &format, arguments, &count);
+			format++;
+		}
+		else if (*format != '%')
+		{
+			write(fd, &(*format), 1);
+			// ft_putchar(*format);
+			count++;
+			format++;
+		}
+	}
+	va_end(arguments);
+	return (count);
+}
+
+int main()
+{
+	my_print(1, "[%s][%d][%s][%d][%s][%s]\n", "lool", 55, "abc",-99999, "samira", "love\nnasser\tpop");
+	return 0;
+}
