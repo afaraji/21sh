@@ -673,6 +673,8 @@ void			print_result_1(t_completion *compl, char **t, t_line *line)
 	int i;
 
 	compl->word_per_line = line->col / compl->str_max_len;
+	if (compl->word_per_line == 0)
+		compl->word_per_line = 1;
 	compl->lines_to_print = compl->total_words / compl->word_per_line;
 	compl->words_to_print = (line->row - 1) * compl->word_per_line;
 	i = 0;
