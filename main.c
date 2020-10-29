@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   readline.c                                         :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: afaraji <afaraji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/13 22:00:18 by sazouaka          #+#    #+#             */
-/*   Updated: 2020/01/13 22:00:20 by sazouaka         ###   ########.fr       */
+/*   Updated: 2020/10/29 23:56:26 by afaraji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,14 @@
 #include "builtins.h"
 #include "ast.h"
 
-// void	print_list(t_hist *his_head)
-// {
-// 	t_hist	*node;
-
-// 	fprintf(ttyfd, "*** got here\n");
-// 	node = his_head;
-// 	while (node)
-// 	{
-// 		fprintf(ttyfd, "\n\n------------> history : |%s|\n", node->hist_str);
-// 		node = node->next;
-// 	}
-// }
-
-t_hist	*create_history(void)
+t_hist		*create_history(void)
 {
 	char	*file_str;
-	t_hist	*his_list = NULL;
-	int fd;
-	int i;
+	t_hist	*his_list;
+	int		fd;
+	int		i;
 
+	his_list = NULL;
 	if (!(fd = open("./.myshell_history", O_RDONLY | O_CREAT, 0600)))
 		return (NULL);
 	i = 1;
@@ -44,10 +32,9 @@ t_hist	*create_history(void)
 	return (his_list);
 }
 
-int		ft_exit(char **av)
+int			ft_exit(char **av)
 {
 	int		status;
-
 
 	ft_set_attr(1);
 	save_list();
@@ -57,14 +44,13 @@ int		ft_exit(char **av)
 		{
 			status = ft_atoi(av[1]);
 			if (av[2])
-				ft_putstr_fd("exit\nshell: exit: too many arguments.\n", 2);
+				ft_print(STDERR, "exit\nshell: exit: too many arguments.\n");
 		}
 		else
 		{
 			status = 255;
-			ft_putstr_fd("exit\nshell: exit:", 2);
-			ft_putstr_fd(av[1], 2);
-			ft_putstr_fd(": numeric argument required.\n", 2);
+			ft_print(STDERR, "exit\nshell: exit: ");
+			ft_print(STDERR, "%s: numeric argument required.\n", av[1]);
 		}
 	}
 	else
@@ -106,26 +92,11 @@ t_variable	*get_setvar(void)
 	return (head);
 }
 
-void	print_set_with_typ(void)
-{
-	t_variable	*node;
-
-	node = g_var.var;
-	fprintf(ttt, "\n++++++++++++++++++++++++\n");
-	while (node)
-	{
-		fprintf(ttt, "%d:%s=%s\n", node->env, node->key, node->value);
-		node = node->next;
-	}
-	fprintf(ttt, "++++++++++++++++++++++++\n");
-		
-}
-
 t_variable	*get_set(char **env)
 {
 	t_variable	*head;
 	t_variable	*node;
-	int		i;
+	int			i;
 
 	head = get_setvar();
 	node = head;
@@ -138,12 +109,10 @@ t_variable	*get_set(char **env)
 		node = node->next;
 		i++;
 	}
-	return (head);	
+	return (head);
 }
 
-void	get_aliases(void);
-
-void	get_ppid_list(void)
+void		get_ppid_list(void)
 {
 	g_var.proc = (t_proc *)malloc(sizeof(t_proc));
 	g_var.proc->ppid = getpid();
@@ -166,23 +135,19 @@ int		init_shell(char **env)
 	return (0);
 }
 
-void	signal_callback_handler(int signum)
+void		signal_callback_handler(int signum)
 {
-	// printf("\nexiting from signal:%d\n", signum);
 	if (signum == 2)
 	{
-		// printf("ctrl-c received\n");
-		// ft_prompt("\n&> ");
 		ft_putchar('\n');
 		g_var.sig = signum;
 		ft_set_attr(0);
-		// free(line);
 	}
 	else
-		ft_exit(NULL);//??? char **av
+		ft_exit(NULL);
 }
 
-void	child_handler(int signum)
+void		child_handler(int signum)
 {
 	pid_t	pid;
 	int		status;
@@ -196,14 +161,14 @@ void	child_handler(int signum)
 		{
 			proc->status = status;
 			proc->done = 1;
-			return;
+			return ;
 		}
 		proc = proc->next;
 	}
 	exit_status(status);
 }
 
-void	ft_signal(void)
+void		ft_signal(void)
 {
 	signal(SIGINT, &signal_callback_handler);
 	// signal(SIGCHLD, &child_handler);// this new should I ?
@@ -232,47 +197,16 @@ void	ft_signal(void)
 	// signal(SIGUSR2, &signal_callback_handler);
 }
 
-int		interactive_mode(char **env)
+int			main(int ac, char **av, char **env)
 {
-	char	buff[BUFF_SIZE + 1];
-	char	*line;
-	char	*tmp;
-	int		ret, i;
-	char	**cmd_list;
-
-	ret = 0;
-	tmp = ft_strdup("");
-	g_var.var = get_set(env);
-	while ((ret = read(STDIN, buff, BUFF_SIZE)) > 0)
-	{
-		buff[ret] = '\0';
-		line = ft_strjoin(tmp, buff);
-		free(tmp);
-		tmp = line;
-	}
-	// line[ft_strlen(line) - 1] = '\0';
-	cmd_list = ft_strsplit(line, '\n');
-	// printf("[%s]\n", line);
-	i = 0;
-	while (cmd_list[i])
-	{
-		ret = main_parse(cmd_list[i]);
-		i++;
-	}
-	return (ret);
-}
-
-int		main(int ac, char **av, char **env)
-{
-	
 	char	*line = NULL;
 	int		ret = 0;
 
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
 		return (-1);
+	line = NULL;	ttyfd = fopen("/dev/ttys001", "w");
+	ret = 0;	ttt = fopen("/dev/ttys002", "w");
 	ft_signal();
-	ttyfd = fopen("/dev/ttys001", "w");
-	ttt = fopen("/dev/ttys002", "w");
 	if (init_shell(env))
 		return (1);
 	line = readline(0);
