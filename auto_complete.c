@@ -232,7 +232,7 @@ char			**var_search(char *str)
 int			matched_f_d_1(char **tmp, struct dirent	*dir)
 {
 	*tmp = ft_strjoin("./", dir->d_name);
-	if (verify_type(*tmp) == 1)
+	if (verify_type(*tmp) == 1 || verify_type(*tmp) == 3)
 	{
 		free(*tmp);
 		*tmp = ft_strjoin(dir->d_name, "/");
@@ -352,7 +352,7 @@ char			*files_dirs_search_3(char *d_name, char *path)
 	}
 	else
 		tmp2 = ft_strjoin(path, d_name);
-	if (verify_type(tmp2) == 1)
+	if (verify_type(tmp2) == 1 || verify_type(tmp2) == 3)
 	{
 		free(tmp2);
 		tmp2 = ft_strjoin(d_name, "/");
