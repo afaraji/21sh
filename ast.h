@@ -12,8 +12,6 @@
 
 #ifndef AST_H
 # define AST_H
-# include "21sh.h"
-# include "readline.h"
 # include "parse.h"
 
 int				is_op(char *str, int i);

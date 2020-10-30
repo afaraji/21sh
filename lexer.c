@@ -93,12 +93,12 @@ int		alias_sub(t_list_token *word, t_alias *aliases)
 
 int		is_reserved(char *str)
 {
-	char *rsrved[18] = {"!", "{", "}", "case", "do", "done", "elif", "else", "esac",
+	char *rsrved[17] = {"{", "}", "case", "do", "done", "elif", "else", "esac",
 						"fi", "for", "if", "in", "then", "until", "while", ")", "("};
 	int i;
 
 	i = 0;
-	while (i < 18)
+	while (i < 17)
 	{
 		if (ft_strcmp(str, rsrved[i]) == 0)
 			return (1);
@@ -119,7 +119,7 @@ void		insert_alias(char *key, char *sub)
 		node->next = (t_alias *)malloc(sizeof(t_alias));
 		node->next->next = NULL;
 		node->next->key = ft_strdup(key);
-		node->next->sub = ft_strdup(sub);		
+		node->next->sub = ft_strdup(sub);
 	}
 	else
 	{
@@ -128,7 +128,7 @@ void		insert_alias(char *key, char *sub)
 		g_var.aliases->key = ft_strdup(key);
 		g_var.aliases->sub = ft_strdup(sub);
 	}
-	
+
 }
 
 void	get_aliases(void)
@@ -140,7 +140,7 @@ void	get_aliases(void)
 }
 
 t_list_token	*__tokenize(char *str);
-void	token_print(t_list_token *node); 
+void	token_print(t_list_token *node);
 
 void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
 {
@@ -165,7 +165,7 @@ void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
 		*cmd_token = toinsert;
 	}
 	free(node->data);
-	free(node);	
+	free(node);
 }
 
 int		keywords_alias_sub(t_list_token **cmd_token)
@@ -183,7 +183,7 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 				node = node->next;
 			if (node && node->type == WORD && is_reserved(node->data))
 			{
-				printf("\nfound '%s' - not implimented yet", node->data);
+				ft_print(STDERR, "found '%s' - not implimented yet\n", node->data);
 				return (1);
 			}
 			else if (node && node->type == WORD)
@@ -285,7 +285,7 @@ int		tilde_sub(t_list_token **cmd_token)
 				{
 					free(str);
 					str = ft_strjoin(tmp, rest);
-				}				
+				}
 			}
 			else if (!ft_strcmp(tilde_prefix, "+"))
 			{// $PWD

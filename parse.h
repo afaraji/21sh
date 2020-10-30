@@ -12,7 +12,7 @@
 
 #ifndef PARSE_H
 # define PARSE_H
-# include "21sh.h"
+# include "ft_21sh.h"
 # include "readline.h"
 # define STDIN		0
 # define STDOUT		1

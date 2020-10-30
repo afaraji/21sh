@@ -12,8 +12,6 @@
 
 #ifndef EXEC_H
 # define EXEC_H
-# include "21sh.h"
-# include "readline.h"
 # include "parse.h"
 
 void		exit_status(int status);
@@ -41,5 +39,7 @@ t_variable	*var_list_dup(t_variable *src);
 void		reset_in_out(int set);
 int			exec_ast(t_pipe_seq *cmd, int bg);
 int			execute(t_and_or *cmd, int bg);
+void		free_tokens(t_list_token *tokens);
+void		free_cmd_list(t_cmdlist *list);
 
 #endif
