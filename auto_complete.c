@@ -45,6 +45,7 @@ char			*get_path_2(char **str, int i)
 	char	*tmp1;
 	char	*tmp2;
 
+	tmp2 = NULL;
 	tmp1 = ft_strsub(*str, 0, i + 1);
 	if (tmp1[0] == '/' || (tmp1[0] == '.' && tmp1[1] == '/'))
 	{
@@ -85,6 +86,7 @@ char			*get_to_cmp(char *str)
 
 	i = 0;
 	j = 0;
+	file_to_find = NULL;
 	while (str[i])
 	{
 		if (str[i] == '/')
@@ -99,7 +101,8 @@ t_l				*names_list(char *str)
 {
 	t_l	*node;
 
-	node = (t_l *)malloc(sizeof(t_l));
+	if (!(node = (t_l *)malloc(sizeof(t_l))))
+		return (NULL);
 	node->data = ft_strdup(str);
 	node->next = NULL;
 	return (node);
@@ -112,7 +115,8 @@ t_l	*get_var_list(char *str, t_l *head)
 
 	if (!head)
 	{
-		head = (t_l *)malloc(sizeof(t_l));
+		if (!(head = (t_l *)malloc(sizeof(t_l))))
+			return (NULL);
 		tmp = ft_strdup(str);
 		head->data = ft_strjoin("$", tmp);
 		free(tmp);
@@ -122,7 +126,8 @@ t_l	*get_var_list(char *str, t_l *head)
 	node = head;
 	while (node->next)
 		node = node->next;
-	node->next = (t_l *)malloc(sizeof(t_l));
+	if (!(node->next = (t_l *)malloc(sizeof(t_l))))
+		return (NULL);
 	node = node->next;
 	tmp = ft_strdup(str);
 	node->data = ft_strjoin("$", tmp);
@@ -153,6 +158,7 @@ t_l	*sort_list(t_l *head)
 	char	*tmp;
 
 	node1 = head;
+	tmp = NULL;
 	while (node1->next)
 	{
 		node2 = node1->next;
@@ -179,7 +185,9 @@ char			**tab_from_list(t_l *head)
 
 	node = head;
 	sum = get_node_sum(head);
-	tabl = (char **)malloc(sizeof(char *) * (sum + 1));
+	tabl = NULL;
+	if (!(tabl = (char **)malloc(sizeof(char *) * (sum + 1))))
+		return (NULL);
 	node = head;
 	sum = 0;
 	while (node)
@@ -195,12 +203,28 @@ char			**tab_from_list(t_l *head)
 	return (tabl);
 }
 
-void			ft_free_list(t_l *head)
+void	free_tab(char **table)
+{
+	int i;
+
+	i = 0;
+	if (table == NULL)
+		return ;
+	while (table[i])
+	{
+		free(table[i]);
+		i++;
+	}
+	free(table);
+}
+
+void			free_list(t_l *head)
 {
 	t_l	*tmp1;
 	t_l	*tmp2;
 
 	tmp1 = head;
+	tmp2 = NULL;
 	while (tmp1)
 	{
 		tmp2 = tmp1;
@@ -218,6 +242,7 @@ char			**var_search(char *str)
 
 	var = g_var.var;
 	var_list = NULL;
+	var_tab = NULL;
 	while (var)
 	{
 		if (!ft_strncmp(str, var->key, ft_strlen(str)))
@@ -225,7 +250,7 @@ char			**var_search(char *str)
 		var = var->next;
 	}
 	var_tab = tab_from_list(var_list);
-	ft_free_list(var_list);
+	free_list(var_list);
 	return (var_tab);
 }
 
@@ -255,6 +280,8 @@ t_l				*matched_f_d(DIR *d, char *str)
 	t_l				*node;
 
 	f_d_list = NULL;
+	node = NULL;
+	tmp = NULL;
 	while ((dir = readdir(d)))
 	{
 		matched_f_d_1(&tmp, dir);
@@ -305,7 +332,6 @@ t_l				*f_d_search(char *path, char *d_name, char *cmp, char *f_d)
 			{
 				list = names_list(f_d);
 			}
-			free(f_d);
 			return (list);
 		}
 	}
@@ -314,7 +340,6 @@ t_l				*f_d_search(char *path, char *d_name, char *cmp, char *f_d)
 		if ((!ft_strcmp("", cmp) || !ft_strncmp(d_name, cmp, ft_strlen(cmp)))
 		&& d_name[0] != '.')
 			list = names_list(f_d);
-		free(f_d);
 		return (list);
 	}
 	return (NULL);
@@ -324,14 +349,16 @@ char			**files_dirs_search_4(t_l *files_dirs_list)
 {
 	char	**dir_tab;
 
+	dir_tab = NULL;
 	if (files_dirs_list)
 	{
 		dir_tab = tab_from_list(sort_list(files_dirs_list));
-		ft_free_list(files_dirs_list);
+		free_list(files_dirs_list);
 	}
 	else
 	{
-		dir_tab = (char **)malloc(sizeof(char *) * 1);
+		if (!(dir_tab = (char **)malloc(sizeof(char *) * 1)))
+			return (NULL);
 		dir_tab[0] = NULL;
 	}
 	return (dir_tab);
@@ -348,21 +375,21 @@ char			*files_dirs_search_3(char *d_name, char *path)
 	{
 		tmp1 = ft_strjoin(path, "/");
 		tmp2 = ft_strjoin(tmp1, d_name);
-		free(tmp1);
+		ft_strdel(&tmp1);
 	}
 	else
 		tmp2 = ft_strjoin(path, d_name);
 	if (verify_type(tmp2) == 1 || verify_type(tmp2) == 3)
 	{
-		free(tmp2);
-		tmp2 = ft_strjoin(d_name, "/");
+		ft_strdel(&tmp2);
+		tmp1 = ft_strjoin(d_name, "/");
 	}
 	else
 	{
-		free(tmp2);
-		tmp2 = ft_strdup(d_name);
+		ft_strdel(&tmp2);
+		tmp1 = ft_strdup(d_name);
 	}
-	return (tmp2);
+	return (tmp1);
 }
 
 char			**files_dirs_search_2(char *path)
@@ -371,14 +398,16 @@ char			**files_dirs_search_2(char *path)
 	t_l		*files_dirs_list;
 
 	files_dirs_list = matched_files_dirs(path);
+	dir_tab = NULL;
 	if (files_dirs_list)
 	{
 		dir_tab = tab_from_list(sort_list(files_dirs_list));
-		ft_free_list(files_dirs_list);
+		free_list(files_dirs_list);
 	}
 	else
 	{
-		dir_tab = (char **)malloc(sizeof(char *) * 1);
+		if (!(dir_tab = (char **)malloc(sizeof(char *) * 1)))
+			return (NULL);
 		dir_tab[0] = NULL;
 	}
 	return (dir_tab);
@@ -393,6 +422,7 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 
 	files_dirs_list = NULL;
 	file_dir = NULL;
+	node = NULL;
 	while ((dir = readdir(d)))
 	{
 		file_dir = files_dirs_search_3(dir->d_name, path);
@@ -409,6 +439,9 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 		}
 	}
 	closedir(d);
+	ft_strdel(&file_dir);
+	//free(path);
+	//free(to_cmp);
 	return (files_dirs_search_4(files_dirs_list));
 }
 
@@ -417,12 +450,9 @@ char			**files_dirs_search(char *str, int i)
 	DIR		*d;
 	char	*to_cmp;
 	char	*path;
-	t_l		*files_dirs_list;
-	char	**dir_tab;
 
 	path = get_path(str);
 	to_cmp = get_to_cmp(str);
-	files_dirs_list = NULL;
 	d = opendir(path);
 	if (d != NULL)
 	{
@@ -441,7 +471,8 @@ t_l	*get_cmd_list_1(char *str, t_l *head)
 
 	if (!head)
 	{
-		head = (t_l *)malloc(sizeof(t_l));
+		if (!(head = (t_l *)malloc(sizeof(t_l))))
+			return (NULL);
 		head->data = ft_strdup(str);
 		head->next = NULL;
 		return (head);
@@ -449,7 +480,8 @@ t_l	*get_cmd_list_1(char *str, t_l *head)
 	node = head;
 	while (node->next)
 		node = node->next;
-	node->next = (t_l *)malloc(sizeof(t_l));
+	if (!(node->next = (t_l *)malloc(sizeof(t_l))))
+			return (NULL);
 	node = node->next;
 	node->data = ft_strdup(str);
 	node->next = NULL;
@@ -498,7 +530,8 @@ void			cmd_path_1(char **tmp, char ***cmd_paths)
 	i = 0;
 	while (tmp[i])
 		i++;
-	*cmd_paths = (char **)malloc(sizeof(char *) * (i + 1));
+	if (!(*cmd_paths = (char **)malloc(sizeof(char *) * (i + 1))))
+		return ;
 	i = 0;
 	while (tmp[i])
 	{
@@ -506,6 +539,7 @@ void			cmd_path_1(char **tmp, char ***cmd_paths)
 		free(tmp[i]);
 		i++;
 	}
+	free(tmp);
 	(*cmd_paths)[i] = NULL;
 }
 
@@ -521,7 +555,8 @@ int				cmd_path(t_l *cmd_list, char ***cmd_tab, char ***cmd_paths)
 			*cmd_tab = tab_from_list(sort_list(cmd_list));
 		else
 		{
-			*cmd_tab = (char **)malloc(sizeof(char *) * 1);
+			if (!(*cmd_tab = (char **)malloc(sizeof(char *) * 1)))
+				return (0);
 			(*cmd_tab)[0] = NULL;
 		}
 		return (1);
@@ -556,10 +591,9 @@ void			get_cmd_list(t_l **cmd_list, char **cmd_paths, char *str)
 				}
 			}
 		}
+		closedir(d);
 		i++;
 	}
-	if (d)
-		closedir(d);
 }
 
 char			**cmd_search(char *str)
@@ -568,19 +602,26 @@ char			**cmd_search(char *str)
 	t_l		*cmd_list;
 	char	**cmd_tab;
 
+	cmd_paths = NULL;
 	cmd_tab = NULL;
 	cmd_list = search_builtin(str);
 	if (cmd_path(cmd_list, &cmd_tab, &cmd_paths) == 1)
+	{
+		free_list(cmd_list);
+		free_tab(cmd_paths);
 		return (cmd_tab);
+	}
 	get_cmd_list(&cmd_list, cmd_paths, str);
+	free_tab(cmd_paths);
 	if (!cmd_list)
 	{
-		cmd_tab = (char **)malloc(sizeof(char *) * 1);
+		if (!(cmd_tab = (char **)malloc(sizeof(char *) * 1)))
+			return (NULL);
 		cmd_tab[0] = NULL;
 	}
 	else
 		cmd_tab = tab_from_list(sort_list(cmd_list));
-	free(cmd_list);
+	free_list(cmd_list);
 	return (cmd_tab);
 }
 
@@ -604,9 +645,11 @@ char			**completion_split_1(char **table)
 	int		i;
 
 	i = 0;
+	tmp = NULL;
 	while (table[i])
 		i++;
-	tmp = (char **)malloc(sizeof(char *) * (i + 2));
+	if (!(tmp = (char **)malloc(sizeof(char *) * (i + 2))))
+		return(NULL);
 	i = 0;
 	while (table[i])
 	{
@@ -622,9 +665,11 @@ char			**completion_split(char *line)
 {
 	char	**table;
 
+	table = NULL;
 	if (!ft_strcmp(line, ""))
 	{
-		table = (char **)malloc(sizeof(char *) * 2);
+		if (!(table = (char **)malloc(sizeof(char *) * 2)))
+			return(NULL);
 		table[0] = ft_strdup("");
 		table[1] = NULL;
 		return (table);
@@ -694,6 +739,7 @@ void			print_result_1(t_completion *compl, char **t, t_line *line)
 			ft_putchar('\n');
 		(i)++;
 	}
+	free(compl);
 }
 
 void			print_result(char **t, t_line *line)
@@ -720,6 +766,7 @@ int				get_home_path(char **str)
 	char		*tmp;
 
 	var = g_var.var;
+	tmp = NULL;
 	while (var)
 	{
 		if (!ft_strcmp(var->key, "HOME"))
@@ -741,6 +788,7 @@ char			**auto_completion_1(t_line *line)
 	int		i;
 
 	splited_line = completion_split(line->str);
+	result = NULL;
 	i = 0;
 	while (splited_line[i + 1])
 		i++;
@@ -759,6 +807,7 @@ char			**auto_completion_1(t_line *line)
 		result = files_dirs_search(splited_line[i], i);
 	else
 		result = cmd_search(splited_line[0]);
+	free_tab(splited_line);
 	return (result);
 }
 
@@ -766,6 +815,7 @@ int				auto_completion_2(char **result, t_line *line)
 {
 	ft_putchar('\n');
 	print_result(result, line);
+	free_tab(result);
 	return (2);
 }
 
@@ -776,13 +826,17 @@ int				auto_completion(t_line *line)
 
 	result = auto_completion_1(line);
 	if (result[0] == NULL)
+	{
+		free_tab(result);
 		return (0);
+	}
 	j = 0;
 	while (result && result[j + 1])
 		j++;
 	if (j == 0)
 	{
 		line->str = completed_line(line->str, result[0]);
+		free_tab(result);
 		if (line->init_pos == line->row)
 			display_line_from_begin(line);
 		else

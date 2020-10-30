@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+# include "ft_21sh.h"
 #ifndef _READLINE_H
 # define _READLINE_H
-# include "21sh.h"
 # define LFTARROW		0x445B1B
 # define RTARROW		0x435B1B
 # define UPARROW		0x415B1B
@@ -183,7 +183,8 @@ t_l					*get_var_list(char *str, t_l *head);
 int					get_node_sum(t_l *head);
 t_l					*sort_list(t_l *head);
 char				**tab_from_list(t_l *head);
-void				ft_free_list(t_l *head);
+void				free_list(t_l *head);
+void				free_tab(char **table);
 char				**var_search(char *str);
 t_l					*matched_f_d(DIR *d, char *str);
 t_l					*matched_files_dirs(char *str);

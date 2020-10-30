@@ -43,7 +43,7 @@ int		get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 	if (term->buff == ENTER)
 	{
 		tmp = term->line->str;
-		term->line->str = trim_cmd(term->line->str);
+		term->line->str = trim_cmd(tmp);
 		free(tmp);
 		if (term->line->str[0] == '!' && term->line->str[1])
 		{

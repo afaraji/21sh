@@ -56,5 +56,6 @@ char	*trim_cmd(char *s)
 	len = len - i + 1;
 	if (len < 0)
 		len = 0;
-	return (ft_strsub(s, i, len));
+	str = ft_strsub(s, i, len);
+	return (str);
 }
