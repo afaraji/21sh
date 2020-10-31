@@ -587,6 +587,7 @@ t_io_redirect	*io_redirect(t_list_token **cmd, t_list_token **end)
 			if (!(*cmd))
 			{
 				*cmd = node;
+				free(io_r);
 				return (NULL);
 			}
 			io_r->filename = io_file(cmd, end, &(io_r->redirect_type));
@@ -600,11 +601,14 @@ t_io_redirect	*io_redirect(t_list_token **cmd, t_list_token **end)
 				return (io_r);
 			}
 			if (g_var.errno)
+			{
+				free(io_r);
 				return (NULL);
+			}
 			*cmd = node;
 		}
 	}
-	//free(io_r);
+	free(io_r);
 	return(NULL);
 }
 
@@ -668,7 +672,7 @@ t_cmd_prefix	*cmd_prefix(t_list_token **cmd, t_list_token **end)
 		node->prefix = cmd_prefix(cmd, end);
 		return (node);
 	}
-	//free(node);
+	free(node);
 	return (NULL);
 }
 
@@ -964,7 +968,7 @@ t_and_or	*get_andor_list(t_list_token *strt, int dep, t_list_token *end)
 	node->next = NULL;
 	tmp = list_sub(strt, end);
 	node->ast = ast(tmp);
-	// free(tmp);
+	free_tokens(tmp);
 	if (!(node->ast))
 		return (NULL);
 	node->dependent = 0;

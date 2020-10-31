@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afaraji <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: afaraji <afaraji@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/14 23:23:11 by afaraji           #+#    #+#             */
-/*   Updated: 2020/01/14 23:23:26 by afaraji          ###   ########.fr       */
+/*   Updated: 2020/10/31 20:36:36 by afaraji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,5 @@ t_variable	*var_list_dup(t_variable *src);
 void		reset_in_out(int set);
 int			exec_ast(t_pipe_seq *cmd, int bg);
 int			execute(t_and_or *cmd, int bg);
-void		free_tokens(t_list_token *tokens);
-void		free_cmd_list(t_cmdlist *list);
 
 #endif

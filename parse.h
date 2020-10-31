@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afaraji <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: afaraji <afaraji@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/14 23:23:11 by afaraji           #+#    #+#             */
-/*   Updated: 2020/01/14 23:23:26 by afaraji          ###   ########.fr       */
+/*   Updated: 2020/10/31 20:38:55 by afaraji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # define QUOTE	-2	/*	'	*/
 # define DQUOTE	-3	/* "	*/
 # define SMCLN	-4	/*	;	*/
-# define ANDLG	-5	/*	&&	*/	
+# define ANDLG	-5	/*	&&	*/
 # define ORLG	-6	/*	||	*/
 # define PIP	-10	/*	|	*/
 # define BGJOB	-11	/*	&	*/

@@ -205,37 +205,6 @@ char			**tab_from_list(t_l *head)
 	return (tabl);
 }
 
-void	free_tab(char **table)
-{
-	int i;
-
-	i = 0;
-	if (table == NULL)
-		return ;
-	while (table[i])
-	{
-		ft_strdel(&table[i]);
-		i++;
-	}
-	free(table);
-}
-
-void			free_list(t_l *head)
-{
-	t_l	*tmp1;
-	t_l	*tmp2;
-
-	tmp1 = head;
-	tmp2 = NULL;
-	while (tmp1)
-	{
-		tmp2 = tmp1;
-		tmp1 = tmp1->next;
-		ft_strdel(&tmp2->data);
-		free(tmp2);
-	}
-}
-
 char			**var_search(char *str)
 {
 	t_variable	*var;

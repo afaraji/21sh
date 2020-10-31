@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afaraji <afaraji@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: afaraji <afaraji@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 16:13:41 by afaraji           #+#    #+#             */
-/*   Updated: 2020/02/10 16:14:17 by afaraji          ###   ########.fr       */
+/*   Updated: 2020/10/31 20:39:29 by afaraji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "exec.h"
+#include "ft_free.h"
 
 int		def_io;
 
@@ -430,7 +431,7 @@ int		do_simpleCmd(t_simple_cmd *cmd)
 
 char	**list_to_tab(t_l *list)
 {
-	t_l	*node;
+	t_l		*node;
 	int		i;
 	char	**args;
 
@@ -458,7 +459,7 @@ char	**list_to_tab(t_l *list)
 		node = node->next;
 	}
 	args[i] = NULL;
-	//free_list(list);
+	free_l(list);
 	return (args);
 }
 
@@ -717,7 +718,7 @@ int		exec_no_fork(t_pipe_seq *cmd, int bg)
 		av = get_arg_var_sub(cmd->left);
 		if (av && is_builtin(av[0]))
 			return (exec_no_fork_builtin(cmd->left, av));
-		// free(av);
+		free_tab(av);
 		if (!(cmd->left->name) && !(cmd->left->word))
 		{
 			reset_in_out(SETDFL);

@@ -12,6 +12,48 @@
 
 #include "exec.h"
 
+void	free_tab(char **av)
+{
+	int i;
+
+	i = 0;
+	if (!av)
+		return ;
+	while (av[i])
+	{
+		ft_strdel(&av[i]);
+		i++;
+	}
+	free(av);
+	av = NULL;
+}
+
+void			free_list(t_l *head)
+{
+	t_l	*tmp1;
+	t_l	*tmp2;
+
+	tmp1 = head;
+	tmp2 = NULL;
+	while (tmp1)
+	{
+		tmp2 = tmp1;
+		tmp1 = tmp1->next;
+		ft_strdel(&tmp2->data);
+		free(tmp2);
+	}
+}
+
+void	free_l(t_l *list)
+{
+	if (!list)
+		return ;
+	free_l(list->next);
+	ft_strdel(&(list->data));
+	free(list);
+	list = NULL;
+}
+
 void	free_tokens(t_list_token *tokens)
 {
 	if (!tokens)
@@ -118,3 +160,5 @@ void	free_cmd_list(t_cmdlist *list)
 	free(list);
 	list = NULL;
 }
+
+
