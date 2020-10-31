@@ -92,6 +92,7 @@ void	free_term(t_terminal **term)
 {
 	if (*term == NULL)
 		return ;
+	ft_strdel(&((*term)->line->str));
 	free((*term)->line);
 	free((*term)->select);
 	free(*term);

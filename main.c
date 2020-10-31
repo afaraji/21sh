@@ -38,6 +38,7 @@ int			ft_exit(char **av)
 
 	ft_set_attr(1);
 	save_list();
+	free_g_var();
 	if (av[1])
 	{
 		if (ft_strlen(av[1]) < 10 && is_all_digits(av[1]))
@@ -203,7 +204,7 @@ int			main(int ac, char **av, char **env)
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
 		return (-1);
 	line = NULL;	ttyfd = fopen("/dev/ttys001", "w");
-	ret = 0;	ttt = fopen("/dev/ttys005", "w");
+	ret = 0;	ttt = fopen("/dev/ttys002", "w");
 	ft_signal();
 	if (init_shell(env))
 		return (1);

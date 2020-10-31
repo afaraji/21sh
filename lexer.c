@@ -233,7 +233,7 @@ int		is_assword(char *str)
 	return (0);
 }
 
-int		tilde_sub(t_list_token **cmd_token)
+int		tilde_sub(t_list_token **cmd_token)// need to be normed and leak free
 {// neeed to add ass_word
 	char 			*tmp = NULL;
 	char			*str;
@@ -456,3 +456,5 @@ int		lexer(t_list_token **cmd_token)
 //	13 - runcmd after I/O affectation
 	return (0);
 }
+
+// working on tilde_sub

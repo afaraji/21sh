@@ -161,4 +161,22 @@ void	free_cmd_list(t_cmdlist *list)
 	list = NULL;
 }
 
+void	free_t_var(t_variable *list)
+{
+	if (!list)
+		return ;
+	free_t_var(list->next);
+	ft_strdel(&(list->key));
+	ft_strdel(&(list->value));
+	free(list);
+	list = NULL;
+}
+
+void	free_g_var(void)
+{
+	// free_t_var(g_var.var); // be carful g_var.var is allocated ??
+	// free(g_var.aliases);
+	// free(g_var.history);
+	// free(g_var.proc);
+}
 

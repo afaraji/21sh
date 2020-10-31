@@ -695,16 +695,16 @@ int		exec_no_fork_builtin(t_simple_cmd *cmd, char **av)
 	reset_in_out(SETDFL);
 	if (do_prefix(cmd->prefix, tmp, 0) || do_suffix(cmd->suffix))
 	{
-		//free(tmp)
+		free_t_var(tmp);
 		reset_in_out(GETDFL);
 		return (1);
 	}
 	env = env_to_tab(tmp, 0);
-	//free(tmp);
+	free_t_var(tmp);
 	status = builtins(av[0], av, env);
 	reset_in_out(GETDFL);
-	// free(env);
-	// free(av);
+	free_tab(env);
+	free_tab(av);
 	return (status);
 }
 

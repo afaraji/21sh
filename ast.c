@@ -1130,6 +1130,8 @@ char		*here_doc_string(char *word)
 		if (!ft_strcmp(buff, "\033"))
 		{
 			g_var.errno = 1;
+			ft_strdel(&buff);
+			ft_strdel(&str);
 			return (ft_strdup(""));
 		}
 		if (!ft_strcmp(buff, "\030"))
@@ -1140,7 +1142,7 @@ char		*here_doc_string(char *word)
 		if (!ft_strcmp(buff, word))
 		{
 			ft_strdel(&buff);
-			break;
+			return (str);
 		}
 		tmp = ft_strjoin(str, buff);
 		ft_strdel(&str);
@@ -1148,9 +1150,7 @@ char		*here_doc_string(char *word)
 		ft_strdel(&tmp);
 		ft_strdel(&buff);
 	}
-	// tmp = ft_strjoin(str, "\n");
-	// free(str);
-	return (str);
+	return (NULL);
 }
 
 void	here_doc(t_list_token *head)

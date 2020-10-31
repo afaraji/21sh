@@ -24,5 +24,6 @@ void	free_suffix(t_cmd_suffix *suff);
 void	free_l(t_l *list);
 void	free_tab(char **av);
 void	free_list(t_l *head);
+void	free_t_var(t_variable *list);
 
 #endif
