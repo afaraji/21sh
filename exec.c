@@ -6,13 +6,13 @@
 /*   By: afaraji <afaraji@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 16:13:41 by afaraji           #+#    #+#             */
-/*   Updated: 2020/10/31 20:39:29 by afaraji          ###   ########.fr       */
+/*   Updated: 2020/10/31 20:54:52 by afaraji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "exec.h"
-#include "ft_free.h"
+// #include "ft_free.h"
 
 int		def_io;
 

@@ -1,15 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test2.c                                            :+:      :+:    :+:   */
+/*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afaraji <afaraji@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: afaraji <afaraji@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/14 22:35:31 by afaraji           #+#    #+#             */
-/*   Updated: 2020/02/14 22:35:36 by afaraji          ###   ########.fr       */
+/*   Updated: 2020/10/31 20:52:37 by afaraji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_free.h"
 #include "parse.h"
 #include "readline.h"
 #include "ast.h"
@@ -717,8 +718,7 @@ t_cmd_suffix	*cmd_suffix(t_list_token **cmd, t_list_token **end)
 		node->suffix = cmd_suffix(cmd, end);
 		return (node);
 	}
-
-	//free(node);
+	free_suffix(node);
 	return (NULL);
 }
 
