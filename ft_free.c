@@ -22,7 +22,7 @@ void	free_tokens(t_list_token *tokens)
 	tokens->prec = NULL;
 	tokens->next = NULL;
 	if (tokens->data)
-		ft_strdel(&tokens->data);
+		ft_strdel(&(tokens->data));
 	free(tokens);
 	tokens = NULL;
 }
@@ -34,13 +34,13 @@ void	free_suffix(t_cmd_suffix *suff)
 	free_suffix(suff->suffix);
 	if (suff->io_redirect)
 	{
-		ft_strdel(&suff->io_redirect->filename);
+		ft_strdel(&(suff->io_redirect->filename));
 		free(suff->io_redirect);
 		suff->io_redirect = NULL;
 	}
 	else
 	{
-		ft_strdel(&suff->word);
+		ft_strdel(&(suff->word));
 	}
 	free(suff);
 	suff = NULL;
@@ -53,14 +53,14 @@ void	free_prefix(t_cmd_prefix *pref)
 	free_prefix(pref->prefix);
 	if (pref->io_redirect)
 	{
-		ft_strdel(&pref->io_redirect->filename);
+		ft_strdel(&(pref->io_redirect->filename));
 		free(pref->io_redirect);
 		pref->io_redirect = NULL;
 	}
 	else
 	{
-		ft_strdel(&pref->ass_word->key);
-		ft_strdel(&pref->ass_word->value);
+		ft_strdel(&(pref->ass_word->key));
+		ft_strdel(&(pref->ass_word->value));
 		free(pref->ass_word);
 		pref->ass_word = NULL;
 	}
@@ -73,18 +73,15 @@ void	free_simple_cmd(t_simple_cmd *cmd)
 	if (!cmd)
 		return ;
 	free_prefix(cmd->prefix);
-	free_suffix(cmd->suffix);
 	if (cmd->name)
 	{
-		fprintf(ttyfd, "freeing===[%s]==cmdName\n", cmd->name);
-		ft_strdel(&cmd->name);
-		fprintf(ttyfd, "done freeing===[%s]==cmdName\n", cmd->name);
+		ft_strdel(&(cmd->name));
+		free_suffix(cmd->suffix);
 	}
-	if (cmd->word)
+	else if (cmd->word)
 	{
-		fprintf(ttyfd, "freeing===[%s]==cmdWord\n", cmd->word);
-		ft_strdel(&cmd->word);
-		fprintf(ttyfd, "done freeing===[%s]==cmdWord\n", cmd->word);
+		ft_strdel(&(cmd->word));
+		free_suffix(cmd->suffix);
 	}
 	cmd->name = NULL;
 	cmd->word = NULL;

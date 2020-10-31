@@ -632,8 +632,9 @@ t_variable		*ass_word(t_list_token **cmd, t_list_token **end)
 		var->key = ft_strsub((*cmd)->data, 0, i);
 		if (!is_valid_word(var->key))
 		{
-			free(var->key);
+			ft_strdel(&(var->key));
 			free(var);
+			var = NULL;
 			return (NULL);
 		}
 		var->value = ft_strdup(&((*cmd)->data[i + 1]));
@@ -874,7 +875,7 @@ void	join_nodes(t_list_token *dst, t_list_token *todel)
 	char			*tmp;
 
 	tmp = ft_strjoin(dst->data, todel->data);
-	free(dst->data);
+	ft_strdel(&(dst->data));
 	dst->data = tmp;
 	dst->type = WORD;
 	dst->next = todel->next;
@@ -1087,7 +1088,6 @@ int		need_append(t_list_token *tokens)
 		{
 			toappend = ft_strjoin(node->data, "\n");
 			toappend = ft_strjoin(toappend, tmp);
-			// ft_putchar('\n');//shouldn t be here , should be in readline
 			toappend = ft_strjoin(tokentoa(typ), toappend);
 			ttt = __tokenize(toappend);
 			token_print(ttt);
@@ -1103,7 +1103,7 @@ int		need_append(t_list_token *tokens)
 			toappend = tmp;
 			node->next = __tokenize(toappend);
 		}
-		free(toappend);
+		ft_strdel(&toappend);
 		if (lexer(&tokens) || verify_tokens(tokens))
 		{
 			return (100);
@@ -1130,19 +1130,19 @@ char		*here_doc_string(char *word)
 		}
 		if (!ft_strcmp(buff, "\030"))
 		{
-			free(buff);
+			ft_strdel(&buff);
 			return (str);
 		}
 		if (!ft_strcmp(buff, word))
 		{
-			free(buff);
+			ft_strdel(&buff);
 			break;
 		}
 		tmp = ft_strjoin(str, buff);
-		free(str);
+		ft_strdel(&str);
 		str = ft_strjoin(tmp, "\n");
-		free(tmp);
-		free(buff);
+		ft_strdel(&tmp);
+		ft_strdel(&buff);
 	}
 	// tmp = ft_strjoin(str, "\n");
 	// free(str);
@@ -1171,7 +1171,7 @@ void	here_doc(t_list_token *head)
 			{
 				str = here_doc_string(node->next->data);
 			}
-			free(node->next->data);
+			ft_strdel(&(node->next->data));
 			node->next->data = str;
 			node->next->type = QUOTE;
 			node->next->is_ok = 1;
@@ -1227,7 +1227,7 @@ void	delet_proc(pid_t pid)
 	{
 		if (pid == node->ppid)
 		{
-			free(node->str);
+			ft_strdel(&(node->str));
 			old_node->next = node->next;
 			free(node);
 			break;
@@ -1258,14 +1258,11 @@ int		manage_cmd_list(t_cmdlist *cmdlist)
 	t_cmdlist		*node;
 	int				ret;
 
-	fprintf(ttyfd, "\033[H\033[2J");
-	fprintf(ttt, "\033[H\033[2J");
 	node = cmdlist;
 	ret = 0;
 	while (node)
 	{
 		ret = execute(node->and_or, node->bg);
-		print_tokenlist(node->and_or->ast);
 		node = node->next;
 	}
 	free_cmd_list(cmdlist);
@@ -1289,9 +1286,9 @@ int 	main_parse(char *line)
 	join_words(tokens);
 	here_doc(tokens);
 	cmdlist = token_split_sep_op(tokens);
+	free_tokens(tokens);
 	if (!cmdlist || g_var.errno)
 		return (42);
-	free_tokens(tokens);
 	return (manage_cmd_list(cmdlist));
 }
 

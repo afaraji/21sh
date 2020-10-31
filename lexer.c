@@ -54,11 +54,11 @@ int		alias_infinit_loop(char *str, t_alias *aliases)
 	{
 		if (!ft_strcmp(tmp, node->key))
 		{
-			free(tmp);
+			ft_strdel(&tmp);
 			tmp = ft_strsub_delimit(node->sub, ' ');
 			if (!ft_strcmp(tmp, str))
 			{
-				free(tmp);
+				ft_strdel(&tmp);
 				return (1);
 			}
 			else
@@ -81,7 +81,7 @@ int		alias_sub(t_list_token *word, t_alias *aliases)
 		{
 			if(!alias_infinit_loop(node->key, aliases))
 			{
-				free(word->data);
+				ft_strdel(&(word->data));
 				word->data = ft_strdup(node->sub);
 				return (1);
 			}
@@ -164,7 +164,7 @@ void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
 	{
 		*cmd_token = toinsert;
 	}
-	free(node->data);
+	ft_strdel(&(node->data));
 	free(node);
 }
 
@@ -267,13 +267,13 @@ int		tilde_sub(t_list_token **cmd_token)
 				tmp = fetch_variables("HOME", -1);
 				if (tmp)
 				{
-					free(str);
+					ft_strdel(&str);
 					str = ft_strjoin(tmp, rest);
 				}
 				else
 				{
 					pw = getpwuid(getuid());
-					free(str);
+					ft_strdel(&str);
 					if (pw)
 						str = ft_strjoin(pw->pw_dir, rest);
 				}
@@ -283,7 +283,7 @@ int		tilde_sub(t_list_token **cmd_token)
 				tmp = fetch_variables("OLDPWD", -1);
 				if(tmp)
 				{
-					free(str);
+					ft_strdel(&str);
 					str = ft_strjoin(tmp, rest);
 				}
 			}
@@ -292,7 +292,7 @@ int		tilde_sub(t_list_token **cmd_token)
 				tmp = fetch_variables("PWD", -1);
 				if(tmp)
 				{
-					free(str);
+					ft_strdel(&str);
 					str = ft_strjoin(tmp, rest);
 				}
 			}
@@ -301,7 +301,7 @@ int		tilde_sub(t_list_token **cmd_token)
 				tmp = ft_strjoin("/Users/", tilde_prefix);
 				if (!access(tmp, F_OK))
 				{
-					free(str);
+					ft_strdel(&str);
 					str = ft_strjoin(tmp, rest);
 				}
 			}
@@ -313,13 +313,13 @@ int		tilde_sub(t_list_token **cmd_token)
 			{
 				node->data[i] = '\0';
 				tmp = ft_strjoin(node->data, str);
-				free(node->data);
-				free(str);
+				ft_strdel(&(node->data));
+				ft_strdel(&str);
 				node->data = tmp;
 			}
 			else
 			{
-				free(node->data);
+				ft_strdel(&(node->data));
 				node->data = str;
 			}
 		}
@@ -408,11 +408,11 @@ char		*str_dollar_sub(char *str)
 	prefix = ft_strsub(str, 0, start);
 	var = get_dollar_var(str, start, end);
 	suffix = ft_strjoin(var, &(str[end]));
-	free(str);
+	ft_strdel(&str);
 	str = ft_strjoin(prefix, suffix);
-	free(prefix);
-	free(var);
-	free(suffix);
+	ft_strdel(&prefix);
+	ft_strdel(&var);
+	ft_strdel(&suffix);
 	if (is_dollar(str) >= 0 && (end - start) > 1)
 		str = str_dollar_sub(str);
 	return (str);

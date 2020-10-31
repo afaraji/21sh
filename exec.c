@@ -76,7 +76,7 @@ int		check_fd(int fd, int io)
 // 	char	*str;
 // 	char	*tmp;
 // 	char	*buff;
-	
+
 // 	ft_prompt("here--doc> ");
 // 	tmp = ft_strdup("");
 // 	while (get_next_line(0, &buff))
@@ -156,7 +156,7 @@ int		check_fd(int fd, int io)
 // 	if (io->redirect_type == GRTAND)
 // 	{
 // 		// fprintf(ttyfd, "----- here >&- ------\n");
-// 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);		
+// 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
 // 		if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
 // 		{
 // 			filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
@@ -246,7 +246,7 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 				if (tmp->env != 2 && !ft_strcmp(tmp->key, node->ass_word->key))
 				{
 					tmp->env = node->ass_word->env;
-					free(tmp->value);
+					ft_strdel(&(tmp->value));
 					tmp->value = ft_strdup(node->ass_word->value);
 					state = 1;
 					break;
@@ -297,7 +297,7 @@ char	**paths_from_env(void)
 	if (!tmp)
 		return (NULL);
 	paths = ft_strsplit(tmp, ':');
-	free(tmp);
+	ft_strdel(&tmp);
 	i = 0;
 	if (!paths)
 		return (NULL);
@@ -335,7 +335,7 @@ char	*get_cmdpath(char *str)
 		{
 			return (tmp);
 		}
-		free(tmp);
+		ft_strdel(&tmp);
 		i++;
 	}
 	printf("shell: command not found: %s\n", str);
@@ -346,7 +346,7 @@ int		env_tab_count(int all)
 {
 	t_variable	*node;
 	int			count;
-	
+
 	node = g_var.var;
 	count = 0;
 	while (node)
@@ -364,9 +364,9 @@ char	**env_to_tab(t_variable *var, int all)
 	char		**argv;
 	char		*tmp;
 	int			i;
-	
+
 	node = var;
-	i = env_tab_count(all);	
+	i = env_tab_count(all);
 	if (!(argv = (char **)malloc(sizeof(char *) * (i + 1))))
 		return (NULL);
 	i = 0;
@@ -376,7 +376,7 @@ char	**env_to_tab(t_variable *var, int all)
 		{
 			tmp = ft_strjoin(node->key, "=");
 			argv[i] = ft_strjoin(tmp, node->value);
-			free(tmp);
+			ft_strdel(&tmp);
 			i++;
 		}
 		node = node->next;
@@ -487,7 +487,7 @@ t_l		*get_args(t_simple_cmd	*cmd)
 				node = node->next;
 			}
 			tmp = tmp->suffix;
-		}	
+		}
 	}
 	return (head);
 }
@@ -520,7 +520,7 @@ t_l	*var_sub(t_l *head)
 	next_node = head->next;
 	tmp = str_dollar_sub(head->data); // node->data is freed.
 	t = ft_strsplit(tmp, ' ');
-	free(tmp);
+	ft_strdel(&tmp);
 	i = 1;
 	if (!t || !t[0])
 	{
@@ -769,6 +769,6 @@ int		execute(t_and_or *cmd, int bg)
 			// fprintf(ttt, "===exit stats[%d]===\n", g_var.exit_status);
 		}
 		cmd = cmd->next;
-	}	
+	}
 	return (ret);
 }
