@@ -125,8 +125,6 @@ void		get_ppid_list(void)
 
 int		init_shell(char **env)
 {
-	if (ft_set_attr(0))
-		return (1);
 	g_var = (t_shell_var){0, 0, 0, NULL, NULL};
 	g_var.var = get_set(env);
 	g_var.history = create_history();
@@ -205,20 +203,19 @@ int			main(int ac, char **av, char **env)
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
 		return (-1);
 	line = NULL;	ttyfd = fopen("/dev/ttys001", "w");
-	ret = 0;	ttt = fopen("/dev/ttys002", "w");
+	ret = 0;	ttt = fopen("/dev/ttys005", "w");
 	ft_signal();
 	if (init_shell(env))
 		return (1);
-	line = readline(0);
 	while (1)
 	{
+		if (ft_set_attr(0))
+			return (1);
+		line = readline(0);
 		if (ft_strcmp(line, "") && (ret = main_parse(line)))
 			exit_status(ret << 8);
 		if (line)
 			ft_strdel(&line);
-		if (ft_set_attr(0))
-			return (1);
-		line = readline(0);
 		bg_jobs();
 	}
 	(void)ac;

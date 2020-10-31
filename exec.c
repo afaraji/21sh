@@ -220,6 +220,8 @@ t_variable	*var_dup(t_variable *var)
 	t_variable	*node;
 
 	node = (t_variable *)malloc(sizeof(t_variable));
+	if (!node)
+		return (NULL);
 	node->env = var->env;
 	node->key = ft_strdup(var->key);
 	node->value = ft_strdup(var->value);
@@ -338,7 +340,7 @@ char	*get_cmdpath(char *str)
 		ft_strdel(&tmp);
 		i++;
 	}
-	printf("shell: command not found: %s\n", str);
+	ft_print(STDERR, "shell: command not found: %s\n", str);
 	return(NULL);
 }
 
@@ -442,7 +444,8 @@ char	**list_to_tab(t_l *list)
 			i++;
 		node = node->next;
 	}
-	args = (char **)malloc(sizeof(char *) * (i + 1));
+	if (!(args = (char **)malloc(sizeof(char *) * (i + 1))))
+		return (NULL);
 	node = list;
 	i = 0;
 	while(node)
@@ -467,7 +470,8 @@ t_l		*get_args(t_simple_cmd	*cmd)
 
 	if (!(cmd->name) && !(cmd->word))
 		return (NULL);
-	head = (t_l *)malloc(sizeof(t_l));
+	if (!(head = (t_l *)malloc(sizeof(t_l))))
+		return (NULL);
 	if (cmd->name)
 		head->data = ft_strdup(cmd->name);
 	else
@@ -587,7 +591,7 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	}
 	ft_set_attr(1);
 	execve(cmd_path, args, env);//error handling
-	printf("shell: permission denied: %s\n", args[0]);
+	ft_print(STDERR, "shell: permission denied: %s\n", args[0]);
 	return (126);
 }
 
