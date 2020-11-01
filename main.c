@@ -203,8 +203,8 @@ int			main(int ac, char **av, char **env)
 
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
 		return (-1);
-	line = NULL;	ttyfd = fopen("/dev/ttys002", "w");
-	ret = 0;	ttt = fopen("/dev/ttys003", "w");
+	line = NULL;	ttyfd = fopen("/dev/ttys001", "w");
+	ret = 0;	ttt = fopen("/dev/ttys002", "w");
 	ft_signal();
 	if (init_shell(env))
 		return (1);

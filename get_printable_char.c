@@ -15,20 +15,22 @@
 
 int		get_cmd_1(char **str1, char **str2)
 {
+	char	*tmp;
+
 	if (*str1)
 	{
-		free(*str2);
+		ft_strdel(str2);
 		*str2 = ft_strdup(*str1);
 		ft_putstr_fd("\n", STDOUT);
 		ft_putstr_fd(*str2, STDOUT);
-		free(*str1);
+		ft_strdel(str1);
 		return (0);
 	}
 	ft_putstr_fd("\n21sh: ", STDERR);
 	ft_putstr_fd(*str2, STDERR);
 	ft_putstr_fd(": event not found", STDERR);
-	free(*str2);
-	free(*str1);
+	ft_strdel(str2);
+	ft_strdel(str1);
 	*str2 = ft_strdup("");
 	return (1);
 }
@@ -44,7 +46,7 @@ int		get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 	{
 		tmp = term->line->str;
 		term->line->str = trim_cmd(tmp);
-		free(tmp);
+		ft_strdel(&tmp);
 		if (term->line->str[0] == '!' && term->line->str[1])
 		{
 			tmp = history_search(term->line->str + 1, his_head);
@@ -54,8 +56,6 @@ int		get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 		if (ft_strcmp(term->line->str, "") != 0
 		|| (mult_line != 0 && mult_line != -1))
 			add_cmd_to_his_list(term->line->str, his_head, mult_line);
-		else
-			free(term->line->str);
 	}
 	return (0);
 }
