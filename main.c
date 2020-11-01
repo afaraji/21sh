@@ -28,7 +28,10 @@ t_hist		*create_history(void)
 		return (NULL);
 	i = 1;
 	while (get_next_line(fd, &file_str) == 1)
+	{
 		get_his_list(file_str, &his_list, i++);
+		ft_strdel(&file_str);
+	}
 	close(fd);
 	return (his_list);
 }

@@ -20,7 +20,6 @@ t_hist	*get_his_node(char *file_str, t_hist *prec, int i)
 	if (!(node = (t_hist *)malloc(sizeof(t_hist))))
 		return (NULL);
 	node->hist_str = ft_strdup(file_str);
-	//ft_strdel(&file_str);
 	node->index = i;
 	node->next = NULL;
 	node->prec = prec;
