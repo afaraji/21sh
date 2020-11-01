@@ -12,9 +12,6 @@
 
 #include "parse.h"
 #include "exec.h"
-// #include "ft_free.h"
-
-int		def_io;
 
 void	exit_status(int status)
 {
@@ -70,151 +67,6 @@ int		check_fd(int fd, int io)
 		return (0);
 	return (1);
 }
-
-// int		here_doc(t_io_redirect	*io)
-// {
-// 	// if (io->io_num >= 0) ?
-// 	char	*str;
-// 	char	*tmp;
-// 	char	*buff;
-
-// 	ft_prompt("here--doc> ");
-// 	tmp = ft_strdup("");
-// 	while (get_next_line(0, &buff))
-// 	{
-// 		if (!ft_strcmp(buff, io->filename) || !ft_strcmp(buff, "\x04"))
-// 		{
-// 			if (!str)
-// 				str = ft_strdup("");
-// 			ft_putstr_fd(str, STDIN);
-// 			free(str);
-// 			free(tmp);
-// 		}
-// 		str = ft_strjoin(tmp, buff);
-// 		free(tmp);
-// 		tmp = str;
-// 	}
-// 	return (0);
-// }
-
-// int		do_redirect(t_io_redirect *io)
-// { // no error handling yet !!!
-// 	int tmpfd;
-// 	int filefd;
-// 	int	fd_io;
-
-// 	if (io->redirect_type == GRT)
-	// {
-	// 	(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
-	// 	filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-	// 	if (filefd < 0)
-	// 	{
-	// 		ft_putstr_fd("error at open file [fd<0]\n", STDERR);
-	// 		return (-1);
-	// 	}
-	// 	dup2(filefd, fd_io);
-	// 	if (filefd != fd_io)
-	// 		close(filefd);
-	// }
-	// if (io->redirect_type == GRTGRT)
-	// {
-	// 	(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
-	// 	filefd = open(io->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-	// 	if (filefd < 0)
-	// 	{
-	// 		ft_putstr_fd("error at open file [fd<0]\n", STDERR);
-	// 		return (-1);
-	// 	}
-	// 	dup2(filefd, fd_io);
-	// 	if (filefd != fd_io)
-	// 		close(filefd);
-	// }
-	// if (io->redirect_type == SMLSML)
-	// {
-	// 	(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
-	// 	return (do_heredoc(io));
-	// }
-	// if (io->redirect_type == SML)
-	// {
-	// 	(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
-	// 	filefd = open(io->filename, O_RDONLY);
-	// 	if (filefd < 0)
-	// 	{
-	// 		ft_putstr_fd("error at open file [fd<0]\n", STDERR);
-	// 		return (-1);
-	// 	}
-	// 	int tmp = check_fd(fd_io, 0);
-	// 	// fprintf(ttyfd, "====12321321===[%d]==fd_io=[%d][%s]\n", tmp, fd_io, ttyname(fd_io));
-	// 	if (fd_io == STDIN && !ttyname(fd_io))
-	// 	{
-	// 		fd_io = dup(def_io);
-	// 		// fprintf(ttyfd, "-------*--->[%d][%s]\n", fd_io, ttyname(fd_io));
-	// 	}
-	// 	dup2(filefd, fd_io);
-	// 		// if (filefd != fd_io)
-	// 	// close(filefd);
-	// }
-// 	if (io->redirect_type == GRTAND)
-// 	{
-// 		// fprintf(ttyfd, "----- here >&- ------\n");
-// 		(io->io_num == -1) ? (fd_io = STDOUT) : (fd_io = io->io_num);
-// 		if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
-// 		{
-// 			filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-// 			if (filefd < 0)
-// 			{
-// 				ft_putstr_fd("error at open file [fd<0]\n", STDERR);
-// 				return (-1);
-// 			}
-// 			dup2(filefd, fd_io);
-// 		}
-// 		else if (is_alldigit(io->filename))
-// 		{
-// 			tmpfd = ft_atoi(io->filename);
-// 			if (!check_fd(tmpfd, STDOUT))
-// 				return (-1);
-// 			dup2(tmpfd, fd_io);
-// 		}
-// 		else
-// 		{
-// 			int ret = close(fd_io);
-// 			// fprintf(ttyfd,"----> closing[%d]----> close[%d]---\n", fd_io, ret);
-// 			// fprintf(ttyfd,"----> ttyname [%s]---\n", ttyname(fd_io));
-// 		}
-// 	}
-// 	if (io->redirect_type == SMLAND)
-// 	{
-// 		(io->io_num == -1) ? (fd_io = STDIN) : (fd_io = io->io_num);
-// 		if (!is_alldigit(io->filename) && ft_strcmp("-", io->filename))
-// 		{
-// 			filefd = open(io->filename, O_RDONLY);
-// 			if (filefd < 0)
-// 			{
-// 				ft_putstr_fd("error at open file [fd<0]\n", STDERR);
-// 				return (-1);
-// 			}
-// 			dup2(filefd, fd_io);
-// 			if (filefd != fd_io)
-// 				close(filefd);
-// 		}
-// 		else if (is_alldigit(io->filename))
-// 		{
-// 			tmpfd = ft_atoi(io->filename);
-// 			if (!check_fd(tmpfd, STDIN))
-// 				return (-1);
-// 			dup2(tmpfd, fd_io);
-// 		}
-// 		else
-// 		{
-// 			if (close(fd_io))
-// 			{
-// 				ft_putstr_fd("error closing fd [bad fd]\n", STDERR);
-// 				return (-1);
-// 			}
-// 		}
-// 	}
-// 	return (0);
-// }
 
 t_variable	*var_dup(t_variable *var)
 {
@@ -704,7 +556,6 @@ int		exec_no_fork_builtin(t_simple_cmd *cmd, char **av)
 	status = builtins(av[0], av, env);
 	reset_in_out(GETDFL);
 	free_tab(env);
-	free_tab(av);
 	return (status);
 }
 
@@ -717,7 +568,11 @@ int		exec_no_fork(t_pipe_seq *cmd, int bg)
 	{
 		av = get_arg_var_sub(cmd->left);
 		if (av && is_builtin(av[0]))
-			return (exec_no_fork_builtin(cmd->left, av));
+		{
+			status = exec_no_fork_builtin(cmd->left, av);
+			free_tab(av);
+			return (status);
+		}
 		free_tab(av);
 		if (!(cmd->left->name) && !(cmd->left->word))
 		{
