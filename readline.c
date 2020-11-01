@@ -88,6 +88,7 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 		//******** neeed to be in a func *********
 		if (term->buff == CTRL_C)
 		{
+			free_term(&term);
 			ft_putstr_fd("^C\n", 1);
 			if (mult_line != 0)
 				return(ft_strdup("\033"));
@@ -96,6 +97,7 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 		}
 		if (term->buff == CTRL_D && !ft_strcmp(term->line->str, ""))
 		{
+			free_term(&term);
 			ft_putchar('\n'); // it may invoc other bugs
             if (mult_line == 0)
                 return (ft_strdup("exit"));
