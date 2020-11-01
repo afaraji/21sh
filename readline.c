@@ -116,7 +116,7 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 			break ;
 		}
 		else if (!(ft_isprint(term->buff)))
-		{fprintf(ttyfd, "************2**********\n");
+		{
 			unprint_ret = unprintable(term, his_head, &to_past);
 			if (unprint_ret == 1)
 				continue;
