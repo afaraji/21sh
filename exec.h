@@ -13,6 +13,7 @@
 #ifndef EXEC_H
 # define EXEC_H
 # include "parse.h"
+# include "ft_free.h"
 
 void		exit_status(int status);
 int			is_alldigit(char *str);

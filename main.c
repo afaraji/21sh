@@ -14,6 +14,7 @@
 #include "parse.h"
 #include "builtins.h"
 #include "ast.h"
+#include "ft_free.h"
 
 t_hist		*create_history(void)
 {
@@ -38,7 +39,7 @@ int			ft_exit(char **av)
 
 	ft_set_attr(1);
 	save_list();
-	// free_g_var();
+	free_g_var();
 	if (av[1])
 	{
 		if (ft_strlen(av[1]) < 10 && is_all_digits(av[1]))

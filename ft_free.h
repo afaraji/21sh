@@ -25,5 +25,6 @@ void	free_l(t_l *list);
 void	free_tab(char **av);
 void	free_list(t_l *head);
 void	free_t_var(t_variable *list);
+void	free_g_var(void);
 
 #endif

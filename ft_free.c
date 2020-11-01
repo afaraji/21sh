@@ -172,11 +172,41 @@ void	free_t_var(t_variable *list)
 	list = NULL;
 }
 
+void	free_proc(t_proc *proc)
+{
+	if (proc->next)
+		free_proc(proc->next);
+	ft_strdel(&(proc->str));
+	free(proc);
+	proc = NULL;
+}
+
+void	free_aliases(t_alias *alias)
+{
+	if (alias->next)
+		free_aliases(alias->next);
+	ft_strdel(&(alias->key));
+	ft_strdel(&(alias->sub));
+	free(alias);
+	alias = NULL;
+}
+
+void	free_history_list(t_hist *list)
+{
+	if (list->next)
+		free_history_list(list->next);
+	ft_strdel(&(list->hist_str));
+	list->next = NULL;
+	list->prec = NULL;
+	free(list);
+	list = NULL;
+}
+
 void	free_g_var(void)
 {
-	// free_t_var(g_var.var); // be carful g_var.var is allocated ??
-	// free(g_var.aliases);
-	// free(g_var.history);
-	// free(g_var.proc);
+	free_t_var(g_var.var);
+	free_aliases(g_var.aliases);
+	free_history_list(g_var.history);
+	free_proc(g_var.proc);
 }
 
