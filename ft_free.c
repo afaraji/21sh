@@ -80,7 +80,7 @@ void	free_suffix(t_cmd_suffix *suff)
 		free(suff->io_redirect);
 		suff->io_redirect = NULL;
 	}
-	else
+	else if (suff->word)
 	{
 		ft_strdel(&(suff->word));
 	}

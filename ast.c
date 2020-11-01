@@ -704,6 +704,7 @@ t_cmd_suffix	*cmd_suffix(t_list_token **cmd, t_list_token **end)
 	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
 	node = (t_cmd_suffix *)malloc(sizeof(t_cmd_suffix));
+	node->suffix = NULL;
 	node->io_redirect = io_redirect(cmd, end);
 	if (node->io_redirect)
 	{
