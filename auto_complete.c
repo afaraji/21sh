@@ -567,6 +567,7 @@ void			get_cmd_list(t_l **cmd_list, char **cmd_paths, char *str)
 	struct dirent	*dir;
 
 	i = 0;
+	d = NULL;
 	while (cmd_paths[i])
 	{
 		d = opendir(cmd_paths[i]);
@@ -581,8 +582,8 @@ void			get_cmd_list(t_l **cmd_list, char **cmd_paths, char *str)
 					*cmd_list = get_cmd_list_1(dir->d_name, *cmd_list);
 				}
 			}
+			closedir(d);
 		}
-		closedir(d);
 		i++;
 	}
 }
