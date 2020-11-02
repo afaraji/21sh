@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtins.h"
-#include "parse.h"
+#include "../inc/ft_21sh.h"
 
 int	change_pwd(char *str1, char *str2)
 {

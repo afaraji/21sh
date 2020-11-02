@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
-#include "parse.h"
+#include "../inc/ft_21sh.h"
 
 t_hist	*get_his_node(char *file_str, t_hist *prec, int i)
 {

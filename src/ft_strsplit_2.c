@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
+#include "../inc/ft_21sh.h"
 
 int		ft_cnt_parts(char *s, char c)
 {

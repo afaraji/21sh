@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
+#include "../inc/ft_21sh.h"
 
 char	*copy_char_1(t_line *line, int curs)
 {

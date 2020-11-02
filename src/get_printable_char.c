@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
-#include "parse.h"
+#include "../inc/ft_21sh.h"
 
 int		get_cmd_1(char **str1, char **str2)
 {

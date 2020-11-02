@@ -13,12 +13,6 @@
 #ifndef EXEC_H
 # define EXEC_H
 # include "ft_21sh.h"
-# include "builtins.h"
-# include "readline.h"
-# include "parse.h"
-# include "ast.h"
-# include "exec.h"
-# include "ft_free.h"
 
 void		exit_status(int status);
 int			is_alldigit(char *str);

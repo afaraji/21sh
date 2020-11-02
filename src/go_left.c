@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
+#include "../inc/ft_21sh.h"
 
 void	go_upline(t_line *line)
 {

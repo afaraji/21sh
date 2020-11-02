@@ -10,12 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_free.h"
-#include "parse.h"
-#include "readline.h"
-#include "ast.h"
-#include "lexer.c"
-#include "exec.c"
+#include "../inc/ft_21sh.h"
 
 int		is_op(char *str, int i)
 {
@@ -27,27 +22,21 @@ int		is_op(char *str, int i)
 		return (DQUOTE);
 	if (str[i] == ';')
 		return (SMCLN);
-	if (str[i] == '&' && str[i + 1] == '&')	// should escape 2nd &
+	if (str[i] == '&' && str[i + 1] == '&')
 		return (ANDLG);
-	if (str[i] == '|' && str[i + 1] == '|')	// should escape 2nd |
+	if (str[i] == '|' && str[i + 1] == '|')
 		return (ORLG);
 	if (str[i] == '|')
 		return (PIP);
 	if (str[i] == 92)
 		return (ESCAPE);
-	// if (str[i] == '<' && str[i + 1] == '<' && str[i + 2] == '-')
-	// 	return (DSMLDASH);
 	if ((str[i] == '>' && str[i + 1] == '&') || (str[i] == '&' && str[i + 1] == '>'))
 		return (GRTAND);
-	// if (str[i] == '>' && str[i + 1] == '|')
-	// 	return (CLOBBER);
-	if (str[i] == '>' && str[i + 1] == '>')	// should escape 2nd >
+	if (str[i] == '>' && str[i + 1] == '>')
 		return (GRTGRT);
 	if ((str[i] == '<' && str[i + 1] == '&'))// || (str[i] == '&' && str[i + 1] == '<'))
 		return (SMLAND);
-	// if (str[i] == '<' && str[i + 1] == '>')
-	// 	return (SMLGRT);
-	if (str[i] == '<' && str[i + 1] == '<')	// should escape 2nd <
+	if (str[i] == '<' && str[i + 1] == '<')
 		return (SMLSML);
 	if (str[i] == '>')
 		return (GRT);
@@ -56,125 +45,6 @@ int		is_op(char *str, int i)
 	if (str[i] == '&')
 		return (BGJOB);
 	return (0);
-}
-
-void	token_print(t_list_token *node)
-{
-	fprintf(ttt, "\n");
-	while (node)
-	{
-		if(node->type == WORD)
-			fprintf(ttt, "[%s:%d]", node->data, node->type);
-		else if(node->type == QUOTE || node->type == DQUOTE)
-			fprintf(ttt, "{%d:%s}", node->is_ok, node->data);
-		else
-		{
-			//fprintf(ttt, "(%d)", node->type);
-			switch (node->type)
-			{
-			case -1:
-				fprintf(ttt, "_");
-				break;
-			case -4:
-				fprintf(ttt, ";");
-				break;
-			case -5:
-				fprintf(ttt, "(&&)");
-				break;
-			case -6:
-				fprintf(ttt, "||");
-				break;
-			case -10:
-				fprintf(ttt, "|");
-				break;
-			case -11:
-				fprintf(ttt, "&");
-				break;
-			case -12:
-				fprintf(ttt, "[%s:%d]", node->data, node->type);
-				break;
-			case -20:
-				fprintf(ttt, ">");
-				break;
-			case -21:
-				fprintf(ttt, ">>");
-				break;
-			case -22:
-				fprintf(ttt, "<");
-				break;
-			case -30:
-				fprintf(ttt, "<<");
-				break;
-
-			default:
-				fprintf(ttt, "[%d]", node->type);
-				break;
-			}
-		}
-		node = node->next;
-	}
-	fprintf(ttt, "\n");
-}
-
-void	token_print_inverse(t_list_token *node)
-{
-	fprintf(ttt, "\n");
-	while (node->next)
-		node = node->next;
-
-	while (node)
-	{
-		if(node->type == WORD)
-			fprintf(ttt, "[%s]", node->data);
-		else if(node->type == QUOTE || node->type == DQUOTE)
-			fprintf(ttt, "{%d:%s}", node->is_ok, node->data);
-		else
-		{
-			//fprintf(ttt, "(%d)", node->type);
-			switch (node->type)
-			{
-			case -1:
-				fprintf(ttt, "_");
-				break;
-			case -4:
-				fprintf(ttt, ";");
-				break;
-			case -5:
-				fprintf(ttt, "(&&)");
-				break;
-			case -6:
-				fprintf(ttt, "||");
-				break;
-			case -10:
-				fprintf(ttt, "|");
-				break;
-			case -11:
-				fprintf(ttt, "&");
-				break;
-			case -12:
-				fprintf(ttt, "[%s]", node->data);
-				break;
-			case -20:
-				fprintf(ttt, ">");
-				break;
-			case -21:
-				fprintf(ttt, ">>");
-				break;
-			case -22:
-				fprintf(ttt, "<");
-				break;
-			case -30:
-				fprintf(ttt, "<<");
-				break;
-
-			default:
-				fprintf(ttt, "[%d]", node->type);
-				break;
-			}
-		}
-		node = node->prec;
-	}
-	fprintf(ttt, "\n");
 }
 
 char	*tokentoa(int token)
@@ -256,14 +126,14 @@ t_list_token	*add_quote(int *index, char *str)
 		i++;
     (str[i] == '\'') ? (node->is_ok = 1) : (node->is_ok = 0);
 	node->type = QUOTE;
-	node->data = ft_strsub(str, *index + 1, i - *index - 1); // i = 0; or i = *index ?
+	node->data = ft_strsub(str, *index + 1, i - *index - 1);
 	node->next = NULL;
 	node->prec = NULL;
 	(i + 1 < ft_strlen(str)) ? (*index = i + 1) : (*index = ft_strlen(str));
 	return (node);
 }
 
-t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeption
+t_list_token	*add_dquote(int *index, char *str)
 {
 	t_list_token	*node;
 	int i = *index;
@@ -276,7 +146,7 @@ t_list_token	*add_dquote(int *index, char *str)		// backslash and dollar exeptio
 		i++;
     (str[i] == '"') ? (node->is_ok = 1) : (node->is_ok = 0);
 	node->type = DQUOTE;
-	node->data = (ft_strsub(str, *index + 1, i - *index - 1));		// i = 0; or i = *index ?
+	node->data = (ft_strsub(str, *index + 1, i - *index - 1));
 	if (is_dollar(node->data) >= 0)
 		node->data = str_dollar_sub(node->data);
 	node->next = NULL;
@@ -290,7 +160,9 @@ t_list_token	*add_space(int *index, char *str)
 	t_list_token	*node;
 	int i = *index;
 
-	node = (t_list_token *)malloc(sizeof(t_list_token));	//need protection if malloc fails.
+	node = (t_list_token *)malloc(sizeof(t_list_token));
+	if (!node)
+		return (NULL);
 	node->type = SPACE;
 	node->data = NULL;
 	node->next = NULL;
@@ -301,7 +173,7 @@ t_list_token	*add_space(int *index, char *str)
 	return (node);
 }
 
-t_list_token	*add_escape(int *index, char *str) // need thinking and recoding
+t_list_token	*add_escape(int *index, char *str)
 {
 	t_list_token	*node;
 
@@ -845,31 +717,6 @@ t_list_token	*list_sub(t_list_token *start, t_list_token *end)
 	return (head);
 }
 
-void	print_tokenlist(t_pipe_seq *ast)
-{
-	t_simple_cmd	*node;
-
-	if (!ast)
-		return;
-	node = ast->left;
-	print_simple_cmd(node);
-	print_tokenlist(ast->right);
-}
-
-void	print_andor(t_cmdlist *list)
-{
-	t_and_or	*node;
-
-	node = list->and_or;
-	while (node)
-	{
-		fprintf(ttt,"+-+-+-+-+-+-+-+-+-+-+---+-+\ndependent ===>[%d]\n", node->dependent);
-		print_tokenlist(node->ast);
-		node = node->next;
-	}
-
-}
-
 void	free_token_node(t_list_token **todel)
 {
 	ft_strdel(&((*todel)->data));
@@ -1099,7 +946,6 @@ int		need_append(t_list_token *tokens)
 			toappend = ft_strjoin(toappend, tmp);
 			toappend = ft_strjoin(tokentoa(typ), toappend);
 			ttt = ft_tokenize(toappend);
-			token_print(ttt);
 			if (ttt->next)
 				ttt->next->prec = node;
 			node->data = ttt->data;
@@ -1300,6 +1146,3 @@ int 	main_parse(char *line)
 		return (42);
 	return (manage_cmd_list(cmdlist));
 }
-
-// correct error management with (g_var.[errno, err_str])
-// escape deep thinking and search

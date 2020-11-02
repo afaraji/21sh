@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtins.h"
-#include "parse.h"
+#include "../inc/ft_21sh.h"
 
 char	*ft_get_ld(char *cwd, char *flag)
 {

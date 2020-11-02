@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
-#include "parse.h"
+#include "../inc/ft_21sh.h"
 
 void	ft_prompt(char *prompt)
 {
@@ -93,7 +92,7 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 			if (mult_line != 0)
 				return(ft_strdup("\033"));
 			return (ft_strdup(""));
-			
+
 		}
 		if (term->buff == CTRL_D && !ft_strcmp(term->line->str, ""))
 		{

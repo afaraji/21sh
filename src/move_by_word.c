@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
+#include "../inc/ft_21sh.h"
 
 void	move_by_word_1(t_line *line)
 {

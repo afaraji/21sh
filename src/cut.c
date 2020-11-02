@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
+#include "../inc/ft_21sh.h"
 
 void	ft_cut_1(t_terminal *term, int curs, char *tmp_s)
 {

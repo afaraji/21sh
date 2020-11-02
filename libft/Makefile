@@ -41,7 +41,7 @@ $(NAME):
 	@ranlib $(NAME)
 
 clean:
-	@printf "removing OBJ files\n"
+	@printf "removing OBJ files in ./libft/\n"
 	@/bin/rm -f $(OBJECTS)
 
 fclean: clean

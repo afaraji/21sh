@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
-#include "parse.h"
-#include "builtins.h"
+#include "../inc/ft_21sh.h"
 
 int		ft_export(char **flag, char **env)
 {

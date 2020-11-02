@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtins.h"
-#include "exec.h"
+#include "../inc/ft_21sh.h"
 
 int	ft_echo(char **av)
 {

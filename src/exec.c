@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
-#include "exec.h"
+#include "../inc/ft_21sh.h"
 
 void	exit_status(int status)
 {

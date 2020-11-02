@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
-#include "parse.h"
+#include "../inc/ft_21sh.h"
 
 char	*history_search_num(int index)
 {

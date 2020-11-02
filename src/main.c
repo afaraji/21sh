@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_21sh.h"
+#include "../inc/ft_21sh.h"
 
 t_hist		*create_history(void)
 {
@@ -203,8 +203,8 @@ int			main(int ac, char **av, char **env)
 
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
 		return (-1);
-	line = NULL;	ttyfd = fopen("/dev/ttys001", "w");
-	ret = 0;	ttt = fopen("/dev/ttys002", "w");
+	line = NULL;
+	ret = 0;
 	ft_signal();
 	if (init_shell(env))
 		return (1);

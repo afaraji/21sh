@@ -13,12 +13,6 @@
 #ifndef AST_H
 # define AST_H
 # include "ft_21sh.h"
-# include "builtins.h"
-# include "readline.h"
-# include "parse.h"
-# include "ast.h"
-# include "exec.h"
-# include "ft_free.h"
 
 int				is_op(char *str, int i);
 void			token_print(t_list_token *node);

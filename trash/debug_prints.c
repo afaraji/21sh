@@ -98,3 +98,150 @@ void	print_simple_cmd(t_simple_cmd *cmd)
 }
 
 //**********************************
+
+
+void	token_print(t_list_token *node)
+{
+	fprintf(ttt, "\n");
+	while (node)
+	{
+		if(node->type == WORD)
+			fprintf(ttt, "[%s:%d]", node->data, node->type);
+		else if(node->type == QUOTE || node->type == DQUOTE)
+			fprintf(ttt, "{%d:%s}", node->is_ok, node->data);
+		else
+		{
+			//fprintf(ttt, "(%d)", node->type);
+			switch (node->type)
+			{
+			case -1:
+				fprintf(ttt, "_");
+				break;
+			case -4:
+				fprintf(ttt, ";");
+				break;
+			case -5:
+				fprintf(ttt, "(&&)");
+				break;
+			case -6:
+				fprintf(ttt, "||");
+				break;
+			case -10:
+				fprintf(ttt, "|");
+				break;
+			case -11:
+				fprintf(ttt, "&");
+				break;
+			case -12:
+				fprintf(ttt, "[%s:%d]", node->data, node->type);
+				break;
+			case -20:
+				fprintf(ttt, ">");
+				break;
+			case -21:
+				fprintf(ttt, ">>");
+				break;
+			case -22:
+				fprintf(ttt, "<");
+				break;
+			case -30:
+				fprintf(ttt, "<<");
+				break;
+
+			default:
+				fprintf(ttt, "[%d]", node->type);
+				break;
+			}
+		}
+		node = node->next;
+	}
+	fprintf(ttt, "\n");
+}
+
+void	token_print_inverse(t_list_token *node)
+{
+	fprintf(ttt, "\n");
+	while (node->next)
+		node = node->next;
+
+	while (node)
+	{
+		if(node->type == WORD)
+			fprintf(ttt, "[%s]", node->data);
+		else if(node->type == QUOTE || node->type == DQUOTE)
+			fprintf(ttt, "{%d:%s}", node->is_ok, node->data);
+		else
+		{
+			//fprintf(ttt, "(%d)", node->type);
+			switch (node->type)
+			{
+			case -1:
+				fprintf(ttt, "_");
+				break;
+			case -4:
+				fprintf(ttt, ";");
+				break;
+			case -5:
+				fprintf(ttt, "(&&)");
+				break;
+			case -6:
+				fprintf(ttt, "||");
+				break;
+			case -10:
+				fprintf(ttt, "|");
+				break;
+			case -11:
+				fprintf(ttt, "&");
+				break;
+			case -12:
+				fprintf(ttt, "[%s]", node->data);
+				break;
+			case -20:
+				fprintf(ttt, ">");
+				break;
+			case -21:
+				fprintf(ttt, ">>");
+				break;
+			case -22:
+				fprintf(ttt, "<");
+				break;
+			case -30:
+				fprintf(ttt, "<<");
+				break;
+
+			default:
+				fprintf(ttt, "[%d]", node->type);
+				break;
+			}
+		}
+		node = node->prec;
+	}
+	fprintf(ttt, "\n");
+}
+
+//*************************************************
+
+void	print_tokenlist(t_pipe_seq *ast)
+{
+	t_simple_cmd	*node;
+
+	if (!ast)
+		return;
+	node = ast->left;
+	print_simple_cmd(node);
+	print_tokenlist(ast->right);
+}
+
+void	print_andor(t_cmdlist *list)
+{
+	t_and_or	*node;
+
+	node = list->and_or;
+	while (node)
+	{
+		fprintf(ttt,"+-+-+-+-+-+-+-+-+-+-+---+-+\ndependent ===>[%d]\n", node->dependent);
+		print_tokenlist(node->ast);
+		node = node->next;
+	}
+
+}

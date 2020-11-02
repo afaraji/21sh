@@ -13,12 +13,6 @@
 #ifndef _READLINE_H
 # define _READLINE_H
 # include "ft_21sh.h"
-# include "builtins.h"
-# include "readline.h"
-# include "parse.h"
-# include "ast.h"
-# include "exec.h"
-# include "ft_free.h"
 
 # define LFTARROW		0x445B1B
 # define RTARROW		0x435B1B
@@ -42,56 +36,6 @@
 # define CTRL_QUIT		0x1C
 # define CTRL_D			0x4
 # define CTRL_L			0xC
-
-typedef	struct		s_line
-{
-	char			*str;
-	int				init_pos;
-	int				curs;
-	int				col;
-	int				row;
-	int				pmt_s;
-}					t_line;
-
-typedef struct		s_hist
-{
-	char			*hist_str;
-	int				index;
-	struct s_hist	*next;
-	struct s_hist	*prec;
-}					t_hist;
-
-typedef struct		s_select
-{
-	int				start;
-	int				on;
-	int				len;
-}					t_select;
-
-typedef struct		s_terminal
-{
-	t_line			*line;
-	t_select		*select;
-	int				tab_on;
-	int				index;
-	int				buff;
-}					t_terminal;
-
-typedef struct		s_completion
-{
-	int				space;
-	int				total_words;
-	int				str_max_len;
-	int				word_per_line;
-	int				lines_to_print;
-	int				words_to_print;
-}					t_completion;
-
-typedef struct		s_l
-{
-	char			*data;
-	struct s_l		*next;
-}					t_l;
 
 int					termtype(void);
 int					check_termcap(void);

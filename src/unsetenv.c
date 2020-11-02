@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
-#include "parse.h"
-#include "builtins.h"
+#include "../inc/ft_21sh.h"
 
 void	delete_node(t_variable *prec, t_variable *current, t_variable *after)
 {

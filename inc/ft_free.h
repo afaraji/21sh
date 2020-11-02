@@ -12,13 +12,7 @@
 
 #ifndef FT_FREE_H
 # define FT_FREE_H
-#include "ft_21sh.h"
-# include "builtins.h"
-# include "readline.h"
-# include "parse.h"
-# include "ast.h"
-# include "exec.h"
-# include "ft_free.h"
+# include "ft_21sh.h"
 
 void	free_tokens(t_list_token *tokens);
 void	free_cmd_list(t_cmdlist *list);

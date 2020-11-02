@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
-#include "parse.h"
+#include "../inc/ft_21sh.h"
 
 void	freeleak_down_2(t_terminal *term, char *old_line)
 {

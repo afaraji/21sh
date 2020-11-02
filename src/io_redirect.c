@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "exec.h"
+#include "../inc/ft_21sh.h"
 
 int     redirect_grt(t_io_redirect *io)
 {
@@ -103,7 +103,7 @@ int		redirect_grt_and(t_io_redirect *io)
 			return (-1);
 		}
 		dup2(filefd, fd_io);
-		// if (filefd != fd_io) // ?? should or shouldn t 
+		// if (filefd != fd_io) // ?? should or shouldn t
 		// 	close(filefd);
 	}
 	else if (is_alldigit(io->filename))
@@ -150,7 +150,7 @@ int		redirect_sml_and(t_io_redirect *io)
 			return (-1);
 		}
 		dup2(filefd, fd_io);
-		// if (filefd != fd_io) // ?? should or shouldn t 
+		// if (filefd != fd_io) // ?? should or shouldn t
 		// 	close(filefd);
 	}
 	else if (is_alldigit(io->filename))

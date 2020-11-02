@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
+#include "../inc/ft_21sh.h"
 #include <stdarg.h>
 
 void	handle_percent(int fd, char **format, va_list args, int *i)

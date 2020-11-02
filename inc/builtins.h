@@ -13,12 +13,6 @@
 #ifndef BUILTINS_H
 # define BUILTINS_H
 # include "ft_21sh.h"
-# include "builtins.h"
-# include "readline.h"
-# include "parse.h"
-# include "ast.h"
-# include "exec.h"
-# include "ft_free.h"
 
 int		get_next_line(const int fd, char **line);
 int		ft_cd(char *flag, char **env);
