@@ -288,6 +288,7 @@ t_l	*matched_files_dirs(char *str)
 	t_l	*files_dirs_list;
 
 	files_dirs_list = NULL;
+	d = NULL;
 	d = opendir(".");
 	if (d != NULL)
 	{
@@ -437,6 +438,7 @@ char			**files_dirs_search(char *str, int i)
 	path = get_path(str);
 	to_cmp = get_to_cmp(str);
 	files_dirs = NULL;
+	d = NULL;
 	d = opendir(path);
 	if (d != NULL)
 	{
@@ -447,13 +449,12 @@ char			**files_dirs_search(char *str, int i)
 		 	free(to_cmp);
 		return (files_dirs);
 	}
-	else if (d == NULL)
+	else
 	{
 		if (to_cmp)
 		 	free(to_cmp);
 		return (files_dirs_search_2(path));
 	}
-	return (NULL);
 }
 
 t_l	*get_cmd_list_1(char *str, t_l *head)
