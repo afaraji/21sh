@@ -44,15 +44,17 @@ OBJ_LF = $(SRC_LF:.c=.o)
 all : $(NAME)
 
 $(NAME) : $(OBJ_SHL) $(OBJ_LF)
-	$(MAKE) -C ./libft
-	gcc -I=$(HEADR)  $(SRC_SHL) $(LIBFTA) -ltermcap -o $(NAME)
+	@$(MAKE) -C ./libft
+	@gcc -I=$(HEADR)  $(SRC_SHL) $(LIBFTA) -ltermcap -o $(NAME)
 
 clean :
-	/bin/rm -f $(OBJ_SHL)
-	$(MAKE) -C ./libft/ clean
+	@printf "removing OBJ files\n"
+	@/bin/rm -f $(OBJ_SHL)
+	@$(MAKE) -C ./libft/ clean
 
 fclean : clean
-	/bin/rm -f $(NAME)
-	$(MAKE) -C ./libft/ fclean
+	@printf "removing executable\n"
+	@/bin/rm -f $(NAME)
+	@$(MAKE) -C ./libft/ fclean
 
 re : fclean all
