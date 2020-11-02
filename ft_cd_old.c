@@ -33,6 +33,13 @@ int	ft_cd_old(char **env)
 		free(cwd);
 		return (0);
 	}
+	if (access(tmp, F_OK) == 0 && access(tmp, X_OK) == -1)
+	{
+		ft_putstr_fd("cd: permission denied: ", STDERR);
+		ft_putstr_fd(tmp, STDERR);
+		ft_putchar_fd('\n', STDERR);
+		return (0);
+	}
 	ft_putstr_fd("cd: ", STDERR);
 	ft_putstr_fd(tmp, STDERR);
 	free(tmp);
