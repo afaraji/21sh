@@ -12,8 +12,6 @@
 
 #ifndef FT_21SH_H
 # define FT_21SH_H
-# include "libft/libft.h"
-# include "builtins.h"
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <pwd.h>
@@ -27,5 +25,13 @@
 # include <termios.h>
 # include <curses.h>
 # include <term.h>
+# include "libft/libft.h"
+# include "builtins.h"
+
+t_shell_var	g_var;
+
+FILE		*ttt;
+FILE		*ttyfd;
+
 
 #endif

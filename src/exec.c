@@ -284,7 +284,7 @@ int		do_suffix(t_cmd_suffix *suffix)
 	return (ret);
 }
 
-int		do_simpleCmd(t_simple_cmd *cmd)
+int		do_simple_cmd(t_simple_cmd *cmd)
 {
 	int		ret = 0;
 	char	*command;
@@ -447,7 +447,7 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 
 	if (!cmd)
 		return (404);
-	if (do_simpleCmd(cmd))//does prefix and suffix
+	if (do_simple_cmd(cmd))//does prefix and suffix
 		return (1);
 	args = get_arg_var_sub(cmd);
 	if (!args || !args[0])

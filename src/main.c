@@ -10,11 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readline.h"
-#include "parse.h"
-#include "builtins.h"
-#include "ast.h"
-#include "ft_free.h"
+#include "ft_21sh.h"
 
 t_hist		*create_history(void)
 {

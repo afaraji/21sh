@@ -12,7 +12,13 @@
 
 #ifndef AST_H
 # define AST_H
+# include "ft_21sh.h"
+# include "builtins.h"
+# include "readline.h"
 # include "parse.h"
+# include "ast.h"
+# include "exec.h"
+# include "ft_free.h"
 
 int				is_op(char *str, int i);
 void			token_print(t_list_token *node);
@@ -25,7 +31,7 @@ t_list_token	*add_escape(int *index, char *str);
 t_list_token	*add_op(int *index, char *str, int op);
 t_list_token	*add_word_int(int *index, char *str);
 t_list_token	*tokenize(char *str, int *i);
-t_list_token	*__tokenize(char *str);
+t_list_token	*ft_tokenize(char *str);
 void			print_io_redirect(t_io_redirect *head);
 void			print_cmdprefix(t_cmd_prefix *head);
 void			print_cmdsuffix(t_cmd_suffix *head);

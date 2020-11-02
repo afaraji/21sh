@@ -10,9 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "ft_21sh.h"
 #ifndef _READLINE_H
 # define _READLINE_H
+# include "ft_21sh.h"
+# include "builtins.h"
+# include "readline.h"
+# include "parse.h"
+# include "ast.h"
+# include "exec.h"
+# include "ft_free.h"
+
 # define LFTARROW		0x445B1B
 # define RTARROW		0x435B1B
 # define UPARROW		0x415B1B
@@ -85,8 +92,6 @@ typedef struct		s_l
 	char			*data;
 	struct s_l		*next;
 }					t_l;
-
-FILE				*ttyfd;
 
 int					termtype(void);
 int					check_termcap(void);

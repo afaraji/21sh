@@ -398,7 +398,7 @@ t_list_token	*tokenize(char *str, int *i)
 	}
 }
 
-t_list_token	*__tokenize(char *str)
+t_list_token	*ft_tokenize(char *str)
 {
 	t_list_token	*head;
 	t_list_token	*node;
@@ -922,7 +922,8 @@ int		verify_tokens(t_list_token *token)
 
 	if (!token)
 		return (1);
-	if (_OR(token->type, SMCLN, ANDLG, ORLG, BGJOB, PIP))
+
+	if (ft_or(token->type, SMCLN, ANDLG, ORLG) || ft_or(token->type, PIP, BGJOB, 0))
 	{
 		ft_putstr_fd("syntax error, unexpected token `", 2);
 		ft_putstr_fd(tokentoa(token->type), 2);
@@ -933,7 +934,7 @@ int		verify_tokens(t_list_token *token)
 	node = token;
 	while (node)
 	{
-		if (_OR(node->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN))
+		if (ft_or(token->type, SMCLN, ANDLG, ORLG) || token->type == BGJOB)
 		{
 			tmp = node->next;
 			while(tmp && tmp->type == SPACE)
@@ -946,7 +947,7 @@ int		verify_tokens(t_list_token *token)
 				g_var.errno = 131;
 				return (3);
 			}
-			if (tmp && (_OR(tmp->type, SMCLN, ANDLG, ORLG, BGJOB, SMCLN)))
+			if (tmp && (ft_or(token->type, SMCLN, ANDLG, ORLG) || token->type == BGJOB))
 			{
 				ft_putstr_fd("syntax error, unexpected token `", 2);
 				ft_putstr_fd(tokentoa(tmp->type), 2);
@@ -1097,7 +1098,7 @@ int		need_append(t_list_token *tokens)
 			toappend = ft_strjoin(node->data, "\n");
 			toappend = ft_strjoin(toappend, tmp);
 			toappend = ft_strjoin(tokentoa(typ), toappend);
-			ttt = __tokenize(toappend);
+			ttt = ft_tokenize(toappend);
 			token_print(ttt);
 			if (ttt->next)
 				ttt->next->prec = node;
@@ -1109,7 +1110,7 @@ int		need_append(t_list_token *tokens)
 		else
 		{
 			toappend = tmp;
-			node->next = __tokenize(toappend);
+			node->next = ft_tokenize(toappend);
 		}
 		ft_strdel(&toappend);
 		if (lexer(&tokens) || verify_tokens(tokens))
@@ -1283,7 +1284,7 @@ int 	main_parse(char *line)
 	t_cmdlist		*cmdlist;
 	int				ret;
 
-    tokens = __tokenize(line);
+    tokens = ft_tokenize(line);
 	g_var.errno = 0;
 	if (lexer(&tokens) || verify_tokens(tokens))
 	{

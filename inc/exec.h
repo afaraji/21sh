@@ -12,7 +12,12 @@
 
 #ifndef EXEC_H
 # define EXEC_H
+# include "ft_21sh.h"
+# include "builtins.h"
+# include "readline.h"
 # include "parse.h"
+# include "ast.h"
+# include "exec.h"
 # include "ft_free.h"
 
 void		exit_status(int status);
@@ -28,7 +33,7 @@ char		*get_cmdpath(char *str);
 int			env_tab_count(int all);
 char		**env_to_tab(t_variable *var, int all);
 int			do_suffix(t_cmd_suffix *suffix);
-int			do_simpleCmd(t_simple_cmd *cmd);
+int			do_simple_cmd(t_simple_cmd *cmd);
 char		**list_to_tab(t_l *list);
 t_l			*get_args(t_simple_cmd *cmd);
 int			is_builtin(char *str);

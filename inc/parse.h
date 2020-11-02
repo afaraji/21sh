@@ -13,59 +13,34 @@
 #ifndef PARSE_H
 # define PARSE_H
 # include "ft_21sh.h"
+# include "builtins.h"
 # include "readline.h"
-# define STDIN		0
-# define STDOUT		1
-# define STDERR		2
-# define SETDFL		1
-# define GETDFL		0
+# include "parse.h"
+# include "ast.h"
+# include "exec.h"
+# include "ft_free.h"
 
-# define SPACE	-1	/* white space */
-# define QUOTE	-2	/*	'	*/
-# define DQUOTE	-3	/* "	*/
-# define SMCLN	-4	/*	;	*/
-# define ANDLG	-5	/*	&&	*/
-# define ORLG	-6	/*	||	*/
-# define PIP	-10	/*	|	*/
-# define BGJOB	-11	/*	&	*/
-# define ESCAPE	-12	/*	\	*/
-# define GRT	-20	/*	>	*/
-# define GRTGRT	-21	/*	>>	*/
-# define SML	-22	/*	<	*/
-# define SMLSML	-30	/*	<<	*/
-# define SMLAND	-24	/*	<&	*/
-# define GRTAND	-25	/*	>&	*/
-// # define SMLGRT	-26	/*	<>	*/
-// # define CLOBBER -27/*	>|	*/
-// # define DSMLDASH -31	/*	<<-	*/
-# define WORD	-42	/*	word	*/
-# define _OR(m,a,b,c,d,e) (m==a||m==b||m==c||m==d||m==e) ? 1 : 0
-
-FILE	*ttt;
-
-/*
-**<& (fd or file name) check if number => fd or string => filename only in aggr
-*/
-/*
-**' and " WORDs
-*/
-/*
-**ls 2>&1 < kuhkj | cat -e  plan should read all command before exec
-*/
-
-/*
-**cmd > file4 && cmd1 >> file3 || cmd2 7&> file2 & cmd3 1>&5  | cmd4 <&5
-**| cmd5 <<EOF | cmd6
-*/
-
-/*
-**the line above return invalid read (doesn t stop at & BG)
-*/
-
-/*
-**< cmd > file4 allo  && cmd1 >> file3 allo   | cmd2 7&> file2 allo ballo
-**| acmd3 1>&5 toto koko & cmd4 <&5 mimi | cmd5 <<EOF wowo ; cmd6 -p;
-*/
+# define STDIN	0
+# define STDOUT	1
+# define STDERR	2
+# define SETDFL	1
+# define GETDFL	0
+# define SPACE	-1
+# define QUOTE	-2
+# define DQUOTE	-3
+# define SMCLN	-4
+# define ANDLG	-5
+# define ORLG	-6
+# define PIP	-10
+# define BGJOB	-11
+# define ESCAPE	-12
+# define GRT	-20
+# define GRTGRT	-21
+# define SML	-22
+# define SMLSML	-30
+# define SMLAND	-24
+# define GRTAND	-25
+# define WORD	-42
 
 typedef struct				s_list_token
 {
@@ -73,7 +48,7 @@ typedef struct				s_list_token
 	char					*data;
 	struct s_list_token		*next;
 	struct s_list_token		*prec;
-	int						is_ok;	// ' and " closed or not (1=closed)
+	int						is_ok;
 }							t_list_token;
 
 typedef struct				s_alias
@@ -116,8 +91,6 @@ typedef struct				s_shell_var
 	t_hist					*history;
 	t_proc					*proc;
 }							t_shell_var;
-
-t_shell_var					g_var;
 
 typedef struct				s_io_redirect
 {
@@ -184,6 +157,7 @@ typedef struct				s_io_list
 }							t_io_list;
 
 int							main_parse(char *line);
+int							ft_or(int m, int a, int b, int c);
 int							ft_print(int fd, char *format, ...);
 int							ft_exit(char **av);
 void						exit_status(int status);
@@ -201,7 +175,7 @@ int							alias_sub(t_list_token *word, t_alias *aliases);
 int							is_reserved(char *str);
 void						insert_alias(char *key, char *sub);
 void						get_aliases(void);
-t_list_token				*__tokenize(char *str);
+t_list_token				*ft_tokenize(char *str);
 void						token_print(t_list_token *node);
 void						parse_and_replace(t_list_token **cmd_token,
 							t_list_token *node);
@@ -218,20 +192,5 @@ char						*get_pwd(char **env);
 int							lexer(t_list_token **cmd_token);
 void						add_proc(pid_t pid);
 void						bg_jobs(void);
-
-/*
-**https://github.com/xopxop/21sh/blob/master/src/executor/redirects_great.c
-*/
-
-/*
-**https://pubs.opengroup.org/onlinepubs/009695399/utilities/
-**xcu_chap02.html#tag_02_03
-**https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
-**https://www.gnu.org/software/bash/manual/bash.html#Shell-Operation
-**https://www.cs.purdue.edu/homes/grr/SystemsProgrammingBook/
-**Book/Chapter5-WritingYourOwnShell.pdf
-**https://git.kernel.org/pub/scm/utils/dash/dash.git/tree/src
-**https://catonmat.net/ftp/bash-redirections-cheat-sheet.pdf
-*/
 
 #endif

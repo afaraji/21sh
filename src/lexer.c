@@ -139,7 +139,7 @@ void	get_aliases(void)
 	insert_alias("abc", "abce lol  123");
 }
 
-t_list_token	*__tokenize(char *str);
+t_list_token	*ft_tokenize(char *str);
 void	token_print(t_list_token *node);
 
 void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
@@ -147,7 +147,7 @@ void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
 	t_list_token	*toinsert;
 	t_list_token	*tmp;
 
-	toinsert = __tokenize(node->data);
+	toinsert = ft_tokenize(node->data);
 	tmp = toinsert;
 	while (tmp->next)
 		tmp = tmp->next;
@@ -168,6 +168,11 @@ void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
 	free(node);
 }
 
+int		ft_or(int m, int a, int b, int c)
+{
+	return ((m == a||m == b||m == c) ? 1 : 0);
+}
+
 int		keywords_alias_sub(t_list_token **cmd_token)
 {
 	t_list_token *node;
@@ -175,7 +180,7 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 	node = *cmd_token;
 	while (node)
 	{
-		if(_OR(node->type, SMCLN, ANDLG, ORLG, PIP, BGJOB) || node == *cmd_token)
+		if(ft_or(node->type, SMCLN, ANDLG, ORLG) || ft_or(node->type, PIP, BGJOB, 0) || node == *cmd_token)
 		{
 			if (node != *cmd_token)
 				node = node->next;
