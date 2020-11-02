@@ -12,15 +12,16 @@
 
 #include "builtins.h"
 
-int		verify_type(char *file)
+int		verify_type(char *str)
 {
-	struct stat			st;
-	int					ret;
-	DIR					*dir;
+	struct stat	st;
+	DIR			*dir;
+	char		*file;
 
+	file = ft_strdup(str);
 	if (file[ft_strlen(file) - 1] == '/' && ft_strlen(file) - 1 > 0)
 		file[ft_strlen(file) - 1] = '\0';
-	if ((ret = lstat(file, &st)) == 0)
+	if (lstat(file, &st) == 0)
 	{
 		if (S_ISDIR(st.st_mode))
 			return (1);
