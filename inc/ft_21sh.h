@@ -193,12 +193,4 @@ typedef struct			s_io_list
 
 t_shell_var				g_var;
 
-
-# include "builtins.h"
-# include "readline.h"
-# include "parse.h"
-# include "ast.h"
-# include "exec.h"
-# include "ft_free.h"
-
 #endif

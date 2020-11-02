@@ -11,6 +11,12 @@
 /* ************************************************************************** */
 
 #include "../inc/ft_21sh.h"
+#include "../inc/builtins.h"
+#include "../inc/parse.h"
+#include "../inc/ast.h"
+#include "../inc/exec.h"
+#include "../inc/ft_free.h"
+#include "../inc/readline.h"
 
 char	*join_line_1(char *str, char *s1, int i, int j)
 {

@@ -11,6 +11,12 @@
 /* ************************************************************************** */
 
 #include "../inc/ft_21sh.h"
+#include "../inc/builtins.h"
+#include "../inc/parse.h"
+#include "../inc/ast.h"
+#include "../inc/exec.h"
+#include "../inc/ft_free.h"
+#include "../inc/readline.h"
 
 void	delete_node(t_variable *prec, t_variable *current, t_variable *after)
 {
