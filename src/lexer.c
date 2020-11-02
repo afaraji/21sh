@@ -146,7 +146,6 @@ void	get_aliases(void)
 }
 
 t_list_token	*ft_tokenize(char *str);
-void	token_print(t_list_token *node);
 
 void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
 {

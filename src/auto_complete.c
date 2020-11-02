@@ -18,19 +18,6 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-void			print_tab(char **tabl)
-{
-	int		i;
-
-	i = 0;
-	while (tabl[i])
-	{
-		ft_putchar('\n');
-		ft_putstr(tabl[i]);
-		i++;
-	}
-}
-
 int				get_path_1(char *str)
 {
 	int		index;

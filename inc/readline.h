@@ -122,7 +122,6 @@ void				right_select_2(t_terminal *term);
 char				*readline(int prompt);
 void				free_term(t_terminal **term);
 int					auto_completion(t_line *line);
-void				print_tab(char **tabl);
 char				*get_path(char *str);
 char				*get_path_2(char **str, int i);
 int					get_path_1(char *str);
