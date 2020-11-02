@@ -747,6 +747,9 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 	if (g_var.errno)
 		return (NULL);
 	ret = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
+	ret->name = NULL;
+	ret->word = NULL;
+	ret->suffix = NULL;
 	ret->prefix = cmd_prefix(&start, &end);
 	if (ret->prefix)
 	{
