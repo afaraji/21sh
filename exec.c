@@ -76,8 +76,9 @@ t_variable	*var_dup(t_variable *var)
 	if (!node)
 		return (NULL);
 	node->env = var->env;
-	node->key = ft_strdup(var->key);
+	var->value = str_dollar_sub(var->value);
 	node->value = ft_strdup(var->value);
+	node->key = ft_strdup(var->key);
 	node->next = NULL;
 	return (node);
 }
@@ -100,6 +101,7 @@ int		do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 			{
 				if (tmp->env != 2 && !ft_strcmp(tmp->key, node->ass_word->key))
 				{
+					node->ass_word->value = str_dollar_sub(node->ass_word->value);
 					tmp->env = node->ass_word->env;
 					ft_strdel(&(tmp->value));
 					tmp->value = ft_strdup(node->ass_word->value);
@@ -167,34 +169,53 @@ char	**paths_from_env(void)
 	return (paths);
 }
 
+char	*get_cmdpath_error(int err_no, char *str)
+{
+	int	typ;
+
+	if (err_no == 1)
+	{
+		typ = verify_type(str);
+		if (typ == 1 || typ == 3)
+			ft_print(STDERR, "shell: %s: is directory\n",str);
+		else
+			ft_print(STDERR, "shell: %s: No such file or directory\n",str);
+		return (NULL);
+	}
+	if (err_no == 2)
+	{
+		ft_print(STDERR, "shell: command not found: %s\n", str);
+		return(NULL);
+	}
+	return (NULL);
+}
+
 char	*get_cmdpath(char *str)
 {
 	char	**paths;
 	int		i;
 	char	*tmp;
 
-	if (!access(str, F_OK))
+	if (!access(str, F_OK) && verify_type(str) == 2)
 		return (ft_strdup(str));
 	if (is_path(str))
-	{
-		ft_print(STDERR, "shell: %s: No such file or directory\n",str);
-		return (NULL);
-	}
+		return (get_cmdpath_error(1, str));
 	if (!(paths = paths_from_env()))
-		return(NULL);
+		return (get_cmdpath_error(2, str));
 	i = 0;
 	while (paths[i])
 	{
 		tmp = ft_strjoin(paths[i], str);
 		if (!access(tmp, F_OK))
 		{
+			free_tab(paths);
 			return (tmp);
 		}
 		ft_strdel(&tmp);
 		i++;
 	}
-	ft_print(STDERR, "shell: command not found: %s\n", str);
-	return(NULL);
+	free_tab(paths);
+	return (get_cmdpath_error(2, str));
 }
 
 int		env_tab_count(int all)
@@ -432,7 +453,6 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	if (!args || !args[0])
 		exit (0);
 	env = env_to_tab(g_var.var, 0);
-	// if builtin exec builtin
 	if (is_builtin(args[0]))
 	{
 		//do builtin
