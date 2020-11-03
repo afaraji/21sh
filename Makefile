@@ -27,7 +27,9 @@ SRC_SHL = ./src/ast.c ./src/main.c ./src/manage_terminal.c ./src/readline.c	\
 	./src/add_tokens.c ./src/append_and_verify.c ./src/ft_tokenize.c		\
 	./src/get_pipe_sec.c ./src/get_splited_and_or.c ./src/get_suffix.c		\
 	./src/here_doc.c ./src/join_tokens.c ./src/proc_manage.c				\
-	./src/tokens_translate.c ./src/verify_tokens.c
+	./src/tokens_translate.c ./src/verify_tokens.c ./src/do_assignement.c	\
+	./src/do_sufix_prefix.c ./src/exec_nofork.c ./src/exit_status.c			\
+	./src/get_cmdargs.c ./src/get_cmdpath.c
 
 LIBFTA = ./libft/libft.a
 

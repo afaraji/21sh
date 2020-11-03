@@ -39,5 +39,6 @@ t_variable	*var_list_dup(t_variable *src);
 void		reset_in_out(int set);
 int			exec_ast(t_pipe_seq *cmd, int bg);
 int			execute(t_and_or *cmd, int bg);
+int			exec_no_fork(t_pipe_seq *cmd, int bg);
 
 #endif

@@ -514,8 +514,8 @@ dtruss? strace ??
 //extern int		g_var;
 
 auto_complete.c
-ast.c           !!!
-exec.c          !!!
+ast.c
+exec.c
 io_redirect.c   !!
 lexer.c         !!!
 main.c
