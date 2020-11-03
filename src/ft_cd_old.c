@@ -30,8 +30,7 @@ int	ft_cd_old(char **env)
 	if (!chdir(tmp))
 	{
 		change_pwd("PWD", tmp);
-		ft_putstr(tmp);
-		ft_putchar('\n');
+		ft_print(STDOUT, "%s\n", tmp);
 		if (cwd)
 			change_pwd("OLDPWD", cwd);
 		free(tmp);
@@ -40,14 +39,10 @@ int	ft_cd_old(char **env)
 	}
 	if (access(tmp, F_OK) == 0 && access(tmp, X_OK) == -1)
 	{
-		ft_putstr_fd("cd: permission denied: ", STDERR);
-		ft_putstr_fd(tmp, STDERR);
-		ft_putchar_fd('\n', STDERR);
+		ft_print(STDERR, "cd: permission denied: %s\n", tmp);
 		return (0);
 	}
-	ft_putstr_fd("cd: ", STDERR);
-	ft_putstr_fd(tmp, STDERR);
+	ft_print(STDERR, "cd: %s: No such file or directory.\n", tmp);
 	free(tmp);
-	ft_putstr_fd(": No such file or directory.\n", STDERR);
 	return (1);
 }

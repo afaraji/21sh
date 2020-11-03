@@ -18,15 +18,22 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-int	ft_echo(char **av)
+int	ft_echo_error(void)
 {
-	int	i;
-
-	if (!check_fd(1,1))
+	if (!check_fd(1, 1))
 	{
 		ft_putstr_fd("shell: echo: write error: Bad file descriptor\n", 2);
 		return (1);
 	}
+	return (0);
+}
+
+int	ft_echo(char **av)
+{
+	int	i;
+
+	if (ft_echo_error())
+		return (1);
 	i = 1;
 	if (av[1] == NULL)
 	{

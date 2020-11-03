@@ -130,7 +130,7 @@ void		get_ppid_list(void)
 	g_var.proc->next = NULL;
 }
 
-int		init_shell(char **env)
+int			init_shell(char **env)
 {
 	g_var = (t_shell_var){0, 0, 0, NULL, NULL};
 	g_var.var = get_set(env);
@@ -176,36 +176,13 @@ void		child_handler(int signum)
 void		ft_signal(void)
 {
 	signal(SIGINT, &signal_callback_handler);
-	// signal(SIGCHLD, &child_handler);// this new should I ?
-	// signal(SIGQUIT, &signal_callback_handler);
-	// signal(SIGILL, &signal_callback_handler);
-	// signal(SIGABRT, &signal_callback_handler);
-	// signal(SIGFPE, &signal_callback_handler);
-	// signal(SIGBUS, &signal_callback_handler);
-	// signal(SIGSEGV, &signal_callback_handler);
-	// signal(SIGTERM, &signal_callback_handler);
-	// signal(SIGPIPE, &signal_callback_handler);
-	// signal(SIGHUP, &signal_callback_handler);
-	// signal(SIGTRAP, &signal_callback_handler);
-	// signal(SIGEMT, &signal_callback_handler);
-	// signal(SIGKILL, &signal_callback_handler);
-	// signal(SIGSYS, &signal_callback_handler);
-	// signal(SIGALRM , &signal_callback_handler);
-	// signal(SIGURG, &signal_callback_handler);
-	// signal(SIGTSTP, &signal_callback_handler);
-	// signal(SIGTTOU, &signal_callback_handler);
-	// signal(SIGIO, &signal_callback_handler);
-	// signal(SIGXCPU, &signal_callback_handler);
-	// signal(SIGXFSZ, &signal_callback_handler);
-	// signal(SIGINFO, &signal_callback_handler);
-	// signal(SIGUSR1, &signal_callback_handler);
-	// signal(SIGUSR2, &signal_callback_handler);
+	// signal(SIGCHLD, &child_handler);
 }
 
 int			main(int ac, char **av, char **env)
 {
-	char	*line = NULL;
-	int		ret = 0;
+	char	*line;
+	int		ret;
 
 	if (!ttyname(0) || !ttyname(1) || !ttyname(2))
 		return (-1);

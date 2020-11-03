@@ -34,7 +34,7 @@ void	free_tab(char **av)
 	av = NULL;
 }
 
-void			free_list(t_l *head)
+void	free_list(t_l *head)
 {
 	t_l	*tmp1;
 	t_l	*tmp2;
@@ -215,4 +215,3 @@ void	free_g_var(void)
 	free_history_list(g_var.history);
 	free_proc(g_var.proc);
 }
-

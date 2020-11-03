@@ -55,7 +55,7 @@ int		get_cmd(t_terminal *term, t_hist **his_head, int mult_line)
 		if (term->line->str[0] == '!' && term->line->str[1])
 		{
 			tmp = history_search(term->line->str + 1, his_head);
-			if (get_cmd_1(&tmp, &(term->line->str)) == 1) // 0=found !nbr
+			if (get_cmd_1(&tmp, &(term->line->str)) == 1)
 				return (1);
 		}
 		if (ft_strcmp(term->line->str, "") != 0

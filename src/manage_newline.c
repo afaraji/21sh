@@ -18,7 +18,6 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-
 int	verify_new_line(t_line *line)
 {
 	int	i;

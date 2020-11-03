@@ -102,7 +102,7 @@ t_l				*names_list(char *str)
 	return (node);
 }
 
-t_l	*get_var_list(char *str, t_l *head)
+t_l				*get_var_list(char *str, t_l *head)
 {
 	t_l		*node;
 	char	*tmp;
@@ -145,7 +145,7 @@ int				get_node_sum(t_l *head)
 	return (sum);
 }
 
-t_l	*sort_list(t_l *head)
+t_l				*sort_list(t_l *head)
 {
 	t_l		*node1;
 	t_l		*node2;
@@ -274,7 +274,7 @@ t_l				*matched_f_d(DIR *d, char *str)
 	return (f_d_list);
 }
 
-t_l	*matched_files_dirs(char *str)
+t_l				*matched_files_dirs(char *str)
 {
 	DIR	*d;
 	t_l	*files_dirs_list;
@@ -438,18 +438,18 @@ char			**files_dirs_search(char *str, int i)
 		if (path)
 			ft_strdel(&path);
 		if (to_cmp)
-		 	free(to_cmp);
+			free(to_cmp);
 		return (files_dirs);
 	}
 	else
 	{
 		if (to_cmp)
-		 	free(to_cmp);
+			free(to_cmp);
 		return (files_dirs_search_2(path));
 	}
 }
 
-t_l	*get_cmd_list_1(char *str, t_l *head)
+t_l				*get_cmd_list_1(char *str, t_l *head)
 {
 	t_l	*node;
 
@@ -465,14 +465,14 @@ t_l	*get_cmd_list_1(char *str, t_l *head)
 	while (node->next)
 		node = node->next;
 	if (!(node->next = (t_l *)malloc(sizeof(t_l))))
-			return (NULL);
+		return (NULL);
 	node = node->next;
 	node->data = ft_strdup(str);
 	node->next = NULL;
 	return (head);
 }
 
-t_l	*search_builtin(char *str)
+t_l				*search_builtin(char *str)
 {
 	int		i;
 	t_l		*head;
@@ -634,7 +634,7 @@ char			**completion_split_1(char **table)
 	while (table[i])
 		i++;
 	if (!(tmp = (char **)malloc(sizeof(char *) * (i + 2))))
-		return(NULL);
+		return (NULL);
 	i = 0;
 	while (table[i])
 	{
@@ -655,7 +655,7 @@ char			**completion_split(char *line)
 	if (!ft_strcmp(line, ""))
 	{
 		if (!(table = (char **)malloc(sizeof(char *) * 2)))
-			return(NULL);
+			return (NULL);
 		table[0] = ft_strdup("");
 		table[1] = NULL;
 		return (table);
@@ -767,6 +767,14 @@ int				get_home_path(char **str)
 	return (0);
 }
 
+char			**auto_completion_3(char **splited_line, int i)
+{
+	if (splited_line[i][1] == '{')
+		return (var_search(splited_line[i] + 2));
+	else
+		return (var_search(splited_line[i] + 1));
+}
+
 char			**auto_completion_1(t_line *line)
 {
 	char	**result;
@@ -782,10 +790,7 @@ char			**auto_completion_1(t_line *line)
 		get_home_path(&splited_line[i]);
 	if (splited_line[i][0] == '$')
 	{
-		if (splited_line[i][1] == '{')
-			result = var_search(splited_line[i] + 2);
-		else
-			result = var_search(splited_line[i] + 1);
+		result = auto_completion_3(splited_line, i);
 	}
 	else if (i == 0 && splited_line[0][0] == '.')
 		result = files_dirs_search(splited_line[0], i);
@@ -806,15 +811,26 @@ int				auto_completion_2(char **result, t_line *line)
 	return (2);
 }
 
+int				is_valid_tab(char **t)
+{
+	if (!t)
+		return (0);
+	if (t[0] == NULL)
+	{
+		free_tab(t);
+		return (0);
+	}
+	return (1);
+}
+
 int				auto_completion(t_line *line)
 {
 	char	**result;
 	int		j;
 
 	result = auto_completion_1(line);
-	if (result[0] == NULL)
+	if (!is_valid_tab(result))
 	{
-		free_tab(result);
 		return (0);
 	}
 	j = 0;

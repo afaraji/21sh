@@ -27,12 +27,41 @@ void	delete_node(t_variable *prec, t_variable *current, t_variable *after)
 	free(current);
 }
 
-int		ft_unsetenv(char **flag)
+int		ft_unsetenv_2(char *str)
 {
-	int			i;
 	t_variable	*node;
 	t_variable	*prec;
 
+	node = g_var.var;
+	prec = NULL;
+	while (node)
+	{
+		if (!ft_strcmp(node->key, str))
+		{
+			if (node->env != 2)
+			{
+				delete_node(prec, node, node->next);
+				return (0);
+			}
+			else
+			{
+				ft_print(STDERR, "unsetenv: read-only variable: %s\n", str);
+				return (1);
+			}
+		}
+		prec = node;
+		node = node->next;
+	}
+	return (0);
+}
+
+int		ft_unsetenv(char **flag)
+{
+	int			i;
+	int			ret;
+	int			tmp;
+
+	ret = 0;
 	if (flag[1] == NULL)
 	{
 		ft_putstr_fd("unsetenv: Too few arguments.\n", STDERR);
@@ -41,26 +70,10 @@ int		ft_unsetenv(char **flag)
 	i = 1;
 	while (flag[i])
 	{
-		node = g_var.var;
-		prec = NULL;
-		while (node)
-		{
-			if (!ft_strcmp(node->key, flag[i]))
-			{
-				if (node->env != 2)
-					delete_node(prec, node, node->next);
-				else
-				{
-					ft_putstr_fd("unsetenv: read-only variable: ", STDERR);
-					ft_putstr_fd(flag[i], STDERR);
-					ft_putchar_fd('\n', STDERR);
-				}
-				break;
-			}
-			prec = node;
-			node = node->next;
-		}
+		tmp = ft_unsetenv_2(flag[i]);
+		if (tmp)
+			ret = tmp;
 		i++;
 	}
-	return (0);
+	return (ret);
 }
