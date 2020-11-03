@@ -23,7 +23,11 @@ SRC_SHL = ./src/ast.c ./src/main.c ./src/manage_terminal.c ./src/readline.c	\
 	./src/ft_cd_1.c ./src/ft_cd_2.c ./src/change_pwd.c ./src/ft_echo.c		\
 	./src/verify_type.c ./src/setenv.c ./src/unsetenv.c ./src/export.c 		\
 	./src/auto_complete.c ./src/io_redirect.c ./src/my_printf.c ./src/ft_free.c\
-	./src/exec.c ./src/lexer.c ./src/move_curs.c
+	./src/exec.c ./src/lexer.c ./src/move_curs.c ./src/add_redirect.c		\
+	./src/add_tokens.c ./src/append_and_verify.c ./src/ft_tokenize.c		\
+	./src/get_pipe_sec.c ./src/get_splited_and_or.c ./src/get_suffix.c		\
+	./src/here_doc.c ./src/join_tokens.c ./src/proc_manage.c				\
+	./src/tokens_translate.c ./src/verify_tokens.c
 
 LIBFTA = ./libft/libft.a
 
