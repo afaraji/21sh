@@ -62,12 +62,12 @@ int		is_op(char *str, int i)
 char	*tokentoa_2(int token)
 {
 	if (token == SMLSML)
-		return("<<");
+		return ("<<");
 	if (token == SMLAND)
-		return("<&");
+		return ("<&");
 	if (token == GRTAND)
-		return(">&");
-	return(ft_itoa(token));
+		return (">&");
+	return (ft_itoa(token));
 }
 
 char	*tokentoa(int token)
@@ -75,26 +75,26 @@ char	*tokentoa(int token)
 	if (token == SPACE)
 		return (" ");
 	if (token == QUOTE)
-		return("'");
+		return ("'");
 	if (token == DQUOTE)
-		return("\"");
+		return ("\"");
 	if (token == SMCLN)
-		return(";");
+		return (";");
 	if (token == ANDLG)
-		return("&&");
+		return ("&&");
 	if (token == ORLG)
-		return("||");
+		return ("||");
 	if (token == PIP)
-		return("|");
+		return ("|");
 	if (token == BGJOB)
-		return("&");
+		return ("&");
 	if (token == ESCAPE)
-		return("\\");
+		return ("\\");
 	if (token == GRT)
-		return(">");
+		return (">");
 	if (token == GRTGRT)
-		return(">>");
+		return (">>");
 	if (token == SML)
-		return("<");
+		return ("<");
 	return (tokentoa_2(token));
 }

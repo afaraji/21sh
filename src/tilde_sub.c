@@ -27,43 +27,35 @@ char	*tilde_sub_var(char *rest, char *tilde_prefix)
 	tmp = NULL;
 	if (!ft_strcmp(tilde_prefix, ""))
 		tmp = fetch_variables("HOME", -1);
-	else if(!ft_strcmp(tilde_prefix, "-"))
+	else if (!ft_strcmp(tilde_prefix, "-"))
 		tmp = fetch_variables("OLDPWD", -1);
 	else if (!ft_strcmp(tilde_prefix, "+"))
 		tmp = fetch_variables("PWD", -1);
 	s = NULL;
 	if (tmp)
-	{
 		s = ft_strjoin(tmp, rest);
-	}
 	else if (!ft_strcmp(tilde_prefix, ""))
 	{
 		pw = getpwuid(getuid());
 		if (pw)
-		{
 			s = ft_strjoin(pw->pw_dir, rest);
-		}
 	}
 	else
 	{
 		tmp = ft_strjoin("/Users/", tilde_prefix);
 		if (!access(tmp, F_OK))
-		{
 			s = ft_strjoin(tmp, rest);
-		}
 	}
 	ft_strdel(&tmp);
 	return (s);
 }
 
-
-
-char		*tilde_sub_2(char *str)
+char	*tilde_sub_2(char *str)
 {
-	char			*s;
-	char			*tilde_prefix;
-	char 			*rest;
-	int				i;
+	char	*s;
+	char	*tilde_prefix;
+	char	*rest;
+	int		i;
 
 	s = NULL;
 	i = 1;
@@ -81,17 +73,22 @@ char		*tilde_sub_2(char *str)
 	return (s);
 }
 
-int		tilde_sub(t_list_token **cmd_token)// need to be normed and leak free
-{// neeed to add ass_word
-	char 			*tmp = NULL;
+int		tilde_sub(t_list_token **cmd_token)
+/*
+**neeed to add ass_word
+*/
+{
+	char			*tmp;
 	char			*str;
 	t_list_token	*node;
 	int				i;
 
 	node = *cmd_token;
+	tmp = NULL;
 	while (node)
 	{
-		if (node->type != WORD || (node->next && (node->next->type == QUOTE || node->next->type == DQUOTE)))
+		if (node->type != WORD || (node->next && (node->next->type == QUOTE
+		|| node->next->type == DQUOTE)))
 		{
 			node = node->next;
 			continue;
@@ -103,10 +100,15 @@ int		tilde_sub(t_list_token **cmd_token)// need to be normed and leak free
 		if (str && str[0] == '~')
 		{
 			str = tilde_sub_2(str);
-			// tilde_sub_in_token()
+/*
+**tilde_sub_in_token()
+*/
 			if ((i = is_assword(node->data)))
 			{
-				node->data[i] = '\0';// !! free problem ?
+				node->data[i] = '\0';
+/*
+**!! free problem ?
+*/
 				tmp = ft_strjoin(node->data, str);
 				ft_strdel(&(node->data));
 				ft_strdel(&str);

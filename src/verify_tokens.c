@@ -48,7 +48,8 @@ int		verify_tokens(t_list_token *token)
 
 	if (!token)
 		return (1);
-	if (ft_or(token->type, SMCLN, ANDLG, ORLG) || ft_or(token->type, PIP, BGJOB, 0))
+	if (ft_or(token->type, SMCLN, ANDLG, ORLG)
+	|| ft_or(token->type, PIP, BGJOB, 0))
 		return (verify_tokens_error(2, node->type));
 	node = token;
 	while (node)
@@ -56,11 +57,12 @@ int		verify_tokens(t_list_token *token)
 		if (ft_or(token->type, SMCLN, ANDLG, ORLG) || token->type == BGJOB)
 		{
 			tmp = node->next;
-			while(tmp && tmp->type == SPACE)
+			while (tmp && tmp->type == SPACE)
 				tmp = tmp->next;
 			if (!tmp && (node->type == ANDLG || node->type == ORLG))
 				return (verify_tokens_error(3, node->type));
-			if (tmp && (ft_or(token->type, SMCLN, ANDLG, ORLG) || token->type == BGJOB))
+			if (tmp && (ft_or(token->type, SMCLN, ANDLG, ORLG)
+			|| token->type == BGJOB))
 				return (verify_tokens_error(4, tmp->type));
 		}
 		node = node->next;
