@@ -516,8 +516,8 @@ dtruss? strace ??
 auto_complete.c
 ast.c
 exec.c
-io_redirect.c   !!
-lexer.c         !!!
+io_redirect.c
+lexer.c
 main.c
 readline.c
 

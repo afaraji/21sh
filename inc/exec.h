@@ -19,6 +19,8 @@ int			is_alldigit(char *str);
 int			check_fd(int fd, int io);
 int			do_heredoc(t_io_redirect *io);
 int			do_redirect(t_io_redirect *io);
+int			redirect_grt_and(t_io_redirect *io);
+int			redirect_sml_and(t_io_redirect *io);
 t_variable	*var_dup(t_variable *var);
 int			do_assignement(t_cmd_prefix *pref, t_variable *head, int env);
 int			do_prefix(t_cmd_prefix *prefix, t_variable *var, int env);
