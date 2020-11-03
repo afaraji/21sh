@@ -18,7 +18,7 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-int				is_valid_word(char *s)
+int	is_valid_word(char *s)
 {
 	int	i;
 
@@ -28,13 +28,13 @@ int				is_valid_word(char *s)
 	while (s[i])
 	{
 		if (s[i] != '_' && !ft_isalnum(s[i]))
-			return(0);
+			return (0);
 		i++;
 	}
 	return (1);
 }
 
-int				is_all_digits(char *s)
+int	is_all_digits(char *s)
 {
 	while (*s)
 	{
@@ -45,7 +45,7 @@ int				is_all_digits(char *s)
 	return (1);
 }
 
-int			is_valid_file(char *file, t_list_token *node)
+int	is_valid_file(char *file, t_list_token *node)
 {
 	if (!node || !file)
 		return (1);
@@ -59,7 +59,7 @@ int			is_valid_file(char *file, t_list_token *node)
 	return (1);
 }
 
-int		need_append(t_list_token *tokens)
+int	need_append(t_list_token *tokens)
 {
 	t_list_token	*node;
 	t_list_token	*ttt;
@@ -105,4 +105,3 @@ int		need_append(t_list_token *tokens)
 	}
 	return (0);
 }
-

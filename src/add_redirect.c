@@ -18,7 +18,7 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
+char			*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 {
 	char	*file;
 
@@ -26,13 +26,13 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
-	if((*cmd)->type >= GRTAND && (*cmd)->type <= GRT)
+	if ((*cmd)->type >= GRTAND && (*cmd)->type <= GRT)
 	{
 		*r_type = (*cmd)->type;
 		*cmd = (*cmd)->next;
 		while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
-			*cmd = (*cmd)->next;;
-		if (*cmd && ((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))	// QOTE and DQOTE ??
+			*cmd = (*cmd)->next;
+		if (*cmd && ((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))
 		{
 			if (is_valid_file((*cmd)->data, (*cmd)->next))
 			{
@@ -68,20 +68,21 @@ char		*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 	return (NULL);
 }
 
-char		*io_here(t_list_token **cmd, t_list_token **end, int *r_type)
+char			*io_here(t_list_token **cmd, t_list_token **end, int *r_type)
 {
 	char	*file;
+
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
-	if((*cmd)->type == SMLSML)
+	if ((*cmd)->type == SMLSML)
 	{
 		*r_type = (*cmd)->type;
 		*cmd = (*cmd)->next;
 		while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 			*cmd = (*cmd)->next;
-		if (*cmd && ((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))	// QOTE and DQOTE ??
+		if (*cmd && ((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))
 		{
 			if (is_valid_file((*cmd)->data, (*cmd)->next))
 			{
@@ -162,5 +163,5 @@ t_io_redirect	*io_redirect(t_list_token **cmd, t_list_token **end)
 		}
 	}
 	free(io_r);
-	return(NULL);
+	return (NULL);
 }

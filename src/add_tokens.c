@@ -21,49 +21,64 @@
 t_list_token	*add_quote(int *index, char *str)
 {
 	t_list_token	*node;
-	int i = *index;
+	int				i;
 
+	i = *index;
 	if (!(node = (t_list_token *)malloc(sizeof(t_list_token))))
-		return(NULL);
+		return (NULL);
 	i++;
 	while (str[i] && str[i] != '\'')
 		i++;
-    (str[i] == '\'') ? (node->is_ok = 1) : (node->is_ok = 0);
+	if (str[i] == '\'')
+		node->is_ok = 1;
+	else
+		node->is_ok = 0;
 	node->type = QUOTE;
 	node->data = ft_strsub(str, *index + 1, i - *index - 1);
 	node->next = NULL;
 	node->prec = NULL;
-	(i + 1 < ft_strlen(str)) ? (*index = i + 1) : (*index = ft_strlen(str));
+	if (i + 1 < ft_strlen(str))
+		*index = i + 1;
+	else
+		*index = ft_strlen(str);
 	return (node);
 }
 
 t_list_token	*add_dquote(int *index, char *str)
 {
 	t_list_token	*node;
-	int i = *index;
+	int				i;
 
+	i = *index;
 	node = (t_list_token *)malloc(sizeof(t_list_token));
 	if (!node)
 		return (NULL);
 	i++;
 	while (str[i] && (str[i] != '"' || str[i - 1] == '\\'))
 		i++;
-    (str[i] == '"') ? (node->is_ok = 1) : (node->is_ok = 0);
+	if (str[i] == '"')
+		node->is_ok = 1;
+	else
+		node->is_ok = 0;
 	node->type = DQUOTE;
 	node->data = (ft_strsub(str, *index + 1, i - *index - 1));
 	if (is_dollar(node->data) >= 0)
 		node->data = str_dollar_sub(node->data);
 	node->next = NULL;
 	node->prec = NULL;
-    (i + 1 < ft_strlen(str)) ? (*index = i + 1) : (*index = ft_strlen(str));
+	if (i + 1 < ft_strlen(str))
+		*index = i + 1;
+	else
+		*index = ft_strlen(str);
 	return (node);
 }
 
 t_list_token	*add_space(int *index, char *str)
 {
 	t_list_token	*node;
-	int i = *index;
+	int				i;
 
+	i = *index;
 	node = (t_list_token *)malloc(sizeof(t_list_token));
 	if (!node)
 		return (NULL);

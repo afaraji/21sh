@@ -34,13 +34,13 @@ int		manage_cmd_list(t_cmdlist *cmdlist)
 	return (ret);
 }
 
-int 	main_parse(char *line)
+int		main_parse(char *line)
 {
-	t_list_token    *tokens;
+	t_list_token	*tokens;
 	t_cmdlist		*cmdlist;
 	int				ret;
 
-    tokens = ft_tokenize(line);
+	tokens = ft_tokenize(line);
 	g_var.errno = 0;
 	if (lexer(&tokens) || verify_tokens(tokens))
 	{

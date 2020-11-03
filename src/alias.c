@@ -30,8 +30,8 @@ char	*ft_strsub_delimit(char *s, char c)
 
 int		alias_infinit_loop(char *str, t_alias *aliases)
 {
-	char *tmp;
-	t_alias *node;
+	char	*tmp;
+	t_alias	*node;
 
 	node = aliases;
 	tmp = ft_strdup(str);
@@ -51,7 +51,6 @@ int		alias_infinit_loop(char *str, t_alias *aliases)
 		}
 		node = node->next;
 	}
-
 	return (0);
 }
 
@@ -64,7 +63,7 @@ int		alias_sub(t_list_token *word, t_alias *aliases)
 	{
 		if (!ft_strcmp(word->data, node->key))
 		{
-			if(!alias_infinit_loop(node->key, aliases))
+			if (!alias_infinit_loop(node->key, aliases))
 			{
 				ft_strdel(&(word->data));
 				word->data = ft_strdup(node->sub);
@@ -73,10 +72,10 @@ int		alias_sub(t_list_token *word, t_alias *aliases)
 		}
 		node = node->next;
 	}
-	return(0);
+	return (0);
 }
 
-void		insert_alias(char *key, char *sub)
+void	insert_alias(char *key, char *sub)
 {
 	t_alias		*node;
 
@@ -97,10 +96,9 @@ void		insert_alias(char *key, char *sub)
 		g_var.aliases->key = ft_strdup(key);
 		g_var.aliases->sub = ft_strdup(sub);
 	}
-
 }
 
-void	get_aliases(void)// test aliases
+void	get_aliases(void)
 {
 	insert_alias("toto", "lala qwerty");
 	insert_alias("lala", "yoyo");
