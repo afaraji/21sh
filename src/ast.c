@@ -18,6 +18,19 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
+int		is_op_2(char c, char c2)
+{
+	if (c == '<' && c2 == '<')
+		return (SMLSML);
+	if (c == '>')
+		return (GRT);
+	if (c == '<')
+		return (SML);
+	if (c == '&')
+		return (BGJOB);
+	return (0);
+}
+
 int		is_op(char *str, int i)
 {
 	if (ft_isspace(str[i]))
@@ -36,89 +49,56 @@ int		is_op(char *str, int i)
 		return (PIP);
 	if (str[i] == 92)
 		return (ESCAPE);
-	if ((str[i] == '>' && str[i + 1] == '&') || (str[i] == '&' && str[i + 1] == '>'))
+	if ((str[i] == '>' && str[i + 1] == '&') ||
+						(str[i] == '&' && str[i + 1] == '>'))
 		return (GRTAND);
 	if (str[i] == '>' && str[i + 1] == '>')
 		return (GRTGRT);
 	if ((str[i] == '<' && str[i + 1] == '&'))// || (str[i] == '&' && str[i + 1] == '<'))
 		return (SMLAND);
-	if (str[i] == '<' && str[i + 1] == '<')
-		return (SMLSML);
-	if (str[i] == '>')
-		return (GRT);
-	if (str[i] == '<')
-		return (SML);
-	if (str[i] == '&')
-		return (BGJOB);
-	return (0);
+	return (is_op_2(str[i], str[i + 1]));
+}
+
+char	*tokentoa_2(int token)
+{
+	if (token == SMLSML)
+		return("<<");
+	if (token == SMLAND)
+		return("<&");
+	if (token == GRTAND)
+		return(">&");
+	return(ft_itoa(token));
 }
 
 char	*tokentoa(int token)
 {
-
-	switch (token)
-	{
-		case -1:
-			return(" ");
-			break;
-		case -2:
-			return("'");
-			break;
-		case -3:
-			return("\"");
-			break;
-		case -4:
-			return(";");
-			break;
-		case -5:
-			return("&&");
-			break;
-		case -6:
-			return("||");
-			break;
-		case -10:
-			return("|");
-			break;
-		case -11:
-			return("&");
-			break;
-		case -12:
-			return("\\");
-			break;
-		case -20:
-			return(">");
-			break;
-		case -21:
-			return(">>");
-			break;
-		case -22:
-			return("<");
-			break;
-		case -30:
-			return("<<");
-			break;
-		case -24:
-			return("<&");
-			break;
-		case -25:
-			return(">&");
-			break;
-		case -26:
-			return("<>");
-			break;
-		case -27:
-			return(">|");
-			break;
-		case -31:
-			return("<<-");
-			break;
-
-		default:
-			return(ft_itoa(token));
-			break;
-	}
-
+	if (token == SPACE)
+		return (" ");
+	if (token == QUOTE)
+		return("'");
+	if (token == DQUOTE)
+		return("\"");
+	if (token == SMCLN)
+		return(";");
+	if (token == ANDLG)
+		return("&&");
+	if (token == ORLG)
+		return("||");
+	if (token == PIP)
+		return("|");
+	if (token == BGJOB)
+		return("&");
+	if (token == ESCAPE)
+		return("\\");
+	if (token == GRT)
+		return(">");
+	if (token == GRTGRT)
+		return(">>");
+	if (token == SML)
+		return("<");
+	return (tokentoa_2(token));
 }
+
 
 t_list_token	*add_quote(int *index, char *str)
 {
@@ -219,7 +199,6 @@ t_list_token	*add_word_int(int *index, char *str)
 	t_list_token	*node;
 
 	i = *index;
-
 	while (str[i] && is_op(str, i) == 0)
 	{
 		i++;
@@ -400,7 +379,7 @@ char		*io_here(t_list_token **cmd, t_list_token **end, int *r_type)
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
-	if((*cmd)->type == SMLSML)// || (*cmd)->type == DSMLDASH)
+	if((*cmd)->type == SMLSML)
 	{
 		*r_type = (*cmd)->type;
 		*cmd = (*cmd)->next;
@@ -555,7 +534,7 @@ t_cmd_prefix	*cmd_prefix(t_list_token **cmd, t_list_token **end)
 	return (NULL);
 }
 
-char			*cmd_word(t_list_token **cmd, t_list_token **end) // need to apply rule 7b ? and need to include qote and dqote(is_ok = ?)
+char			*cmd_word(t_list_token **cmd, t_list_token **end)
 {
 	char	*word;
 
@@ -569,7 +548,6 @@ char			*cmd_word(t_list_token **cmd, t_list_token **end) // need to apply rule 7
 		*cmd = (*cmd)->next;
 		return (word);
 	}
-	// what if type is quote o dquote ?
 	return (NULL);
 }
 
@@ -601,7 +579,7 @@ t_cmd_suffix	*cmd_suffix(t_list_token **cmd, t_list_token **end)
 	return (NULL);
 }
 
-char			*cmd_name(t_list_token	**cmd, t_list_token **end)	// need to apply rule 7a ? and need to include qote and dqote(is_ok = ?)
+char			*cmd_name(t_list_token	**cmd, t_list_token **end)
 {
 	char	*name;
 
@@ -618,7 +596,7 @@ char			*cmd_name(t_list_token	**cmd, t_list_token **end)	// need to apply rule 7
 	return (NULL);
 }
 
-t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need recoding and rethinking
+t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end)
 {
 	t_simple_cmd *ret;
 
@@ -631,22 +609,22 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end) // need rec
 	ret->prefix = cmd_prefix(&start, &end);
 	if (ret->prefix)
 	{
-		ret->word = cmd_word(&start, &end);					//	include " '
+		ret->word = cmd_word(&start, &end);
 		if (ret->word)
 		{
-			ret->suffix = cmd_suffix(&start, &end);			//	include " '
+			ret->suffix = cmd_suffix(&start, &end);
 			return (ret);
 		}
 		return (ret);
 	}
-	else if ((ret->name = cmd_name(&start, &end)))			//	include " '
+	else if ((ret->name = cmd_name(&start, &end)))
 	{
-		ret->suffix = cmd_suffix(&start, &end);				//	include " '
+		ret->suffix = cmd_suffix(&start, &end);
 		return (ret);
 	}
 	else
 	{
-		if (!g_var.errno)// here if sigfaults
+		if (!g_var.errno)
 		{
 			ft_putstr_fd("syntax error, unexpected token near '", 2);
 			ft_putstr_fd(tokentoa(start->type), 2);
@@ -768,6 +746,29 @@ void	join_words(t_list_token *token)
 	}
 }
 
+int		verify_tokens_error(int err, int typ)
+{
+	ft_putstr_fd("syntax error, unexpected token `", 2);
+	ft_putstr_fd(tokentoa(typ), 2);
+	ft_putstr_fd("'\n", 2);
+	if (err == 2)
+	{
+		g_var.errno = 130;
+		return (2);
+	}
+	if (err == 3)
+	{
+		g_var.errno = 131;
+		return (3);
+	}
+	if (err == 4)
+	{
+		g_var.errno = 132;
+		return (4);
+	}
+	return (0);
+}
+
 int		verify_tokens(t_list_token *token)
 {
 	t_list_token	*node;
@@ -775,15 +776,8 @@ int		verify_tokens(t_list_token *token)
 
 	if (!token)
 		return (1);
-
 	if (ft_or(token->type, SMCLN, ANDLG, ORLG) || ft_or(token->type, PIP, BGJOB, 0))
-	{
-		ft_putstr_fd("syntax error, unexpected token `", 2);
-		ft_putstr_fd(tokentoa(token->type), 2);
-		ft_putstr_fd("'\n", 2);
-		g_var.errno = 130;
-		return (2);
-	}
+		return (verify_tokens_error(2, node->type));
 	node = token;
 	while (node)
 	{
@@ -793,21 +787,9 @@ int		verify_tokens(t_list_token *token)
 			while(tmp && tmp->type == SPACE)
 				tmp = tmp->next;
 			if (!tmp && (node->type == ANDLG || node->type == ORLG))
-			{
-				ft_putstr_fd("syntax error after `", 2);
-				ft_putstr_fd(tokentoa(node->type), 2);
-				ft_putstr_fd("'\n", 2);
-				g_var.errno = 131;
-				return (3);
-			}
+				return (verify_tokens_error(3, node->type));
 			if (tmp && (ft_or(token->type, SMCLN, ANDLG, ORLG) || token->type == BGJOB))
-			{
-				ft_putstr_fd("syntax error, unexpected token `", 2);
-				ft_putstr_fd(tokentoa(tmp->type), 2);
-				ft_putstr_fd("'\n", 2);
-				g_var.errno = 132;
-				return (4);
-			}
+				return (verify_tokens_error(4, tmp->type));
 		}
 		node = node->next;
 	}
