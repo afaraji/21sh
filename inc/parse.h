@@ -35,6 +35,7 @@
 # define SMLAND	-24
 # define GRTAND	-25
 # define WORD	-42
+# define BUILTINS	"echo|export|cd|setenv|unsetenv|env|exit"
 
 int				main_parse(char *line);
 int				ft_or(int m, int a, int b, int c);

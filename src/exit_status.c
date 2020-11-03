@@ -30,7 +30,7 @@ void	exit_status(int status)
 		{
 			free(tmp->value);
 			tmp->value = ft_itoa(g_var.exit_status);
-			break;
+			break ;
 		}
 		tmp = tmp->next;
 	}
@@ -60,16 +60,12 @@ int		check_fd(int fd, int io)
 	if (io == 0)
 	{
 		ret = read(fd, NULL, 0);
-		// fprintf(ttt, "from read [%zd]\n",ret);
 	}
 	else
 	{
 		ret = write(fd, NULL, 0);
-		// fprintf(ttt, "from write [%zd]\n",ret);
 	}
-	// fprintf(ttt, "fd[%d]-->[%d:%zd]\n", fd, status, ret);
 	if (status < 0 || ret < 0)
 		return (0);
 	return (1);
 }
-

@@ -18,7 +18,7 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-char			*cmd_name(t_list_token	**cmd, t_list_token **end)
+char			*cmd_name(t_list_token **cmd, t_list_token **end)
 {
 	char	*name;
 
@@ -26,7 +26,8 @@ char			*cmd_name(t_list_token	**cmd, t_list_token **end)
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
-	if (((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))
+	if (((*cmd)->type == WORD || (*cmd)->type == QUOTE ||
+		(*cmd)->type == DQUOTE))
 	{
 		name = ft_strdup((*cmd)->data);
 		*cmd = (*cmd)->next;
@@ -70,7 +71,7 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end)
 			ft_putstr_fd("'\n", 2);
 			g_var.errno = 122;
 		}
-		return(NULL);
+		return (NULL);
 	}
 }
 
@@ -78,7 +79,7 @@ t_pipe_seq		*ast(t_list_token *tokens)
 {
 	t_list_token	*node;
 	t_list_token	*prec;
-	t_pipe_seq		*tmp = NULL;
+	t_pipe_seq		*tmp;
 
 	if (!tokens || g_var.errno)
 	{
@@ -90,6 +91,7 @@ t_pipe_seq		*ast(t_list_token *tokens)
 		return (NULL);
 	}
 	node = tokens;
+	tmp = NULL;
 	while (node)
 	{
 		if (node->type == PIP)
@@ -97,7 +99,7 @@ t_pipe_seq		*ast(t_list_token *tokens)
 			tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
 			tmp->left = get_simple_cmd(tokens, node);
 			tmp->right = ast(node->next);
-			return(tmp);
+			return (tmp);
 		}
 		prec = node;
 		node = node->next;
@@ -105,5 +107,5 @@ t_pipe_seq		*ast(t_list_token *tokens)
 	tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
 	tmp->left = get_simple_cmd(tokens, prec);
 	tmp->right = NULL;
-	return(tmp);
+	return (tmp);
 }

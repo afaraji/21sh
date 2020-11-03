@@ -66,10 +66,11 @@ char	**env_to_tab(t_variable *var, int all)
 int		do_suffix(t_cmd_suffix *suffix)
 {
 	t_cmd_suffix	*node;
-	t_l	*args;
-	t_l	*tmp;
-	int				ret = 0;
+	t_l				*args;
+	t_l				*tmp;
+	int				ret;
 
+	ret = 0;
 	node = suffix;
 	while (node)
 	{
@@ -86,9 +87,10 @@ int		do_suffix(t_cmd_suffix *suffix)
 
 int		do_simple_cmd(t_simple_cmd *cmd)
 {
-	int		ret = 0;
+	int		ret;
 	char	*command;
 
+	ret = 0;
 	if (cmd->prefix)
 	{
 		ret = do_prefix(cmd->prefix, g_var.var, 0);
@@ -101,4 +103,3 @@ int		do_simple_cmd(t_simple_cmd *cmd)
 	}
 	return (ret);
 }
-

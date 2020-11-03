@@ -21,8 +21,9 @@
 int		do_prefix(t_cmd_prefix *prefix, t_variable *var, int env)
 {
 	t_cmd_prefix	*node;
-	int				ret = 0;
+	int				ret;
 
+	ret = 0;
 	do_assignement(prefix, var, env);
 	node = prefix;
 	while (node)
@@ -33,7 +34,6 @@ int		do_prefix(t_cmd_prefix *prefix, t_variable *var, int env)
 			if (ret != 0)
 				return (ret);
 		}
-
 		node = node->prefix;
 	}
 	return (ret);
@@ -43,7 +43,7 @@ char	**paths_from_env(void)
 {
 	char	**paths;
 	char	*tmp;
-	int i;
+	int		i;
 
 	tmp = fetch_variables("PATH", -1);
 	if (!tmp)
@@ -72,15 +72,15 @@ char	*get_cmdpath_error(int err_no, char *str)
 	{
 		typ = verify_type(str);
 		if (typ == 1 || typ == 3)
-			ft_print(STDERR, "shell: %s: is directory\n",str);
+			ft_print(STDERR, "shell: %s: is directory\n", str);
 		else
-			ft_print(STDERR, "shell: %s: No such file or directory\n",str);
+			ft_print(STDERR, "shell: %s: No such file or directory\n", str);
 		return (NULL);
 	}
 	if (err_no == 2)
 	{
 		ft_print(STDERR, "shell: command not found: %s\n", str);
-		return(NULL);
+		return (NULL);
 	}
 	return (NULL);
 }

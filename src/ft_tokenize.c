@@ -41,54 +41,36 @@ t_list_token	*add_word_int(int *index, char *str)
 
 t_list_token	*tokenize(char *str, int *i)
 {
-	int op;
-	t_list_token	*tmp;
+	int				op;
 
 	op = is_op(str, *i);
 	if (op < 0)
 	{
 		if (op == QUOTE)
-		{
-			tmp = add_quote(i, str);
-			return (tmp);
-		}
+			return (add_quote(i, str));
 		else if (op == DQUOTE)
-		{
-			tmp = add_dquote(i, str);
-			return (tmp);
-		}
+			return (add_dquote(i, str));
 		else if (op == SPACE)
-		{
-			tmp = add_space(i, str);
-			return (tmp);
-		}
+			return (add_space(i, str));
 		else if (op == ESCAPE)
-		{
-			tmp = add_escape(i, str);
-			return (tmp);
-		}
+			return (add_escape(i, str));
 		else
-		{
-			tmp = add_op(i, str, op);
-			return (tmp);
-		}
+			return (add_op(i, str, op));
 	}
 	else
-	{
-		tmp = add_word_int(i, str);
-		return (tmp);
-	}
+		return (add_word_int(i, str));
 }
 
 t_list_token	*ft_tokenize(char *str)
 {
 	t_list_token	*head;
 	t_list_token	*node;
-	int i;
+	int				i;
 
 	head = NULL;
 	i = 0;
-	while(str[i])
+	while
+	(str[i])
 	{
 		if (!head)
 		{
