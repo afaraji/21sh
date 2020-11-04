@@ -25,12 +25,16 @@ int		is_reserved(char *str)
 
 	i = 0;
 	rsrved = ft_strsplit(RSRVDWORD, '|');
-	while (i < 17)
+	while (rsrved[i])
 	{
 		if (ft_strcmp(str, rsrved[i]) == 0)
+		{
+			free_tab(rsrved);
 			return (1);
+		}
 		i++;
 	}
+	free_tab(rsrved);
 	return (0);
 }
 

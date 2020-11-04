@@ -53,7 +53,7 @@ all : $(NAME)
 
 $(NAME) : $(OBJ_SHL) $(OBJ_LF)
 	@$(MAKE) -C ./libft
-	@gcc -I=$(HEADR)  $(SRC_SHL) $(LIBFTA) -ltermcap -o $(NAME)
+	@gcc $(SRC_SHL) $(LIBFTA) -ltermcap -o $(NAME)
 
 clean :
 	@printf "removing OBJ files ./src/\n"
