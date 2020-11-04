@@ -159,5 +159,6 @@ void				print_result_1(t_completion *complete, char **t,
 int					get_home_path(char **str);
 char				**auto_completion_1(t_line *line);
 int					is_all_digits(char *s);
+void				init_vars(t_l **files_dirs_list, char **file_dir, t_l **node);
 
 #endif

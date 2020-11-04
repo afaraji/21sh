@@ -31,7 +31,11 @@ SRC_SHL = ./src/ast.c ./src/main.c ./src/manage_terminal.c ./src/readline.c	\
 	./src/do_sufix_prefix.c ./src/exec_nofork.c ./src/exit_status.c			\
 	./src/get_cmdargs.c ./src/get_cmdpath.c ./src/alias.c ./src/dollar_sub.c\
 	./src/reserved_words.c ./src/tilde_sub.c ./src/io_redirect_aggr.c		\
-	./src/ft_free_ast.c ./src/ft_free_g_var.c ./src/list_to_tab.c
+	./src/ft_free_ast.c ./src/ft_free_g_var.c ./src/list_to_tab.c           \
+	./src/auto_complete_1.c ./src/auto_complete_2.c ./src/cmd_completion.c  \
+	./src/cmd_completion_1.c ./src/f_d_completion_1.c ./src/ff_d_completion.c\
+	./src/f_d_completion_2.c ./src/f_d_completion_3.c ./src/print_completion.c\
+	./src/variables_completion.c
 
 LIBFTA = ./libft/libft.a
 
