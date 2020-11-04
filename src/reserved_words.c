@@ -69,14 +69,23 @@ int		ft_or(int m, int a, int b, int c)
 	return ((m == a || m == b || m == c) ? 1 : 0);
 }
 
+int		keywords_alias_sub_2(t_list_token **cmd_token, t_list_token *node)
+{
+	parse_and_replace(cmd_token, node);
+	if (keywords_alias_sub(cmd_token))
+		return (1);
+	return (0);
+}
+
 int		keywords_alias_sub(t_list_token **cmd_token)
 {
-	t_list_token *node;
+	t_list_token	*node;
 
 	node = *cmd_token;
 	while (node)
 	{
-		if (ft_or(node->type, SMCLN, ANDLG, ORLG) || ft_or(node->type, PIP, BGJOB, 0) || node == *cmd_token)
+		if (ft_or(node->type, SMCLN, ANDLG, ORLG) ||
+						ft_or(node->type, PIP, BGJOB, 0) || node == *cmd_token)
 		{
 			if (node != *cmd_token)
 				node = node->next;
@@ -88,15 +97,8 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 				return (1);
 			}
 			else if (node && node->type == WORD)
-			{
 				if (alias_sub(node, g_var.aliases))
-				{
-					parse_and_replace(cmd_token, node);
-					if (keywords_alias_sub(cmd_token))
-						return (1);
-					return (0);
-				}
-			}
+					return (keywords_alias_sub_2(cmd_token, node));
 		}
 		if (node)
 			node = node->next;

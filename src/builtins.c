@@ -107,5 +107,7 @@ int		builtins(char *cmd, char **av, char **env)
 		return (ft_unsetenv(av));
 	else if (ft_strcmp(cmd, "export") == 0)
 		return (ft_export(av, env));
+	else if(ft_strcmp(cmd, "alias") == 0)
+		return (ft_alias(av, env));
 	return (42);
 }

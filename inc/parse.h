@@ -73,5 +73,6 @@ char			*get_pwd(char **env);
 int				lexer(t_list_token **cmd_token);
 void			add_proc(pid_t pid);
 void			bg_jobs(void);
+int				ft_alias(char **av);
 
 #endif
