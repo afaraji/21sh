@@ -21,10 +21,11 @@
 int		is_dollar(char *s)
 {
 	int i;
+
 	if (!s)
 		return (-42);
 	i = 0;
-	while(s[i] && s[i] != '$')
+	while (s[i] && s[i] != '$')
 		i++;
 	if (s[i] == '$')
 		return (i);
@@ -41,7 +42,7 @@ int		end_dollar_word(char *s, int start)
 		bracket = 1;
 	i = start + bracket + 1;
 	if (s[i] == '!' || s[i] == '#' || s[i] == '$' || s[i] == '?')
-		return(i + 1 + bracket);
+		return (i + 1 + bracket);
 	if (s[i] != '_' && !ft_isalpha(s[i]))
 	{
 		if (!bracket)
@@ -79,11 +80,11 @@ char	*get_dollar_var(char *s, int start, int end)
 	tmp = ft_strsub(s, index, len);
 	var = fetch_variables(tmp, -1);
 	if (!var)
-		return(ft_strdup(""));
+		return (ft_strdup(""));
 	return (var);
 }
 
-char		*str_dollar_sub(char *str)
+char	*str_dollar_sub(char *str)
 {
 	int		start;
 	int		end;
@@ -103,8 +104,6 @@ char		*str_dollar_sub(char *str)
 	ft_strdel(&prefix);
 	ft_strdel(&var);
 	ft_strdel(&suffix);
-	// if (is_dollar(str) >= 0 && (end - start) > 1)	// causes infinit loop, if needed
-	// 	str = str_dollar_sub(str);						// should be protected from infinit loop
 	return (str);
 }
 

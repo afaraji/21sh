@@ -38,7 +38,7 @@ char	**list_to_tab(t_l *list)
 		return (NULL);
 	node = list;
 	i = 0;
-	while(node)
+	while (node)
 	{
 		if (ft_strcmp(node->data, ""))
 		{
@@ -52,7 +52,7 @@ char	**list_to_tab(t_l *list)
 	return (args);
 }
 
-t_l		*get_args(t_simple_cmd	*cmd)
+t_l		*get_args(t_simple_cmd *cmd)
 {
 	t_l				*head;
 	t_l				*node;
@@ -88,33 +88,37 @@ t_l		*get_args(t_simple_cmd	*cmd)
 
 int		is_builtin(char *str)
 {
-	char	*b_in_list[] = {"echo", "export", "cd", "setenv", "unsetenv", "env", "exit", NULL};
+	char	**b_in_list;
 	int		i;
 
+	b_in_list = ft_strsplit(BUILTINS, '|');
 	if (!str || !ft_strcmp(str, ""))
 		return (0);
 	i = 0;
 	while (b_in_list[i])
 	{
 		if (!ft_strcmp(b_in_list[i], str))
+		{
+			free_tab(b_in_list);
 			return (i + 1);
+		}
 		i++;
 	}
+	free_tab(b_in_list);
 	return (0);
 }
 
-t_l	*var_sub(t_l *head)
+t_l		*var_sub(t_l *head)
 {
-	t_l	*node;
-	t_l	*next_node;
-	char			*tmp;
-	char			**t;
-	int				i;
+	t_l		*node;
+	t_l		*next_node;
+	char	**t;
+	int		i;
 
 	next_node = head->next;
-	tmp = str_dollar_sub(head->data); // node->data is freed.
-	t = ft_strsplit(tmp, ' ');
-	ft_strdel(&tmp);
+	head->data = str_dollar_sub(head->data);
+	t = ft_strsplit(head->data, ' ');
+	ft_strdel(&(head->data));
 	i = 1;
 	if (!t || !t[0])
 	{

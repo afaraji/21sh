@@ -92,7 +92,7 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	list = NULL;
 	while (tmp)
 	{
-		if (tmp->type == SMCLN || tmp->type ==BGJOB)
+		if (tmp->type == SMCLN || tmp->type == BGJOB)
 		{
 			if (!list)
 			{
@@ -121,7 +121,6 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	}
 	else if (tokens->next)
 	{
-
 		node->next = (t_cmdlist *)malloc(sizeof(t_cmdlist));
 		node = node->next;
 		node->and_or = token_split_andor(tokens->next, NULL, SMCLN);
@@ -130,4 +129,3 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	}
 	return (list);
 }
-

@@ -30,7 +30,8 @@ SRC_SHL = ./src/ast.c ./src/main.c ./src/manage_terminal.c ./src/readline.c	\
 	./src/tokens_translate.c ./src/verify_tokens.c ./src/do_assignement.c	\
 	./src/do_sufix_prefix.c ./src/exec_nofork.c ./src/exit_status.c			\
 	./src/get_cmdargs.c ./src/get_cmdpath.c ./src/alias.c ./src/dollar_sub.c\
-	./src/reserved_words.c ./src/tilde_sub.c ./src/io_redirect_aggr.c
+	./src/reserved_words.c ./src/tilde_sub.c ./src/io_redirect_aggr.c		\
+	./src/ft_free_ast.c ./src/ft_free_g_var.c
 
 LIBFTA = ./libft/libft.a
 

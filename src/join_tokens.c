@@ -20,11 +20,12 @@
 
 t_list_token	*list_sub(t_list_token *start, t_list_token *end)
 {
-	t_list_token *head = NULL;
+	t_list_token *head;
 	t_list_token *node;
 
 	if (!start)
 		return (NULL);
+	head = NULL;
 	while (start)
 	{
 		if (!head)
@@ -39,25 +40,28 @@ t_list_token	*list_sub(t_list_token *start, t_list_token *end)
 			node->next->prec = node;
 			node = node->next;
 		}
-		(start->data) ? (node->data = ft_strdup(start->data)) : (node->data = NULL);
+		if (start->data)
+			node->data = ft_strdup(start->data);
+		else
+			node->data = NULL;
 		node->is_ok = start->is_ok;
 		node->type = start->type;
 		node->next = NULL;
 		if (start == end)
-			break;
+			break ;
 		start = start->next;
 	}
 	return (head);
 }
 
-void	free_token_node(t_list_token **todel)
+void			free_token_node(t_list_token **todel)
 {
 	ft_strdel(&((*todel)->data));
 	free(*todel);
 	*todel = NULL;
 }
 
-void	join_nodes(t_list_token *dst, t_list_token *todel)
+void			join_nodes(t_list_token *dst, t_list_token *todel)
 {
 	t_list_token	*node;
 	char			*tmp;
@@ -72,7 +76,7 @@ void	join_nodes(t_list_token *dst, t_list_token *todel)
 	free_token_node(&todel);
 }
 
-void	join_words(t_list_token *token)
+void			join_words(t_list_token *token)
 {
 	t_list_token	*node;
 	t_list_token	*tmp;
@@ -90,8 +94,7 @@ void	join_words(t_list_token *token)
 			}
 		}
 		if (!(node->next))
-			break;
+			break ;
 		node = node->next;
 	}
 }
-

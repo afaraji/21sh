@@ -36,7 +36,7 @@ t_variable	*var_list_dup(t_variable *src)
 	return (head);
 }
 
-void	reset_in_out(int set)
+void		reset_in_out(int set)
 {
 	static int in = -1;
 	static int out = -1;
@@ -62,12 +62,11 @@ void	reset_in_out(int set)
 	}
 }
 
-int		exec_no_fork_builtin(t_simple_cmd *cmd, char **av)
+int			exec_no_fork_builtin(t_simple_cmd *cmd, char **av)
 {
 	int			status;
 	t_variable	*tmp;
 	char		**env;
-
 
 	tmp = var_list_dup(g_var.var);
 	reset_in_out(SETDFL);
@@ -85,7 +84,7 @@ int		exec_no_fork_builtin(t_simple_cmd *cmd, char **av)
 	return (status);
 }
 
-int		exec_no_fork(t_pipe_seq *cmd, int bg)
+int			exec_no_fork(t_pipe_seq *cmd, int bg)
 {
 	char		**av;
 	int			status;

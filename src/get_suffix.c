@@ -32,11 +32,11 @@ t_variable		*ass_word(t_list_token **cmd, t_list_token **end)
 		i = 1;
 		while ((*cmd)->data[i])
 		{
-			if((*cmd)->data[i] == '=')
-				break;
+			if ((*cmd)->data[i] == '=')
+				break ;
 			i++;
 		}
-		if(i >= ft_strlen((*cmd)->data))
+		if (i >= ft_strlen((*cmd)->data))
 			return (NULL);
 		var = (t_variable *)malloc(sizeof(t_variable));
 		var->key = ft_strsub((*cmd)->data, 0, i);
@@ -90,7 +90,8 @@ char			*cmd_word(t_list_token **cmd, t_list_token **end)
 		*cmd = (*cmd)->next;
 	if (!cmd || !(*cmd) || g_var.errno)
 		return (NULL);
-	if (((*cmd)->type == WORD || (*cmd)->type == QUOTE || (*cmd)->type == DQUOTE))
+	if (((*cmd)->type == WORD || (*cmd)->type == QUOTE ||
+														(*cmd)->type == DQUOTE))
 	{
 		word = ft_strdup((*cmd)->data);
 		*cmd = (*cmd)->next;
