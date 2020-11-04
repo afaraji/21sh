@@ -20,11 +20,11 @@
 
 int		is_reserved(char *str)
 {
-	char *rsrved[17] = {"{", "}", "case", "do", "done", "elif", "else", "esac",
-						"fi", "for", "if", "in", "then", "until", "while", ")", "("};
-	int i;
+	char	**rsrved;
+	int		i;
 
 	i = 0;
+	rsrved = ft_strsplit(RSRVDWORD, '|');
 	while (i < 17)
 	{
 		if (ft_strcmp(str, rsrved[i]) == 0)
@@ -62,7 +62,7 @@ void	parse_and_replace(t_list_token **cmd_token, t_list_token *node)
 
 int		ft_or(int m, int a, int b, int c)
 {
-	return ((m == a||m == b||m == c) ? 1 : 0);
+	return ((m == a || m == b || m == c) ? 1 : 0);
 }
 
 int		keywords_alias_sub(t_list_token **cmd_token)
@@ -72,7 +72,7 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 	node = *cmd_token;
 	while (node)
 	{
-		if(ft_or(node->type, SMCLN, ANDLG, ORLG) || ft_or(node->type, PIP, BGJOB, 0) || node == *cmd_token)
+		if (ft_or(node->type, SMCLN, ANDLG, ORLG) || ft_or(node->type, PIP, BGJOB, 0) || node == *cmd_token)
 		{
 			if (node != *cmd_token)
 				node = node->next;
@@ -80,7 +80,7 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 				node = node->next;
 			if (node && node->type == WORD && is_reserved(node->data))
 			{
-				ft_print(STDERR, "found '%s' - not implimented yet\n", node->data);
+				ft_print(STDERR, "found [%s] not implimented.\n", node->data);
 				return (1);
 			}
 			else if (node && node->type == WORD)
@@ -90,7 +90,7 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 					parse_and_replace(cmd_token, node);
 					if (keywords_alias_sub(cmd_token))
 						return (1);
-					return (0); // should break or return ??? break == return unless there is code after while
+					return (0);
 				}
 			}
 		}

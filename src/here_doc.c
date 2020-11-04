@@ -18,7 +18,23 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-char		*here_doc_string(char *word)
+char	*here_doc_signal(char *buff, char *str)
+{
+	if (!ft_strcmp(buff, "\030"))
+	{
+		g_var.errno = 1;
+		ft_strdel(&buff);
+		ft_strdel(&str);
+		return (ft_strdup(""));
+	}
+	else
+	{
+		ft_strdel(&buff);
+		return (str);
+	}
+}
+
+char	*here_doc_string(char *word)
 {
 	char	*str;
 	char	*tmp;
@@ -28,17 +44,9 @@ char		*here_doc_string(char *word)
 	while (1)
 	{
 		buff = readline(SMLSML);
-		if (!ft_strcmp(buff, "\033"))
+		if (!ft_strcmp(buff, "\033") || !ft_strcmp(buff, "\030"))
 		{
-			g_var.errno = 1;
-			ft_strdel(&buff);
-			ft_strdel(&str);
-			return (ft_strdup(""));
-		}
-		if (!ft_strcmp(buff, "\030"))
-		{
-			ft_strdel(&buff);
-			return (str);
+			return (here_doc_signal(buff, str));
 		}
 		if (!ft_strcmp(buff, word))
 		{
@@ -67,15 +75,13 @@ void	here_doc(t_list_token *head)
 			while (node->next && node->next->type == SPACE)
 				node = node->next;
 			if (!node->next)
-				return;
+				return ;
 			if (node->next->type == WORD)
 			{
 				str = str_dollar_sub(here_doc_string(node->next->data));
 			}
-			else if (node->next->type == QUOTE|| node->next->type == DQUOTE)
-			{
+			else if (node->next->type == QUOTE || node->next->type == DQUOTE)
 				str = here_doc_string(node->next->data);
-			}
 			ft_strdel(&(node->next->data));
 			node->next->data = str;
 			node->next->type = QUOTE;
@@ -84,4 +90,3 @@ void	here_doc(t_list_token *head)
 		node = node->next;
 	}
 }
-

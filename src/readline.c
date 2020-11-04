@@ -18,34 +18,38 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-void	ft_prompt(char *prompt)
+void		ft_prompt(char *prompt)
 {
 	ft_putstr("\x1B[35m");
 	ft_putstr(prompt);
 	ft_putstr("\x1b[39m");
 }
 
-int get_current_row(void)
+int			get_current_row(void)
 {
-	char buf[30];
-	int row = 0;
-	int ch = 0;
-	int i = 0;
+	char	buf[30];
+	int		row;
+	int		ch;
+	int		i;
+
+	row = 0;
+	ch = 0;
+	i = 0;
 	write(1, "\033[6n", 4);
-	while(ch !='R')
+	while (ch != 'R')
 	{
 		read(0, &ch, 1);
 		buf[i] = ch;
 		i++;
 	}
-	if((buf[3]) >= '0' && (buf[3] <= '9'))
-		row = ((buf[2] - '0') * 10 ) + (buf[3] - '0');
+	if ((buf[3]) >= '0' && (buf[3] <= '9'))
+		row = ((buf[2] - '0') * 10) + (buf[3] - '0');
 	else
-		row =  buf[2] - '0';
-	return(row);
+		row = buf[2] - '0';
+	return (row);
 }
 
-t_line	*init_line(char *prompt)
+t_line		*init_line(char *prompt)
 {
 	t_line	*line;
 
@@ -77,10 +81,11 @@ t_terminal	*initiate_unprint_var(void)
 char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 {
 	t_terminal	*term;
-	static char	*to_past = NULL;
+	static char	*to_past;
 	char		*tmp;
 	int			unprint_ret;
 
+	to_past = NULL;
 	term = initiate_unprint_var();
 	term->line = init_line(prompt);
 	if (read(0, &term->buff, 0) < 0)
@@ -96,24 +101,22 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 			free_term(&term);
 			ft_putstr_fd("^C\n", 1);
 			if (mult_line != 0)
-				return(ft_strdup("\033"));
+				return (ft_strdup("\033"));
 			return (ft_strdup(""));
-
 		}
 		if (term->buff == CTRL_D && !ft_strcmp(term->line->str, ""))
 		{
 			free_term(&term);
-			ft_putchar('\n'); // it may invoc other bugs
-            if (mult_line == 0)
-                return (ft_strdup("exit"));
-            return(ft_strdup("\030"));
+			ft_putchar('\n');
+			if (mult_line == 0)
+				return (ft_strdup("exit"));
+			return (ft_strdup("\030"));
 		}
 		if (term->buff == CTRL_L && mult_line == 0)
 		{
 			ft_putstr_fd("\033[H\033[2J", 1);
 			ft_prompt("$> ");
 			ft_putstr(term->line->str);
-			// return (ft_strdup(""));
 		}
 		//**********************************************
 		if (printable(term, his_head, mult_line))

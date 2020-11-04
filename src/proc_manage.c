@@ -18,7 +18,7 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-char			*last_in_hist(void)
+char	*last_in_hist(void)
 {
 	t_hist	*node;
 
@@ -32,7 +32,7 @@ char			*last_in_hist(void)
 	return (NULL);
 }
 
-void			add_proc(pid_t pid)
+void	add_proc(pid_t pid)
 {
 	t_proc	*node;
 
@@ -67,7 +67,7 @@ void	delet_proc(pid_t pid)
 			ft_strdel(&(node->str));
 			old_node->next = node->next;
 			free(node);
-			break;
+			break ;
 		}
 		old_node = node;
 		node = node->next;
@@ -83,10 +83,9 @@ void	bg_jobs(void)
 	{
 		if (proc->done == 1)
 		{
-			ft_print(STDOUT, "\n[%d]\tDone\t\t%s\n",proc->index, proc->str);
+			ft_print(STDOUT, "\n[%d]\tDone\t\t%s\n", proc->index, proc->str);
 			delet_proc(proc->ppid);
 		}
 		proc = proc->next;
 	}
 }
-

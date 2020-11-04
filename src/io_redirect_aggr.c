@@ -35,9 +35,9 @@ int		redirect_sml_and(t_io_redirect *io)
 		if (filefd < 0)
 		{
 			if (!access(io->filename, F_OK))
-			ft_print(STDERR, "shell: %s: Permission denied.\n",io->filename);
-		else
-			ft_print(STDERR, "shell: %s: No such file or directory.\n",io->filename);
+				ft_print(STDERR, "shell: %s: Permission denied.\n", io->filename);
+			else
+				ft_print(STDERR, "shell: %s: No such file or directory.\n", io->filename);
 			return (-1);
 		}
 		dup2(filefd, fd_io);
@@ -49,7 +49,7 @@ int		redirect_sml_and(t_io_redirect *io)
 		tmpfd = ft_atoi(io->filename);
 		if (!check_fd(tmpfd, STDIN))
 		{
-			ft_print(STDERR, "shell: %d: Bad file descriptor.\n",tmpfd);
+			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", tmpfd);
 			return (-1);
 		}
 		dup2(tmpfd, fd_io);
@@ -58,7 +58,7 @@ int		redirect_sml_and(t_io_redirect *io)
 	{
 		if (close(fd_io))
 		{
-			ft_print(STDERR, "shell: %d: Bad file descriptor.\n",tmpfd);
+			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", tmpfd);
 			return (-1);
 		}
 	}
@@ -81,7 +81,7 @@ int		redirect_grt_and(t_io_redirect *io)
 		filefd = open(io->filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 		if (filefd < 0)
 		{
-			ft_print(STDERR, "shell: %s: Permission denied.\n",io->filename);
+			ft_print(STDERR, "shell: %s: Permission denied.\n", io->filename);
 			return (-1);
 		}
 		dup2(filefd, fd_io);
@@ -93,7 +93,7 @@ int		redirect_grt_and(t_io_redirect *io)
 		tmpfd = ft_atoi(io->filename);
 		if (!check_fd(tmpfd, STDOUT))
 		{
-			ft_print(STDERR, "shell: %d: Bad file descriptor.\n",tmpfd);
+			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", tmpfd);
 			return (-1);
 		}
 		dup2(tmpfd, fd_io);
@@ -102,7 +102,7 @@ int		redirect_grt_and(t_io_redirect *io)
 	{
 		if (close(fd_io))
 		{
-			ft_print(STDERR, "shell: %d: Bad file descriptor.\n",tmpfd);
+			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", tmpfd);
 			return (-1);
 		}
 	}
