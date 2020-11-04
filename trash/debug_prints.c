@@ -21,6 +21,16 @@
 FILE *ttt;
 FILE *ttyfd;
 
+void	debug(void)
+{
+	ttyfd = fopen("/dev/ttys001", "w");
+	ttt = fopen("/dev/ttys002", "w");
+	fprintf(ttyfd, "\033[H\033[2J");
+	fprintf(ttt, "\033[H\033[2J");
+	fprintf(ttyfd, "++++++++++++ debuging ++++++++++++\n");
+	fprintf(ttt, "++++++++++++ debuging ++++++++++++\n");
+}
+
 void	print_set_with_typ(void)
 {
 	t_variable	*node;
