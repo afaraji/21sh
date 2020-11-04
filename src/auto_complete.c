@@ -18,19 +18,57 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-int				get_path_1(char *str)
-{
-	int		index;
+/********* variables_completion.c **************/
 
-	index = ft_strlen(str) - 1;
-	while (index >= 0)
+t_l				*get_var_list(char *str, t_l *head)
+{
+	t_l		*node;
+	char	*tmp;
+
+	if (!head)
 	{
-		if (str[index] == '/')
-			break ;
-		index--;
+		if (!(head = (t_l *)malloc(sizeof(t_l))))
+			return (NULL);
+		tmp = ft_strdup(str);
+		head->data = ft_strjoin("$", tmp);
+		ft_strdel(&tmp);
+		head->next = NULL;
+		return (head);
 	}
-	return (index);
+	node = head;
+	while (node->next)
+		node = node->next;
+	if (!(node->next = (t_l *)malloc(sizeof(t_l))))
+		return (NULL);
+	node = node->next;
+	tmp = ft_strdup(str);
+	node->data = ft_strjoin("$", tmp);
+	ft_strdel(&tmp);
+	node->next = NULL;
+	return (head);
 }
+
+char			**var_search(char *str)
+{
+	t_variable	*var;
+	t_l			*var_list;
+	char		**var_tab;
+
+	var = g_var.var;
+	var_list = NULL;
+	var_tab = NULL;
+	while (var)
+	{
+		if (!ft_strncmp(str, var->key, ft_strlen(str)))
+			var_list = get_var_list(var->key, var_list);
+		var = var->next;
+	}
+	var_tab = tab_from_list(var_list);
+	free_list(var_list);
+	return (var_tab);
+}
+
+/********* f_d_completion_3.c **************/
 
 char			*get_path_2(char **str, int i)
 {
@@ -49,6 +87,20 @@ char			*get_path_2(char **str, int i)
 		ft_strdel(&tmp1);
 		return (tmp2);
 	}
+}
+
+int				get_path_1(char *str)
+{
+	int		index;
+
+	index = ft_strlen(str) - 1;
+	while (index >= 0)
+	{
+		if (str[index] == '/')
+			break ;
+		index--;
+	}
+	return (index);
 }
 
 char			*get_path(char *str)
@@ -91,131 +143,7 @@ char			*get_to_cmp(char *str)
 	return (file_to_find);
 }
 
-t_l				*names_list(char *str)
-{
-	t_l	*node;
-
-	if (!(node = (t_l *)malloc(sizeof(t_l))))
-		return (NULL);
-	node->data = ft_strdup(str);
-	node->next = NULL;
-	return (node);
-}
-
-t_l				*get_var_list(char *str, t_l *head)
-{
-	t_l		*node;
-	char	*tmp;
-
-	if (!head)
-	{
-		if (!(head = (t_l *)malloc(sizeof(t_l))))
-			return (NULL);
-		tmp = ft_strdup(str);
-		head->data = ft_strjoin("$", tmp);
-		ft_strdel(&tmp);
-		head->next = NULL;
-		return (head);
-	}
-	node = head;
-	while (node->next)
-		node = node->next;
-	if (!(node->next = (t_l *)malloc(sizeof(t_l))))
-		return (NULL);
-	node = node->next;
-	tmp = ft_strdup(str);
-	node->data = ft_strjoin("$", tmp);
-	ft_strdel(&tmp);
-	node->next = NULL;
-	return (head);
-}
-
-int				get_node_sum(t_l *head)
-{
-	int	sum;
-	t_l	*node;
-
-	sum = 0;
-	node = head;
-	while (node)
-	{
-		sum++;
-		node = node->next;
-	}
-	return (sum);
-}
-
-t_l				*sort_list(t_l *head)
-{
-	t_l		*node1;
-	t_l		*node2;
-	char	*tmp;
-
-	node1 = head;
-	tmp = NULL;
-	while (node1->next)
-	{
-		node2 = node1->next;
-		while (node2)
-		{
-			if (ft_strcmp(node1->data, node2->data) > 0)
-			{
-				tmp = node1->data;
-				node1->data = node2->data;
-				node2->data = tmp;
-			}
-			node2 = node2->next;
-		}
-		node1 = node1->next;
-	}
-	return (head);
-}
-
-char			**tab_from_list(t_l *head)
-{
-	t_l		*node;
-	char	**tabl;
-	int		sum;
-
-	node = head;
-	sum = get_node_sum(head);
-	tabl = NULL;
-	if (!(tabl = (char **)malloc(sizeof(char *) * (sum + 1))))
-		return (NULL);
-	node = head;
-	sum = 0;
-	while (node)
-	{
-		if (!(node->next) || ft_strcmp(node->data, node->next->data))
-		{
-			tabl[sum] = ft_strdup(node->data);
-			sum++;
-		}
-		node = node->next;
-	}
-	tabl[sum] = NULL;
-	return (tabl);
-}
-
-char			**var_search(char *str)
-{
-	t_variable	*var;
-	t_l			*var_list;
-	char		**var_tab;
-
-	var = g_var.var;
-	var_list = NULL;
-	var_tab = NULL;
-	while (var)
-	{
-		if (!ft_strncmp(str, var->key, ft_strlen(str)))
-			var_list = get_var_list(var->key, var_list);
-		var = var->next;
-	}
-	var_tab = tab_from_list(var_list);
-	free_list(var_list);
-	return (var_tab);
-}
+/********* f_d_completion_2.c **************/
 
 char			*matched_f_d_1(struct dirent *dir)
 {
@@ -237,6 +165,24 @@ char			*matched_f_d_1(struct dirent *dir)
 	return (NULL);
 }
 
+void			get_f_d_list(t_l **f_d_list, char **tmp, t_l **node)
+{
+	if (!(*f_d_list))
+	{
+		*f_d_list = names_list(*tmp);
+		if (*tmp)
+			ft_strdel(tmp);
+		*node = *f_d_list;
+	}
+	else
+	{
+		(*node)->next = names_list(*tmp);
+		if (*tmp)
+			ft_strdel(tmp);
+		*node = (*node)->next;
+	}
+}
+
 t_l				*matched_f_d(DIR *d, char *str)
 {
 	struct dirent	*dir;
@@ -253,20 +199,7 @@ t_l				*matched_f_d(DIR *d, char *str)
 		if (!ft_strcmp("", str)
 		|| !ft_strncmp(dir->d_name, str, ft_strlen(str)))
 		{
-			if (!f_d_list)
-			{
-				f_d_list = names_list(tmp);
-				if (tmp)
-					ft_strdel(&tmp);
-				node = f_d_list;
-			}
-			else
-			{
-				node->next = names_list(tmp);
-				if (tmp)
-					ft_strdel(&tmp);
-				node = node->next;
-			}
+			get_f_d_list(&f_d_list, &tmp, &node);
 		}
 		if (tmp)
 			ft_strdel(&tmp);
@@ -288,6 +221,19 @@ t_l				*matched_files_dirs(char *str)
 	}
 	closedir(d);
 	return (files_dirs_list);
+}
+
+/********* f_d_completion_1.c **************/
+
+t_l				*names_list(char *str)
+{
+	t_l	*node;
+
+	if (!(node = (t_l *)malloc(sizeof(t_l))))
+		return (NULL);
+	node->data = ft_strdup(str);
+	node->next = NULL;
+	return (node);
 }
 
 t_l				*f_d_search(char *path, char *d_name, char *cmp, char *f_d)
@@ -316,6 +262,21 @@ t_l				*f_d_search(char *path, char *d_name, char *cmp, char *f_d)
 	}
 	return (NULL);
 }
+
+void			free_file_dir(char **file_dir)
+{
+	if (*file_dir)
+		ft_strdel(file_dir);
+}
+
+void			init_vars(t_l **files_dirs_list, char **file_dir, t_l **node)
+{
+	*files_dirs_list = NULL;
+	*file_dir = NULL;
+	*node = NULL;
+}
+
+/********* f_d_completion.c **************/
 
 char			**files_dirs_search_4(t_l *files_dirs_list)
 {
@@ -394,9 +355,7 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 	t_l				*files_dirs_list;
 	t_l				*node;
 
-	files_dirs_list = NULL;
-	file_dir = NULL;
-	node = NULL;
+	init_vars(&files_dirs_list, &file_dir, &node);
 	while ((dir = readdir(d)))
 	{
 		file_dir = files_dirs_search_3(dir->d_name, path);
@@ -404,16 +363,14 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 		{
 			files_dirs_list = f_d_search(path, dir->d_name, to_cmp, file_dir);
 			node = files_dirs_list;
-			if (file_dir)
-				ft_strdel(&file_dir);
+			free_file_dir(&file_dir);
 		}
 		else
 		{
 			node->next = f_d_search(path, dir->d_name, to_cmp, file_dir);
 			if (node->next)
 				node = node->next;
-			if (file_dir)
-				ft_strdel(&file_dir);
+			free_file_dir(&file_dir);
 		}
 	}
 	closedir(d);
@@ -449,6 +406,8 @@ char			**files_dirs_search(char *str, int i)
 	}
 }
 
+/********* cmd_completion_1.c **************/
+
 t_l				*get_cmd_list_1(char *str, t_l *head)
 {
 	t_l	*node;
@@ -476,11 +435,11 @@ t_l				*search_builtin(char *str)
 {
 	int		i;
 	t_l		*head;
-	char	*builtins_list[] = {"cd", "echo", "export", "env",
-						"exit", "setenv", "unsetenv", NULL};
+	char	**builtins_list;
 
 	i = 0;
 	head = NULL;
+	builtins_list = ft_strsplit(BUILTINS, '|');
 	while (builtins_list[i])
 	{
 		if (!ft_strncmp(builtins_list[i], str, ft_strlen(str)))
@@ -506,6 +465,8 @@ int				get_path_value(char ***str)
 	}
 	return (0);
 }
+
+/********* cmd_completion.c **************/
 
 void			cmd_path_1(char **tmp, char ***cmd_paths)
 {
@@ -610,19 +571,76 @@ char			**cmd_search(char *str)
 	return (cmd_tab);
 }
 
-int				is_path(char *str)
-{
-	int	i;
+/********** auto_complete_2.c ************/
 
-	i = 0;
-	while (str[i])
+int				get_node_sum(t_l *head)
+{
+	int	sum;
+	t_l	*node;
+
+	sum = 0;
+	node = head;
+	while (node)
 	{
-		if (str[i] == '/')
-			return (2);
-		i++;
+		sum++;
+		node = node->next;
 	}
-	return (0);
+	return (sum);
 }
+
+t_l				*sort_list(t_l *head)
+{
+	t_l		*node1;
+	t_l		*node2;
+	char	*tmp;
+
+	node1 = head;
+	tmp = NULL;
+	while (node1->next)
+	{
+		node2 = node1->next;
+		while (node2)
+		{
+			if (ft_strcmp(node1->data, node2->data) > 0)
+			{
+				tmp = node1->data;
+				node1->data = node2->data;
+				node2->data = tmp;
+			}
+			node2 = node2->next;
+		}
+		node1 = node1->next;
+	}
+	return (head);
+}
+
+char			**tab_from_list(t_l *head)
+{
+	t_l		*node;
+	char	**tabl;
+	int		sum;
+
+	node = head;
+	sum = get_node_sum(head);
+	tabl = NULL;
+	if (!(tabl = (char **)malloc(sizeof(char *) * (sum + 1))))
+		return (NULL);
+	node = head;
+	sum = 0;
+	while (node)
+	{
+		if (!(node->next) || ft_strcmp(node->data, node->next->data))
+		{
+			tabl[sum] = ft_strdup(node->data);
+			sum++;
+		}
+		node = node->next;
+	}
+	tabl[sum] = NULL;
+	return (tabl);
+}
+
+/********** auto_complete_1.c ************/
 
 char			**completion_split_1(char **table)
 {
@@ -645,6 +663,20 @@ char			**completion_split_1(char **table)
 	tmp[i] = ft_strdup("");
 	tmp[i + 1] = NULL;
 	return (tmp);
+}
+
+int				is_path(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '/')
+			return (2);
+		i++;
+	}
+	return (0);
 }
 
 char			**completion_split(char *line)
@@ -687,6 +719,29 @@ char			*completed_line(char *line, char *str)
 	ft_strdel(&line);
 	return (tmp);
 }
+
+int				get_home_path(char **str)
+{
+	t_variable	*var;
+	char		*tmp;
+
+	var = g_var.var;
+	tmp = NULL;
+	while (var)
+	{
+		if (!ft_strcmp(var->key, "HOME"))
+		{
+			tmp = ft_strsub(*str, 1, ft_strlen(*str));
+			ft_strdel(str);
+			*str = ft_strjoin(var->value, tmp);
+			return (1);
+		}
+		var = var->next;
+	}
+	return (0);
+}
+
+/********* print_completion.c **************/
 
 t_completion	*get_completion_var(void)
 {
@@ -746,26 +801,7 @@ void			print_result(char **t, t_line *line)
 	print_result_1(compl, t, line);
 }
 
-int				get_home_path(char **str)
-{
-	t_variable	*var;
-	char		*tmp;
-
-	var = g_var.var;
-	tmp = NULL;
-	while (var)
-	{
-		if (!ft_strcmp(var->key, "HOME"))
-		{
-			tmp = ft_strsub(*str, 1, ft_strlen(*str));
-			ft_strdel(str);
-			*str = ft_strjoin(var->value, tmp);
-			return (1);
-		}
-		var = var->next;
-	}
-	return (0);
-}
+/**********************************/
 
 char			**auto_completion_3(char **splited_line, int i)
 {
