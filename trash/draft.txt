@@ -516,3 +516,43 @@ dtruss? strace ??
 auto_complete.c
 readline.c
 add_redirect.c
+reserved_words.c
+main.c
+
+when using cd builtin.
+==30788==    by 0x10001160E: ft_strsub (in ./21sh)
+==30788==    by 0x1000066A4: get_var_from_tab (in ./21sh)
+==30788==    by 0x1000065AB: get_pwd (in ./21sh)
+==30788==    by 0x100006206: ft_cd_1 (in ./21sh)
+==30788==    by 0x100006457: ft_cd (in ./21sh)
+==30788==    by 0x100005DE9: cd_builtin (in ./21sh)
+==30788==    by 0x100005E9D: builtins (in ./21sh)
+==30788==    by 0x10000E027: exec_no_fork_builtin (in ./21sh)
+==30788==    by 0x10000E0B7: exec_no_fork (in ./21sh)
+==30788==    by 0x10000A0FA: exec_ast (in ./21sh)
+==30788==    by 0x10000A229: execute (in ./21sh)
+
+
+==33161==    at 0x1000EACF5: malloc (in /Users/afaraji/.brew/Cellar/valgrind/HEAD-0b5ae2f/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==33161==    by 0x10001138C: ft_strsplit (in ./21sh)
+==33161==    by 0x10000E5BB: var_sub (in ./21sh)
+==33161==    by 0x10000E6D9: get_arg_var_sub (in ./21sh)
+==33161==    by 0x10000E073: exec_no_fork (in ./21sh)
+==33161==    by 0x10000A0EA: exec_ast (in ./21sh)
+==33161==    by 0x10000A219: execute (in ./21sh)
+==33161==    by 0x100000DA8: manage_cmd_list (in ./21sh)
+==33161==    by 0x100000E9B: main_parse (in ./21sh)
+==33161==    by 0x1000015A0: main (in ./21sh)
+
+
+==33161==    at 0x1000EACF5: malloc (in /Users/afaraji/.brew/Cellar/valgrind/HEAD-0b5ae2f/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==33161==    by 0x10001138C: ft_strsplit (in ./21sh)
+==33161==    by 0x10000E5BB: var_sub (in ./21sh)
+==33161==    by 0x10000E6D9: get_arg_var_sub (in ./21sh)
+==33161==    by 0x10000E073: exec_no_fork (in ./21sh)
+==33161==    by 0x10000A0EA: exec_ast (in ./21sh)
+==33161==    by 0x10000A219: execute (in ./21sh)
+==33161==    by 0x100000DA8: manage_cmd_list (in ./21sh)
+==33161==    by 0x100000E9B: main_parse (in ./21sh)
+==33161==    by 0x1000015A0: main (in ./21sh)
+

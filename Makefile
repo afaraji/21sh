@@ -63,7 +63,7 @@ clean :
 fclean : clean
 	@printf "removing executable\n"
 	@/bin/rm -f $(NAME)
-	@/bin/rm -f .myshell_history
+#	@/bin/rm -f .myshell_history
 	@$(MAKE) -C ./libft/ fclean
 
 re : fclean all
