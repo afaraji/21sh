@@ -18,6 +18,26 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
+t_variable		*ass_word_add(t_list_token **cmd, int i)
+{
+	t_variable	*var;
+	char		*tmp;
+
+	tmp = ft_strsub((*cmd)->data, 0, i);
+	if (!cmd || !is_valid_word(tmp))
+	{
+		ft_strdel(&tmp);
+		return (NULL);
+	}
+	var = (t_variable *)malloc(sizeof(t_variable));
+	if (!var)
+		return (NULL);
+	var->key = tmp;
+	var->value = ft_strdup(&((*cmd)->data[i + 1]));
+	var->env = 1;
+	return (var);
+}
+
 t_variable		*ass_word(t_list_token **cmd, t_list_token **end)
 {
 	t_variable	*var;
@@ -38,17 +58,7 @@ t_variable		*ass_word(t_list_token **cmd, t_list_token **end)
 		}
 		if (i >= ft_strlen((*cmd)->data))
 			return (NULL);
-		var = (t_variable *)malloc(sizeof(t_variable));
-		var->key = ft_strsub((*cmd)->data, 0, i);
-		if (!is_valid_word(var->key))
-		{
-			ft_strdel(&(var->key));
-			free(var);
-			var = NULL;
-			return (NULL);
-		}
-		var->value = ft_strdup(&((*cmd)->data[i + 1]));
-		var->env = 1;
+		var = ass_word_add(cmd, i);
 		*cmd = (*cmd)->next;
 		return (var);
 	}

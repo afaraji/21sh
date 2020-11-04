@@ -69,8 +69,7 @@ t_list_token	*ft_tokenize(char *str)
 
 	head = NULL;
 	i = 0;
-	while
-	(str[i])
+	while (str[i])
 	{
 		if (!head)
 		{

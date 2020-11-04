@@ -18,6 +18,24 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
+t_list_token	*list_sub_malloc(t_list_token *node, t_list_token *start)
+{
+	t_list_token	*ret;
+
+	ret = (t_list_token *)malloc(sizeof(t_list_token));
+	if (!ret)
+		return (NULL);
+	ret->prec = node;
+	ret->is_ok = start->is_ok;
+	if (start->data)
+		ret->data = ft_strdup(start->data);
+	else
+		ret->data = NULL;
+	ret->type = start->type;
+	ret->next = NULL;
+	return (ret);
+}
+
 t_list_token	*list_sub(t_list_token *start, t_list_token *end)
 {
 	t_list_token *head;
@@ -30,23 +48,14 @@ t_list_token	*list_sub(t_list_token *start, t_list_token *end)
 	{
 		if (!head)
 		{
-			node = (t_list_token *)malloc(sizeof(t_list_token));
-			node->prec = NULL;
+			node = list_sub_malloc(NULL, start);
 			head = node;
 		}
 		else
 		{
-			node->next = (t_list_token *)malloc(sizeof(t_list_token));
-			node->next->prec = node;
+			node->next = list_sub_malloc(node, start);
 			node = node->next;
 		}
-		if (start->data)
-			node->data = ft_strdup(start->data);
-		else
-			node->data = NULL;
-		node->is_ok = start->is_ok;
-		node->type = start->type;
-		node->next = NULL;
 		if (start == end)
 			break ;
 		start = start->next;

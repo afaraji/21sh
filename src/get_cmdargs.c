@@ -18,38 +18,16 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-char	**list_to_tab(t_l *list)
+t_l		*fill_get_args(char *str)
 {
-	t_l		*node;
-	int		i;
-	char	**args;
+	t_l	*node;
 
-	if (!list)
+	node = (t_l *)malloc(sizeof(t_l));
+	if (!node)
 		return (NULL);
-	node = list;
-	i = 0;
-	while (node)
-	{
-		if (ft_strcmp(node->data, ""))
-			i++;
-		node = node->next;
-	}
-	if (!(args = (char **)malloc(sizeof(char *) * (i + 1))))
-		return (NULL);
-	node = list;
-	i = 0;
-	while (node)
-	{
-		if (ft_strcmp(node->data, ""))
-		{
-			args[i] = ft_strdup(node->data);
-			i++;
-		}
-		node = node->next;
-	}
-	args[i] = NULL;
-	free_l(list);
-	return (args);
+	node->data = ft_strdup(str);
+	node->next = NULL;
+	return (node);
 }
 
 t_l		*get_args(t_simple_cmd *cmd)
@@ -73,13 +51,8 @@ t_l		*get_args(t_simple_cmd *cmd)
 		tmp = cmd->suffix;
 		while (tmp)
 		{
-			if (tmp->word)
-			{
-				node->next = (t_l *)malloc(sizeof(t_l));
-				node->next->data = ft_strdup(tmp->word);
-				node->next->next = NULL;
+			if (tmp->word && (node->next = fill_get_args(tmp->word)))
 				node = node->next;
-			}
 			tmp = tmp->suffix;
 		}
 	}
@@ -129,9 +102,7 @@ t_l		*var_sub(t_l *head)
 	node = head;
 	while (t[i])
 	{
-		node->next = (t_l *)malloc(sizeof(t_l));
-		node->next->data = ft_strdup(t[i]);
-		node->next->next = NULL;
+		node->next = fill_get_args(t[i]);
 		node = node->next;
 		i++;
 	}

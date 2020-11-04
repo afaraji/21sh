@@ -33,6 +33,26 @@ t_variable	*var_dup(t_variable *var)
 	return (node);
 }
 
+int			assignement_sub(t_variable *head, t_cmd_prefix *node)
+{
+	t_variable	*tmp;
+
+	tmp = head;
+	while (tmp)
+	{
+		if (tmp->env != 2 && !ft_strcmp(tmp->key, node->ass_word->key))
+		{
+			node->ass_word->value = str_dollar_sub(node->ass_word->value);
+			tmp->env = node->ass_word->env;
+			ft_strdel(&(tmp->value));
+			tmp->value = ft_strdup(node->ass_word->value);
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
 int			do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 {
 	t_cmd_prefix	*node;
@@ -44,23 +64,8 @@ int			do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 	{
 		if (node->ass_word)
 		{
-			tmp = head;
-			state = 0;
 			node->ass_word->env = (node->ass_word->env == 2) ? 2 : env;
-			while (tmp)
-			{
-				if (tmp->env != 2 && !ft_strcmp(tmp->key, node->ass_word->key))
-				{
-					node->ass_word->value = str_dollar_sub(node->ass_word->value);
-					tmp->env = node->ass_word->env;
-					ft_strdel(&(tmp->value));
-					tmp->value = ft_strdup(node->ass_word->value);
-					state = 1;
-					break ;
-				}
-				tmp = tmp->next;
-			}
-			if (!state)
+			if (!assignement_sub(head, node))
 			{
 				tmp = head;
 				while (tmp->next)

@@ -36,16 +36,27 @@ char			*cmd_name(t_list_token **cmd, t_list_token **end)
 	return (NULL);
 }
 
+t_simple_cmd	*malloc_simple_cmd(void)
+{
+	t_simple_cmd	*ret;
+
+	ret = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
+	if (!ret)
+		return (NULL);
+	ret->name = NULL;
+	ret->word = NULL;
+	ret->suffix = NULL;
+	ret->prefix = NULL;
+	return (ret);
+}
+
 t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end)
 {
 	t_simple_cmd *ret;
 
 	if (g_var.errno)
 		return (NULL);
-	ret = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
-	ret->name = NULL;
-	ret->word = NULL;
-	ret->suffix = NULL;
+	ret = malloc_simple_cmd();
 	ret->prefix = cmd_prefix(&start, &end);
 	if (ret->prefix)
 	{
@@ -62,17 +73,24 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end)
 		ret->suffix = cmd_suffix(&start, &end);
 		return (ret);
 	}
-	else
-	{
-		if (!g_var.errno)
-		{
-			ft_putstr_fd("syntax error, unexpected token near '", 2);
-			ft_putstr_fd(tokentoa(start->type), 2);
-			ft_putstr_fd("'\n", 2);
-			g_var.errno = 122;
-		}
+	else if (!g_var.errno)
+		ft_putstr_fd("parse error.\n", 2);
+	return (NULL);
+}
+
+t_pipe_seq		*ast_fill(t_list_token *tokens, t_list_token *node, int right)
+{
+	t_pipe_seq		*tmp;
+
+	tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
+	if (!tmp)
 		return (NULL);
-	}
+	tmp->left = get_simple_cmd(tokens, node);
+	if (right)
+		tmp->right = ast(node->next);
+	else
+		tmp->right = NULL;
+	return (tmp);
 }
 
 t_pipe_seq		*ast(t_list_token *tokens)
@@ -91,21 +109,12 @@ t_pipe_seq		*ast(t_list_token *tokens)
 		return (NULL);
 	}
 	node = tokens;
-	tmp = NULL;
 	while (node)
 	{
 		if (node->type == PIP)
-		{
-			tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
-			tmp->left = get_simple_cmd(tokens, node);
-			tmp->right = ast(node->next);
-			return (tmp);
-		}
+			return (ast_fill(tokens, node, 1));
 		prec = node;
 		node = node->next;
 	}
-	tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
-	tmp->left = get_simple_cmd(tokens, prec);
-	tmp->right = NULL;
-	return (tmp);
+	return (ast_fill(tokens, prec, 0));
 }
