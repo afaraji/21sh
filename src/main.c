@@ -38,6 +38,15 @@ t_hist		*create_history(void)
 	return (his_list);
 }
 
+int			is_number(char *str)
+{
+	if (!str)
+		return (0);
+	if (*str == '+' || *str == '-')
+		str++;
+	return (is_all_digits(str));
+}
+
 int			ft_exit(char **av)
 {
 	int		status;
@@ -47,7 +56,7 @@ int			ft_exit(char **av)
 	free_g_var();
 	if (av[1])
 	{
-		if (ft_strlen(av[1]) < 10 && is_all_digits(av[1]))
+		if (ft_strlen(av[1]) < 10 && is_number(av[1]))
 		{
 			status = ft_atoi(av[1]);
 			if (av[2])

@@ -20,7 +20,7 @@
 
 char	*here_doc_signal(char *buff, char *str)
 {
-	if (!ft_strcmp(buff, "\030"))
+	if (!ft_strcmp(buff, "\033"))
 	{
 		g_var.errno = 1;
 		ft_strdel(&buff);
