@@ -57,10 +57,10 @@ int		alias_infinit_loop(char *str, t_alias *aliases)
 int		alias_sub(t_list_token *word, t_alias *aliases)
 {
 	t_alias	*node;
-
+printf("-----------$1----[%p]---\n", aliases);
 	node = aliases;
 	while (node)
-	{
+	{ft_print(1, "-----------$a-------\n");
 		if (!ft_strcmp(word->data, node->key))
 		{
 			if (!alias_infinit_loop(node->key, aliases))
@@ -72,6 +72,7 @@ int		alias_sub(t_list_token *word, t_alias *aliases)
 		}
 		node = node->next;
 	}
+	ft_print(1, "-----------$2-------\n");
 	return (0);
 }
 
@@ -100,11 +101,11 @@ void	insert_alias(char *key, char *sub)
 
 void	get_aliases(void)
 {
-	insert_alias("toto", "lala qwerty");
-	insert_alias("lala", "yoyo");
-	insert_alias("yoyo", "test alias");
-	insert_alias("abc", "abce lol  123");
-	insert_alias("lla", "ls -la");
+	// insert_alias("toto", "lala qwerty");
+	// insert_alias("lala", "yoyo");
+	// insert_alias("yoyo", "test alias");
+	// insert_alias("abc", "abce lol  123");
+	// insert_alias("lla", "ls -la");
 }
 
 void	print_alias(t_alias *alias)
@@ -159,13 +160,12 @@ int		alias_insert(char *str)
 			{
 				ft_strdel(&(node->sub));
 				node->sub = ft_strdup(&str[i]);
-				break;
+				return (0);
 			}
 			node = node->next;
 		}
 	}
-	else
-		insert_alias(key, &str[i]);
+	insert_alias(key, &str[i]);
 	ft_strdel(&key);
 	return (0);
 }
@@ -195,19 +195,51 @@ int		ft_alias(char **av)
 	return (ret);
 }
 
+void	unset_alias_node(t_alias *prec, t_alias *node)
+{
+	if (prec == NULL)
+	{
+		g_var.aliases = node->next;
+	}
+	else
+	{
+		prec->next = node->next;
+	}
+	ft_strdel(&(node->key));
+	ft_strdel(&(node->sub));
+	free(node);
+	node = NULL;
+}
+
 int		unset_alias(char *key)
 {
-	//look for key in alias_list
-	//if found delet node
-	//else print error and return 1
-	return (0);
+	t_alias	*node;
+	t_alias	*prec;;
+
+	if (g_var.aliases)
+	{
+		node = g_var.aliases;
+		prec = NULL;
+		while (node)
+		{
+			if (!ft_strcmp(key, node->key))
+			{
+				unset_alias_node(prec, node);
+				return (0);
+			}
+			prec = node;
+			node = node->next;
+		}
+	}
+	ft_print(STDERR, "shell: unalias: %s: not found.\n", key);
+	return (1);
 }
 
 int		ft_unalias(char **av)
 {
 	int	i;
 	int ret;
-
+ft_print(1, "-----------***-------\n");
 	if (!av[1])
 	{
 		ft_print(STDERR, "unalias: usage: unalias [-a] name [name ...]\n");
@@ -215,7 +247,13 @@ int		ft_unalias(char **av)
 	}
 	if (!ft_strcmp(av[1], "-a"))
 	{
-		free_aliases(g_var.aliases);
+		ft_print(1, "-----------a-------\n");
+		if (g_var.aliases)
+		{
+			ft_print(1, "-----------b-------\n");
+			free_aliases(g_var.aliases);
+		}
+		ft_print(1, "-----------c-------\n");
 		return (0);
 	}
 	else

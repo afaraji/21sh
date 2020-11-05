@@ -26,6 +26,8 @@ void	free_tab(char **av);
 void	free_list(t_l *head);
 void	free_t_var(t_variable *list);
 void	free_g_var(void);
+void	free_aliases(t_alias *alias);
+void	free_history_list(t_hist *list);
 void	free_file_dir(char **file_dir);
 
 #endif

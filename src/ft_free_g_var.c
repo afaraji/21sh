@@ -31,6 +31,8 @@ void	free_t_var(t_variable *list)
 
 void	free_proc(t_proc *proc)
 {
+	if (!proc)
+		return ;
 	if (proc->next)
 		free_proc(proc->next);
 	ft_strdel(&(proc->str));
@@ -40,16 +42,21 @@ void	free_proc(t_proc *proc)
 
 void	free_aliases(t_alias *alias)
 {
+	if (!alias)
+		return ;
 	if (alias->next)
 		free_aliases(alias->next);
 	ft_strdel(&(alias->key));
 	ft_strdel(&(alias->sub));
+	alias->next = NULL;
 	free(alias);
 	alias = NULL;
 }
 
 void	free_history_list(t_hist *list)
 {
+	if (!list)
+		return ;
 	if (list->next)
 		free_history_list(list->next);
 	ft_strdel(&(list->hist_str));

@@ -46,8 +46,7 @@ SRC_LF = ./libft/ft_bzero.c ./libft/ft_isalnum.c ./libft/ft_isalpha.c		\
 	./libft/ft_strlen.c ./libft/ft_strnew.c	./libft/ft_strsplit.c			\
 	./libft/ft_strsub.c
 
-HEADER = ./inc/ast.h ./inc/builtins.h ./inc/exec.h ./inc/ft_21sh.h			\
-	./inc/ft_free.h ./inc/parse.h ./inc/readline.h
+FLAGS = #-Wall -Werror -Wextra
 
 OBJ_SHL = $(SRC_SHL:.c=.o)
 
@@ -57,7 +56,7 @@ all : $(NAME)
 
 $(NAME) : $(OBJ_SHL) $(OBJ_LF)
 	@$(MAKE) -C ./libft
-	@gcc $(SRC_SHL) $(LIBFTA) -ltermcap -o $(NAME)
+	@gcc $(FLAGS) $(SRC_SHL) $(LIBFTA) -ltermcap -o $(NAME)
 
 clean :
 	@printf "removing OBJ files ./src/\n"
