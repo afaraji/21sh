@@ -18,63 +18,6 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-char	*ft_strsub_delimit(char *s, char c)
-{
-	int i;
-
-	i = 0;
-	while (s[i] && !ft_isspace(s[i]))
-		i++;
-	return (ft_strsub(s, 0, i));
-}
-
-int		alias_infinit_loop(char *str, t_alias *aliases)
-{
-	char	*tmp;
-	t_alias	*node;
-
-	node = aliases;
-	tmp = ft_strdup(str);
-	while (node)
-	{
-		if (!ft_strcmp(tmp, node->key))
-		{
-			ft_strdel(&tmp);
-			tmp = ft_strsub_delimit(node->sub, ' ');
-			if (!ft_strcmp(tmp, str))
-			{
-				ft_strdel(&tmp);
-				return (1);
-			}
-			else
-				node = aliases;
-		}
-		node = node->next;
-	}
-	return (0);
-}
-
-int		alias_sub(t_list_token *word, t_alias *aliases)
-{
-	t_alias	*node;
-
-	node = aliases;
-	while (node)
-	{
-		if (!ft_strcmp(word->data, node->key))
-		{
-			if (!alias_infinit_loop(node->key, aliases))
-			{
-				ft_strdel(&(word->data));
-				word->data = ft_strdup(node->sub);
-				return (1);
-			}
-		}
-		node = node->next;
-	}
-	return (0);
-}
-
 void	insert_alias(char *key, char *sub)
 {
 	t_alias		*node;
@@ -180,75 +123,6 @@ int		ft_alias(char **av)
 				ret = (alias_insert(av[i]) ? 1 : ret);
 			else
 				ret = (alias_findandprint(av[i]) ? 1 : ret);
-			i++;
-		}
-	}
-	return (ret);
-}
-
-void	unset_alias_node(t_alias *prec, t_alias *node)
-{
-	if (prec == NULL)
-	{
-		g_var.aliases = node->next;
-	}
-	else
-	{
-		prec->next = node->next;
-	}
-	ft_strdel(&(node->key));
-	ft_strdel(&(node->sub));
-	free(node);
-	node = NULL;
-}
-
-int		unset_alias(char *key)
-{
-	t_alias	*node;
-	t_alias	*prec;;
-
-	if (g_var.aliases)
-	{
-		node = g_var.aliases;
-		prec = NULL;
-		while (node)
-		{
-			if (!ft_strcmp(key, node->key))
-			{
-				unset_alias_node(prec, node);
-				return (0);
-			}
-			prec = node;
-			node = node->next;
-		}
-	}
-	ft_print(STDERR, "shell: unalias: %s: not found.\n", key);
-	return (1);
-}
-
-int		ft_unalias(char **av)
-{
-	int	i;
-	int ret;
-
-	if (!av[1])
-	{
-		ft_print(STDERR, "unalias: usage: unalias [-a] name [name ...]\n");
-		return (2);
-	}
-	if (!ft_strcmp(av[1], "-a"))
-	{
-		if (g_var.aliases)
-			free_aliases(&g_var.aliases);
-		return (0);
-	}
-	else
-	{
-		i = 1;
-		ret = 0;
-		while (av[i])
-		{
-			ret = (unset_alias(av[i]) ? 1 : ret);
 			i++;
 		}
 	}
