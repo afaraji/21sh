@@ -65,7 +65,7 @@ void			print_result(char **t, t_line *line)
 	compl = get_completion_var();
 	while (t[compl->total_words])
 	{
-		if (ft_strlen(t[compl->total_words]) > compl->str_max_len)
+		if ((int)ft_strlen(t[compl->total_words]) > compl->str_max_len)
 		{
 			compl->str_max_len = ft_strlen(t[compl->total_words]) + 3;
 			compl->total_words++;

@@ -21,7 +21,6 @@
 char	*ft_get_ld(char *cwd, char *flag)
 {
 	int		i;
-	int		j;
 	char	*tmp;
 	char	*path;
 
@@ -64,7 +63,7 @@ char	*get_var_from_tab(char **env, char *str)
 				break ;
 			len++;
 		}
-		if (len >= ft_strlen(env[i]))
+		if (len >= (int)ft_strlen(env[i]))
 			return (NULL);
 		s = ft_strsub(env[i], 0, len);
 		if (!ft_strcmp(s, str))

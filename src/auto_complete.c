@@ -44,9 +44,9 @@ char			**auto_completion_1(t_line *line)
 		result = auto_completion_3(splited_line, i);
 	}
 	else if (i == 0 && splited_line[0][0] == '.')
-		result = files_dirs_search(splited_line[0], i);
+		result = files_dirs_search(splited_line[0]);
 	else if (i != 0 || is_path(splited_line[i]) != 0)
-		result = files_dirs_search(splited_line[i], i);
+		result = files_dirs_search(splited_line[i]);
 	else
 		result = cmd_search(splited_line[0]);
 	if (splited_line)

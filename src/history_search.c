@@ -62,7 +62,6 @@ char	*history_search_word(char *str)
 char	*history_search(char *str, t_hist **his_head)
 {
 	char	*cmd;
-	char	*tmp;
 
 	if (!str || !(*his_head))
 		return (NULL);

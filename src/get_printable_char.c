@@ -20,8 +20,6 @@
 
 int		get_cmd_1(char **str1, char **str2)
 {
-	char	*tmp;
-
 	if (*str1)
 	{
 		ft_strdel(str2);

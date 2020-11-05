@@ -70,9 +70,7 @@ void	add_cmd_to_hislist_1(char *cmd, int mult_line, t_hist **his_head)
 
 void	add_cmd_to_his_list(char *cmd, t_hist **his_head, int mult_line)
 {
-	t_hist	*node;
 	int		i;
-	char	*tmp;
 
 	if (mult_line == SMLSML)
 		return ;

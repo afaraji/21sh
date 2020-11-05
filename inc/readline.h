@@ -137,7 +137,7 @@ char				**var_search(char *str);
 t_l					*matched_f_d(DIR *d, char *str);
 t_l					*matched_files_dirs(char *str);
 t_l					*f_d_search(char *path, char *d_name, char *cmp, char *f_d);
-char				**files_dirs_search(char *str, int i);
+char				**files_dirs_search(char *str);
 char				**files_dirs_search_1(char *path, char *to_cmp, DIR *d);
 char				**files_dirs_search_2(char *path);
 char				*files_dirs_search_3(char *d_name, char *path);

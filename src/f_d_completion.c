@@ -117,7 +117,7 @@ char			**files_dirs_search_1(char *path, char *to_cmp, DIR *d)
 	return (files_dirs_search_4(files_dirs_list));
 }
 
-char			**files_dirs_search(char *str, int i)
+char			**files_dirs_search(char *str)
 {
 	DIR		*d;
 	char	*to_cmp;

@@ -60,8 +60,6 @@ char	*copy_char_2(t_line *line, int curs)
 
 char	*copy_char(t_line *line, int curs)
 {
-	char	*to_copy;
-
 	if (line->curs > curs)
 		return (copy_char_1(line, curs));
 	else

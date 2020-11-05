@@ -20,7 +20,6 @@
 
 int		ft_cd_home(char **env)
 {
-	int		i;
 	char	*path;
 	char	*oldpwd;
 
