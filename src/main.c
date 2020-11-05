@@ -132,11 +132,10 @@ void		get_ppid_list(void)
 
 int			init_shell(char **env)
 {
-	g_var = (t_shell_var){0, 0, 0, NULL, NULL};
+	g_var = (t_shell_var){0, 0, 0, NULL, NULL, NULL, NULL};
 	g_var.var = get_set(env);
 	g_var.history = create_history();
 	get_ppid_list();
-	get_aliases();// should be removed from here (no aliases at program start)
 	return (0);
 }
 

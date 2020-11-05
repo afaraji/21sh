@@ -56,7 +56,6 @@ int				alias_infinit_loop(char *str, t_alias *aliases);
 int				alias_sub(t_list_token *word, t_alias *aliases);
 int				is_reserved(char *str);
 void			insert_alias(char *key, char *sub);
-void			get_aliases(void);
 t_list_token	*ft_tokenize(char *str);
 void			token_print(t_list_token *node);
 void			parse_and_replace(t_list_token **cmd_token, t_list_token *node);

@@ -40,16 +40,17 @@ void	free_proc(t_proc *proc)
 	proc = NULL;
 }
 
-void	free_aliases(t_alias *alias)
+void	free_aliases(t_alias **alias)
 {
-	if (!alias)
+	if (!alias || !*alias)
 		return ;
-	if (alias->next)
-		free_aliases(alias->next);
-	ft_strdel(&(alias->key));
-	ft_strdel(&(alias->sub));
-	alias->next = NULL;
-	free(alias);
+	if ((*alias)->next)
+		free_aliases(&(*alias)->next);
+	ft_strdel(&((*alias)->key));
+	ft_strdel(&((*alias)->sub));
+	(*alias)->next = NULL;
+	free((*alias));
+	(*alias) = NULL;
 	alias = NULL;
 }
 
@@ -68,8 +69,8 @@ void	free_history_list(t_hist *list)
 
 void	free_g_var(void)
 {
-	free_t_var(g_var.var);
-	free_aliases(g_var.aliases);
-	free_history_list(g_var.history);
-	free_proc(g_var.proc);
+	free_t_var(g_var.var);				//should be &g_var.var
+	free_aliases(&g_var.aliases);
+	free_history_list(g_var.history);	//should be &g_var.history
+	free_proc(g_var.proc);				//should be &g_var.proc
 }

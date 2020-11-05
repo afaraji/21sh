@@ -71,9 +71,7 @@ int		ft_or(int m, int a, int b, int c)
 
 int		keywords_alias_sub_2(t_list_token **cmd_token, t_list_token *node)
 {
-	ft_print(1, "-----------!1-------\n");
 	parse_and_replace(cmd_token, node);
-	ft_print(1, "-----------!2-------\n");
 	if (keywords_alias_sub(cmd_token))
 		return (1);
 	return (0);
@@ -88,7 +86,7 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 	{
 		if (ft_or(node->type, SMCLN, ANDLG, ORLG) ||
 						ft_or(node->type, PIP, BGJOB, 0) || node == *cmd_token)
-		{ft_print(1, "-----------@1-------\n");
+		{
 			if (node != *cmd_token)
 				node = node->next;
 			while (node && node->type == SPACE)
@@ -104,7 +102,6 @@ int		keywords_alias_sub(t_list_token **cmd_token)
 		}
 		if (node)
 			node = node->next;
-		ft_print(1, "-----------@2-------\n");
 	}
 	return (0);
 }

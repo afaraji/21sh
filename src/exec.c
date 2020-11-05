@@ -97,7 +97,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 {
 	int			child;
 	int			status;
-ft_print(1, "-----------ast-------\n");
+
 	if ((status = exec_no_fork(cmd, bg)) != -42)
 		return (status << 8);
 	status = 0;

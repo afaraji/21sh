@@ -57,10 +57,10 @@ int		alias_infinit_loop(char *str, t_alias *aliases)
 int		alias_sub(t_list_token *word, t_alias *aliases)
 {
 	t_alias	*node;
-printf("-----------$1----[%p]---\n", aliases);
+
 	node = aliases;
 	while (node)
-	{ft_print(1, "-----------$a-------\n");
+	{
 		if (!ft_strcmp(word->data, node->key))
 		{
 			if (!alias_infinit_loop(node->key, aliases))
@@ -72,7 +72,6 @@ printf("-----------$1----[%p]---\n", aliases);
 		}
 		node = node->next;
 	}
-	ft_print(1, "-----------$2-------\n");
 	return (0);
 }
 
@@ -97,15 +96,6 @@ void	insert_alias(char *key, char *sub)
 		g_var.aliases->key = ft_strdup(key);
 		g_var.aliases->sub = ft_strdup(sub);
 	}
-}
-
-void	get_aliases(void)
-{
-	// insert_alias("toto", "lala qwerty");
-	// insert_alias("lala", "yoyo");
-	// insert_alias("yoyo", "test alias");
-	// insert_alias("abc", "abce lol  123");
-	// insert_alias("lla", "ls -la");
 }
 
 void	print_alias(t_alias *alias)
@@ -158,6 +148,7 @@ int		alias_insert(char *str)
 		{
 			if (!ft_strcmp(key, node->key))
 			{
+				ft_strdel(&key);
 				ft_strdel(&(node->sub));
 				node->sub = ft_strdup(&str[i]);
 				return (0);
@@ -185,7 +176,7 @@ int		ft_alias(char **av)
 		i = 1;
 		while (av[i])
 		{
-			if (is_assword(av[i]))
+			if (is_assword(av[i]) > 1)
 				ret = (alias_insert(av[i]) ? 1 : ret);
 			else
 				ret = (alias_findandprint(av[i]) ? 1 : ret);
@@ -239,7 +230,7 @@ int		ft_unalias(char **av)
 {
 	int	i;
 	int ret;
-ft_print(1, "-----------***-------\n");
+
 	if (!av[1])
 	{
 		ft_print(STDERR, "unalias: usage: unalias [-a] name [name ...]\n");
@@ -247,13 +238,8 @@ ft_print(1, "-----------***-------\n");
 	}
 	if (!ft_strcmp(av[1], "-a"))
 	{
-		ft_print(1, "-----------a-------\n");
 		if (g_var.aliases)
-		{
-			ft_print(1, "-----------b-------\n");
-			free_aliases(g_var.aliases);
-		}
-		ft_print(1, "-----------c-------\n");
+			free_aliases(&g_var.aliases);
 		return (0);
 	}
 	else
