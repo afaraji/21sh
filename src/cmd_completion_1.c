@@ -56,6 +56,7 @@ t_l				*search_builtin(char *str)
 			head = get_cmd_list_1(builtins_list[i], head);
 		i++;
 	}
+	free_tab(builtins_list);
 	return (head);
 }
 

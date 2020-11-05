@@ -18,10 +18,49 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
+int		file_or_dir_link(char **file)
+{
+	DIR			*dir;
+
+	if ((dir = opendir(*file)) != NULL)
+	{
+		closedir(dir);
+		ft_strdel(file);
+		return (1);
+	}
+	else
+	{
+		ft_strdel(file);
+		return (2);
+	}
+	return (0);
+}
+
+int		verify_type_1(char **file, struct stat st)
+{
+	if (S_ISDIR(st.st_mode))
+	{
+		ft_strdel(file);
+		return (1);
+	}
+	if (S_ISLNK(st.st_mode))
+	{
+		if (file_or_dir_link(file) == 1)
+			return (3);
+		else if (file_or_dir_link(file) == 2)
+			return (2);
+	}
+	else
+	{
+		ft_strdel(file);
+		return (2);
+	}
+	return (0);
+}
+
 int		verify_type(char *str)
 {
 	struct stat	st;
-	DIR			*dir;
 	char		*file;
 
 	file = ft_strdup(str);
@@ -29,20 +68,13 @@ int		verify_type(char *str)
 		file[ft_strlen(file) - 1] = '\0';
 	if (lstat(file, &st) == 0)
 	{
-		if (S_ISDIR(st.st_mode))
+		if (verify_type_1(&file, st) == 1)
 			return (1);
-		if (S_ISLNK(st.st_mode))
-		{
-			if ((dir = opendir(file)) != NULL)
-			{
-				closedir(dir);
-				return (3);
-			}
-			else
-				return (2);
-		}
-		else
+		else if (verify_type_1(&file, st) == 2)
 			return (2);
+		else if (verify_type_1(&file, st) == 3)
+			return (3);
 	}
+	ft_strdel(&file);
 	return (-1);
 }

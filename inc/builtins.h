@@ -25,6 +25,8 @@ int		ft_echo(char **flag);
 int		change_pwd(char *str1, char *str2);
 void	free_tab(char **flag);
 int		verify_type(char *file);
+int		file_or_dir_link(char **file);
+int		verify_type_1(char **file, struct stat st);
 void	print_env(char **env);
 int		ft_export(char **flag, char **env);
 void	ft_export_2(char *key, char *value);
