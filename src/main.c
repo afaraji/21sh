@@ -170,6 +170,7 @@ void		child_handler(int signum)
 		proc = proc->next;
 	}
 	exit_status(status);
+	(void)signum;
 }
 
 void		ft_signal(void)

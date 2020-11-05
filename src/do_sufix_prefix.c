@@ -66,8 +66,6 @@ char	**env_to_tab(t_variable *var, int all)
 int		do_suffix(t_cmd_suffix *suffix)
 {
 	t_cmd_suffix	*node;
-	t_l				*args;
-	t_l				*tmp;
 	int				ret;
 
 	ret = 0;
@@ -88,7 +86,6 @@ int		do_suffix(t_cmd_suffix *suffix)
 int		do_simple_cmd(t_simple_cmd *cmd)
 {
 	int		ret;
-	char	*command;
 
 	ret = 0;
 	if (cmd->prefix)

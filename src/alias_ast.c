@@ -22,6 +22,7 @@ char	*ft_strsub_delimit(char *s, char c)
 {
 	int i;
 
+	i = c;
 	i = 0;
 	while (s[i] && !ft_isspace(s[i]))
 		i++;
@@ -51,6 +52,7 @@ int		alias_infinit_loop(char *str, t_alias *aliases)
 		}
 		node = node->next;
 	}
+	ft_strdel(&tmp);
 	return (0);
 }
 

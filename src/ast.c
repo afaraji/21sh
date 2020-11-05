@@ -38,7 +38,6 @@ int		main_parse(char *line)
 {
 	t_list_token	*tokens;
 	t_cmdlist		*cmdlist;
-	int				ret;
 
 	tokens = ft_tokenize(line);
 	g_var.errno = 0;

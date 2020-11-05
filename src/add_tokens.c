@@ -37,7 +37,7 @@ t_list_token	*add_quote(int *index, char *str)
 	node->data = ft_strsub(str, *index + 1, i - *index - 1);
 	node->next = NULL;
 	node->prec = NULL;
-	if (i + 1 < ft_strlen(str))
+	if (i + 1 < (int)ft_strlen(str))
 		*index = i + 1;
 	else
 		*index = ft_strlen(str);
@@ -66,7 +66,7 @@ t_list_token	*add_dquote(int *index, char *str)
 		node->data = str_dollar_sub(node->data);
 	node->next = NULL;
 	node->prec = NULL;
-	if (i + 1 < ft_strlen(str))
+	if (i + 1 < (int)ft_strlen(str))
 		*index = i + 1;
 	else
 		*index = ft_strlen(str);
@@ -107,7 +107,7 @@ t_list_token	*add_escape(int *index, char *str)
 	return (node);
 }
 
-t_list_token	*add_op(int *index, char *str, int op)
+t_list_token	*add_op(int *index, int op)
 {
 	t_list_token	*node;
 

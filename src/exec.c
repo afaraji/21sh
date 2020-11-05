@@ -20,11 +20,9 @@
 
 int		exec_simple_cmd(t_simple_cmd *cmd)
 {
-	char		**args;
-	char		**env;
-	char		*cmd_path;
-	t_l			*args_list;
-	t_variable	*vars;
+	char	**args;
+	char	**env;
+	char	*cmd_path;
 
 	if (!cmd)
 		return (404);

@@ -97,7 +97,6 @@ t_pipe_seq		*ast(t_list_token *tokens)
 {
 	t_list_token	*node;
 	t_list_token	*prec;
-	t_pipe_seq		*tmp;
 
 	if (!tokens || g_var.errno)
 	{

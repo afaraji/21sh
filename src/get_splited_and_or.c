@@ -41,7 +41,7 @@ t_and_or	*get_andor_list(t_list_token *strt, int dep, t_list_token *end)
 	return (node);
 }
 
-t_and_or	*token_split_andor(t_list_token *start, t_list_token *end, int bg)
+t_and_or	*token_split_andor(t_list_token *start, t_list_token *end)
 {
 	t_and_or		*list;
 	t_and_or		*node;
@@ -97,14 +97,14 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 			if (!list)
 			{
 				node = (t_cmdlist *)malloc(sizeof(t_cmdlist));
-				node->and_or = token_split_andor(tokens, tmp->prec, tmp->type);
+				node->and_or = token_split_andor(tokens, tmp->prec);
 				list = node;
 			}
 			else
 			{
 				node->next = (t_cmdlist *)malloc(sizeof(t_cmdlist));
 				node = node->next;
-				node->and_or = token_split_andor(tokens->next, tmp->prec, tmp->type);
+				node->and_or = token_split_andor(tokens->next, tmp->prec);
 			}
 			(tmp->type == BGJOB) ? (node->bg = 1) : (node->bg = 0);
 			tokens = tmp;
@@ -115,7 +115,7 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	if (!list)
 	{
 		list = (t_cmdlist *)malloc(sizeof(t_cmdlist));
-		list->and_or = token_split_andor(tokens, NULL, SMCLN);
+		list->and_or = token_split_andor(tokens, NULL);
 		list->bg = 0;
 		list->next = NULL;
 	}
@@ -123,7 +123,7 @@ t_cmdlist	*token_split_sep_op(t_list_token *tokens)
 	{
 		node->next = (t_cmdlist *)malloc(sizeof(t_cmdlist));
 		node = node->next;
-		node->and_or = token_split_andor(tokens->next, NULL, SMCLN);
+		node->and_or = token_split_andor(tokens->next, NULL);
 		node->bg = 0;
 		node->next = NULL;
 	}

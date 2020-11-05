@@ -55,7 +55,7 @@ t_list_token	*tokenize(char *str, int *i)
 		else if (op == ESCAPE)
 			return (add_escape(i, str));
 		else
-			return (add_op(i, str, op));
+			return (add_op(i, op));
 	}
 	else
 		return (add_word_int(i, str));

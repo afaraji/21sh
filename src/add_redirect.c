@@ -113,7 +113,6 @@ t_io_redirect	*io_redirect(t_list_token **cmd, t_list_token **end)
 {
 	t_io_redirect	*io_r;
 	t_list_token	*node;
-	int				tmp;
 
 	while (*cmd && (*cmd)->type == SPACE && *cmd != *end)
 		*cmd = (*cmd)->next;

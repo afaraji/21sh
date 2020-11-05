@@ -50,7 +50,7 @@ int		verify_tokens(t_list_token *token)
 		return (1);
 	if (ft_or(token->type, SMCLN, ANDLG, ORLG)
 	|| ft_or(token->type, PIP, BGJOB, 0))
-		return (verify_tokens_error(2, node->type));
+		return (verify_tokens_error(2, token->type));
 	node = token;
 	while (node)
 	{

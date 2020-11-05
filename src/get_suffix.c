@@ -56,7 +56,7 @@ t_variable		*ass_word(t_list_token **cmd, t_list_token **end)
 				break ;
 			i++;
 		}
-		if (i >= ft_strlen((*cmd)->data))
+		if (i >= (int)ft_strlen((*cmd)->data))
 			return (NULL);
 		var = ass_word_add(cmd, i);
 		*cmd = (*cmd)->next;

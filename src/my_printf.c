@@ -43,8 +43,6 @@ void	handle_percent(int fd, char **format, va_list args, int *i)
 int		ft_print(int fd, char *format, ...)
 {
 	va_list	arguments;
-	va_list	tmp;
-	char	*str;
 	int		count;
 
 	count = 0;

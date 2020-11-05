@@ -58,7 +58,7 @@ int		redirect_sml_and(t_io_redirect *io)
 	{
 		if (close(fd_io))
 		{
-			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", tmpfd);
+			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", fd_io);
 			return (-1);
 		}
 	}
@@ -102,7 +102,7 @@ int		redirect_grt_and(t_io_redirect *io)
 	{
 		if (close(fd_io))
 		{
-			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", tmpfd);
+			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", fd_io);
 			return (-1);
 		}
 	}

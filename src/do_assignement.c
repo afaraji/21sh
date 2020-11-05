@@ -57,7 +57,6 @@ int			do_assignement(t_cmd_prefix *pref, t_variable *head, int env)
 {
 	t_cmd_prefix	*node;
 	t_variable		*tmp;
-	int				state;
 
 	node = pref;
 	while (node)

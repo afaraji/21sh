@@ -72,7 +72,6 @@ void			free_token_node(t_list_token **todel)
 
 void			join_nodes(t_list_token *dst, t_list_token *todel)
 {
-	t_list_token	*node;
 	char			*tmp;
 
 	tmp = ft_strjoin(dst->data, todel->data);

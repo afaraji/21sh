@@ -24,6 +24,7 @@ int		list_count(t_l *list)
 	int	i;
 
 	node = list;
+	i = 0;
 	while (node)
 	{
 		if (ft_strcmp(node->data, ""))

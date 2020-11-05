@@ -22,7 +22,7 @@ t_list_token	*add_quote(int *index, char *str);
 t_list_token	*add_dquote(int *index, char *str);
 t_list_token	*add_space(int *index, char *str);
 t_list_token	*add_escape(int *index, char *str);
-t_list_token	*add_op(int *index, char *str, int op);
+t_list_token	*add_op(int *index, int op);
 t_list_token	*add_word_int(int *index, char *str);
 t_list_token	*tokenize(char *str, int *i);
 t_list_token	*ft_tokenize(char *str);
@@ -51,8 +51,7 @@ void			join_nodes(t_list_token *dst, t_list_token *todel);
 void			join_words(t_list_token *token);
 int				verify_tokens(t_list_token *token);
 t_and_or		*get_andor_list(t_list_token *strt, int dep, t_list_token *end);
-t_and_or		*token_split_andor(t_list_token *start, t_list_token *end,
-				int bg);
+t_and_or		*token_split_andor(t_list_token *start, t_list_token *end);
 t_cmdlist		*token_split_sep_op(t_list_token *tokens);
 int				need_append(t_list_token *tokens);
 char			*here_doc_string(char *word);
