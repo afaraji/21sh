@@ -23,7 +23,11 @@ void	go_right_1(t_line *line)
 	int len;
 
 	if (line->str[line->curs] == '\n')
+	{
+		if (line->init_pos != line->row)
+					line->init_pos++;
 		tputs(tgetstr("do", NULL), 1, ft_intputchar);
+	}
 	else
 	{
 		len = len_str_from_nl(line, line->curs) + 1;
@@ -31,6 +35,8 @@ void	go_right_1(t_line *line)
 		{
 			if (line->str[line->curs + 1] == '\n')
 				line->curs++;
+			if (line->init_pos != line->row)
+					line->init_pos++;
 			tputs(tgetstr("do", NULL), 1, ft_intputchar);
 		}
 		else
@@ -46,8 +52,16 @@ void	go_right(t_line *line)
 			go_right_1(line);
 		else
 		{
+			if (line->init_pos == line->row
+			&& line->curs < ((int)ft_strlen(line->str) - 1)
+			&& ((int)ft_strlen(line->str) + line->pmt_s - 2) % line->col == 0)
+				tputs(tgetstr("up", NULL), 1, ft_intputchar);
 			if ((line->curs + line->pmt_s) % line->col == 0)
+			{
+				if (line->init_pos != line->row)
+					line->init_pos++;
 				tputs(tgetstr("do", NULL), 1, ft_intputchar);
+			}
 			else
 				tputs(tgetstr("nd", NULL), 1, ft_intputchar);
 		}

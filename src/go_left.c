@@ -20,6 +20,8 @@
 
 void	go_upline(t_line *line)
 {
+	if (line->init_pos > 2)
+		line->init_pos--;
 	tputs(tgetstr("up", NULL), 1, ft_intputchar);
 	tputs(tgoto(tgetstr("ch", NULL), 0, line->col - 1), 1, ft_intputchar);
 }
@@ -38,7 +40,11 @@ void	go_left_1(t_line *line)
 
 	tmp = len_str_from_nl(line, line->curs - 1);
 	if (tmp == 0)
+	{
+		if (line->init_pos > 2)
+			line->init_pos--;
 		tputs(tgetstr("up", NULL), 1, ft_intputchar);
+	}
 	else
 	{
 		tmp = tmp % line->col;
@@ -47,6 +53,8 @@ void	go_left_1(t_line *line)
 			tmp = line->col;
 			line->curs--;
 		}
+		if (line->init_pos > 2)
+			line->init_pos--;
 		tputs(tgetstr("up", NULL), 1, ft_intputchar);
 		tputs(tgoto(tgetstr("ch", NULL), 0, tmp), 1, ft_intputchar);
 	}
