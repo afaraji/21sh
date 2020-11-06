@@ -113,17 +113,17 @@ t_l		*var_sub(t_l *head)
 char	**get_arg_var_sub(t_simple_cmd *cmd)
 {
 	t_l	*list;
-	t_l	*node;
+	// t_l	*node;
 
 	list = get_args(cmd);
-	node = list;
-	while (node)
-	{
-		if (is_dollar(node->data) > -1)
-		{
-			node = var_sub(node);
-		}
-		node = node->next;
-	}
+	// node = list;
+	// while (node)
+	// {
+	// 	if (is_dollar(node->data) > -1)
+	// 	{
+	// 		node = var_sub(node);
+	// 	}
+	// 	node = node->next;
+	// }
 	return (list_to_tab(list));
 }

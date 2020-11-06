@@ -104,6 +104,8 @@ char	*str_dollar_sub(char *str)
 	ft_strdel(&prefix);
 	ft_strdel(&var);
 	ft_strdel(&suffix);
+	if (is_dollar(str) >= 0 && (end - start) > 1)
+		str = str_dollar_sub(str);
 	return (str);
 }
 

@@ -58,5 +58,6 @@ int		lexer(t_list_token **cmd_token)
 		return (42);
 	}
 	tilde_sub(cmd_token);
+	dollar_sub(cmd_token);// remove dollar sub from other places
 	return (0);
 }
