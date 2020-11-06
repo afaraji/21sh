@@ -49,7 +49,7 @@ char			*io_file(t_list_token **cmd, t_list_token **end, int *r_type)
 				*cmd = (*cmd)->next;
 				return (file);
 			}
-			return ("");
+			return (ft_strdup(""));
 		}
 		ft_putstr_fd("syntax error, unexpected token near -- '", 2);
 		if (*cmd)
@@ -90,7 +90,7 @@ char			*io_here(t_list_token **cmd, t_list_token **end, int *r_type)
 				*cmd = (*cmd)->next;
 				return (file);
 			}
-			return ("");
+			return (ft_strdup(""));
 		}
 		ft_putstr_fd("syntax error, unexpected token near '", 2);
 		if (*cmd)

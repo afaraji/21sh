@@ -77,9 +77,7 @@ void	here_doc(t_list_token *head)
 			if (!node->next)
 				return ;
 			if (node->next->type == WORD)
-			{
 				str = str_dollar_sub(here_doc_string(node->next->data));
-			}
 			else if (node->next->type == QUOTE || node->next->type == DQUOTE)
 				str = here_doc_string(node->next->data);
 			ft_strdel(&(node->next->data));
