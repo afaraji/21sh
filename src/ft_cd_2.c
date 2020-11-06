@@ -68,9 +68,10 @@ char	*get_var_from_tab(char **env, char *str)
 		s = ft_strsub(env[i], 0, len);
 		if (!ft_strcmp(s, str))
 		{
-			free(s);
+			ft_strdel(&s);
 			return (ft_strdup(&env[i][len + 1]));
 		}
+		ft_strdel(&s);
 		i++;
 	}
 	return (NULL);

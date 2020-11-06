@@ -79,6 +79,7 @@ char	*get_dollar_var(char *s, int start, int end)
 	}
 	tmp = ft_strsub(s, index, len);
 	var = fetch_variables(tmp, -1);
+	ft_strdel(&tmp);
 	if (!var)
 		return (ft_strdup(""));
 	return (var);

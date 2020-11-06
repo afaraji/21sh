@@ -56,7 +56,7 @@ int		ft_cd_1(char *flag, char **env)
 	oldpwd = get_pwd(env);
 	if (chdir(flag))
 	{
-		free(oldpwd);
+		ft_strdel(&oldpwd);
 		return (1);
 	}
 	change_pwd("OLDPWD", oldpwd);
@@ -64,8 +64,8 @@ int		ft_cd_1(char *flag, char **env)
 	change_pwd("PWD", pwd);
 	ft_putstr(pwd);
 	ft_putchar('\n');
-	free(oldpwd);
-	free(pwd);
+	ft_strdel(&oldpwd);
+	ft_strdel(&pwd);
 	return (0);
 }
 

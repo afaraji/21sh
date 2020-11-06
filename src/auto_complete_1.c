@@ -110,6 +110,7 @@ int				get_home_path(char **str)
 			tmp = ft_strsub(*str, 1, ft_strlen(*str));
 			ft_strdel(str);
 			*str = ft_strjoin(var->value, tmp);
+			ft_strdel(&tmp);
 			return (1);
 		}
 		var = var->next;
