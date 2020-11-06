@@ -59,7 +59,7 @@ int	is_valid_file(char *file, t_list_token *node)
 	return (1);
 }
 
-int		manage_cmd_list(t_cmdlist *cmdlist)
+int	manage_cmd_list(t_cmdlist *cmdlist)
 {
 	t_cmdlist		*node;
 	int				ret;
@@ -75,7 +75,7 @@ int		manage_cmd_list(t_cmdlist *cmdlist)
 	return (ret);
 }
 
-int		main_parse(char *line)
+int	main_parse(char *line)
 {
 	t_list_token	*tokens;
 	t_cmdlist		*cmdlist;

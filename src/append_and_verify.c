@@ -70,7 +70,7 @@ int		need_append(t_list_token *tokens)
 			return (1);
 		if (node->type == QUOTE || node->type == DQUOTE)
 		{
-			toappend = ft_4strjoin(tokentoa(node->type),node->data, "\n",tmp);
+			toappend = ft_4strjoin(tokentoa(node->type), node->data, "\n", tmp);
 			ttt = ft_tokenize(toappend);
 			replace_node(&node, &ttt);
 			ft_strdel(&toappend);

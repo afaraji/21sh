@@ -57,11 +57,10 @@ char	*get_var_from_tab(char **env, char *str)
 	while (env[i])
 	{
 		len = 0;
-		while (env[i][len])
+		while (env[i][len++])
 		{
 			if (env[i][len] == '=')
 				break ;
-			len++;
 		}
 		if (len >= (int)ft_strlen(env[i]))
 			return (NULL);

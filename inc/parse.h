@@ -74,5 +74,9 @@ void			add_proc(pid_t pid);
 void			bg_jobs(void);
 int				ft_alias(char **av);
 int				ft_unalias(char **av);
+void			ft_signal(void);
+void			get_ppid_list(void);
+int				init_shell(char **env);
+t_hist			*create_history(void);
 
 #endif

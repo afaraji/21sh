@@ -513,14 +513,15 @@ dtruss? strace ??
 
 //extern int		g_var;
 
-readline.c
 add_redirect.c
-main.c
-token_translate.c
-io_redirect_aggr.c
-get_splited_and_or.c
+add_tokens.c
 ft_free_gvar.c
-append_and.verivy.c
+get_splited_and_or.c
+io_redirect_aggr.c
+lexer.c
+readline.c
+token_translate.c
+
 
 when using cd builtin.
 ==30788==    by 0x10001160E: ft_strsub (in ./21sh)
