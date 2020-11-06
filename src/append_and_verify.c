@@ -18,89 +18,68 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-int	is_valid_word(char *s)
+int		is_need_append(t_list_token *node)
 {
-	int	i;
+	int typ;
 
-	if (s[0] != '_' && !ft_isalpha(s[0]))
-		return (0);
-	i = 1;
-	while (s[i])
-	{
-		if (s[i] != '_' && !ft_isalnum(s[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-int	is_all_digits(char *s)
-{
-	while (*s)
-	{
-		if (!ft_isdigit(*s))
-			return (0);
-		s++;
-	}
-	return (1);
-}
-
-int	is_valid_file(char *file, t_list_token *node)
-{
-	if (!node || !file)
+	typ = node->type;
+	if (typ == PIP || typ == ESCAPE)
 		return (1);
-	if (node->type <= -20 && node->type >= -31)
-	{
-		if (is_all_digits(file))
-		{
-			return (0);
-		}
-	}
-	return (1);
+	if ((typ == QUOTE || typ == DQUOTE) && node->is_ok == 0)
+		return (1);
+	return (0);
 }
 
-int	need_append(t_list_token *tokens)
+char	*read_to_append(t_list_token *node)
+{
+	char	*str;
+
+	str = readline(node->type);
+	if (!ft_strcmp(str, "\030") || !ft_strcmp(str, "\033"))
+	{
+		ft_strdel(&str);
+		return (NULL);
+	}
+	return (str);
+}
+
+void	replace_node(t_list_token **dst, t_list_token **src)
+{
+	if ((*src)->next)
+		(*src)->next->prec = *dst;
+	ft_strdel(&((*dst)->data));
+	(*dst)->data = ft_strdup((*src)->data);
+	(*dst)->type = (*src)->type;
+	(*dst)->is_ok = (*src)->is_ok;
+	(*dst)->next = (*src)->next;
+	ft_strdel(&((*src)->data));
+	free((*src));
+}
+
+int		need_append(t_list_token *tokens)
 {
 	t_list_token	*node;
 	t_list_token	*ttt;
 	char			*toappend;
 	char			*tmp;
-	int				typ;
 
-	node = tokens;
-	while (node->next)
-		node = node->next;
-	while (node && node->type == SPACE)
-		node = node->prec;
-	typ = node->type;
-	if (typ == PIP || typ == ESCAPE || ((typ == QUOTE || typ == DQUOTE) && node->is_ok == 0))
+	node = get_last_node_toappend(tokens);
+	if (is_need_append(node))
 	{
-		tmp = readline(typ);
-		if (!ft_strcmp(tmp, "\030") || !ft_strcmp(tmp, "\033"))
+		if (!(tmp = read_to_append(node)))
 			return (1);
-		if (typ == QUOTE || typ == DQUOTE)
+		if (node->type == QUOTE || node->type == DQUOTE)
 		{
-			toappend = ft_strjoin(node->data, "\n");
-			toappend = ft_strjoin(toappend, tmp);
-			toappend = ft_strjoin(tokentoa(typ), toappend);
+			toappend = ft_4strjoin(tokentoa(node->type),node->data, "\n",tmp);
 			ttt = ft_tokenize(toappend);
-			if (ttt->next)
-				ttt->next->prec = node;
-			node->data = ttt->data;
-			node->type = ttt->type;
-			node->is_ok = ttt->is_ok;
-			node->next = ttt->next;
+			replace_node(&node, &ttt);
+			ft_strdel(&toappend);
 		}
 		else
-		{
-			toappend = tmp;
-			node->next = ft_tokenize(toappend);
-		}
-		ft_strdel(&toappend);
+			node->next = ft_tokenize(tmp);
+		ft_strdel(&tmp);
 		if (lexer(&tokens) || verify_tokens(tokens))
-		{
 			return (100);
-		}
 		return (need_append(tokens));
 	}
 	return (0);

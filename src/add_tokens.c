@@ -98,7 +98,7 @@ t_list_token	*add_escape(int *index, char *str)
 
 	node = (t_list_token *)malloc(sizeof(t_list_token));
 	if (!node)
-		return (NULL);
+		return (NULL);//what hapens when escaped <newline>
 	node->type = WORD;
 	node->data = ft_strsub(str, *index + 1, 1);
 	node->next = NULL;

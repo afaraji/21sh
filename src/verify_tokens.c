@@ -18,7 +18,7 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-int		verify_tokens_error(int err, int typ)
+int				verify_tokens_error(int err, int typ)
 {
 	if (err == 2)
 	{
@@ -40,7 +40,7 @@ int		verify_tokens_error(int err, int typ)
 	return (258);
 }
 
-int		verify_tokens(t_list_token *token)
+int				verify_tokens(t_list_token *token)
 {
 	t_list_token	*node;
 	t_list_token	*tmp;
@@ -70,4 +70,30 @@ int		verify_tokens(t_list_token *token)
 		node = node->next;
 	}
 	return (0);
+}
+
+char			*ft_4strjoin(char *s1, char *s2, char *s3, char *s4)
+{
+	char	*tmp1;
+	char	*tmp2;
+	char	*ret;
+
+	tmp1 = ft_strjoin(s1, s2);
+	tmp2 = ft_strjoin(s3, s4);
+	ret = ft_strjoin(tmp1, tmp2);
+	ft_strdel(&tmp1);
+	ft_strdel(&tmp2);
+	return (ret);
+}
+
+t_list_token	*get_last_node_toappend(t_list_token *tokens)
+{
+	t_list_token	*node;
+
+	node = tokens;
+	while (node->next)
+		node = node->next;
+	while (node && node->type == SPACE)
+		node = node->prec;
+	return (node);
 }

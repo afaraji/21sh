@@ -18,6 +18,47 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
+int	is_valid_word(char *s)
+{
+	int	i;
+
+	if (s[0] != '_' && !ft_isalpha(s[0]))
+		return (0);
+	i = 1;
+	while (s[i])
+	{
+		if (s[i] != '_' && !ft_isalnum(s[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	is_all_digits(char *s)
+{
+	while (*s)
+	{
+		if (!ft_isdigit(*s))
+			return (0);
+		s++;
+	}
+	return (1);
+}
+
+int	is_valid_file(char *file, t_list_token *node)
+{
+	if (!node || !file)
+		return (1);
+	if (node->type <= -20 && node->type >= -31)
+	{
+		if (is_all_digits(file))
+		{
+			return (0);
+		}
+	}
+	return (1);
+}
+
 int		manage_cmd_list(t_cmdlist *cmdlist)
 {
 	t_cmdlist		*node;
@@ -43,10 +84,14 @@ int		main_parse(char *line)
 	g_var.errno = 0;
 	if (lexer(&tokens) || verify_tokens(tokens))
 	{
+		free_tokens(tokens);
 		return (100);
 	}
 	if (need_append(tokens))
+	{
+		free_tokens(tokens);
 		return (100);
+	}
 	join_words(tokens);
 	here_doc(tokens);
 	cmdlist = token_split_sep_op(tokens);
