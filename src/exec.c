@@ -38,7 +38,6 @@ int		exec_simple_cmd(t_simple_cmd *cmd)
 	}
 	if (!(cmd_path = get_cmdpath(args[0])))
 		return (127);
-	ft_set_attr(1);
 	execve(cmd_path, args, env);
 	ft_print(STDERR, "shell: permission denied: %s\n", args[0]);
 	return (126);
@@ -114,6 +113,7 @@ int		exec_ast(t_pipe_seq *cmd, int bg)
 	else
 	{
 		add_proc(child);
+		ft_set_attr(0);
 	}
 	return (status);
 }

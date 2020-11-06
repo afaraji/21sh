@@ -18,63 +18,39 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-int		file_or_dir_link(char **file)
+int		verify_type_link(char *file)
 {
-	DIR			*dir;
+	DIR	*dir;
 
-	if ((dir = opendir(*file)) != NULL)
+	if ((dir = opendir(file)) != NULL)
 	{
 		closedir(dir);
-		ft_strdel(file);
-		return (1);
+		return (3);
 	}
-	else
-	{
-		ft_strdel(file);
-		return (2);
-	}
-	return (0);
-}
-
-int		verify_type_1(char **file, struct stat st)
-{
-	if (S_ISDIR(st.st_mode))
-	{
-		ft_strdel(file);
-		return (1);
-	}
-	if (S_ISLNK(st.st_mode))
-	{
-		if (file_or_dir_link(file) == 1)
-			return (3);
-		else if (file_or_dir_link(file) == 2)
-			return (2);
-	}
-	else
-	{
-		ft_strdel(file);
-		return (2);
-	}
-	return (0);
+	return (2);
 }
 
 int		verify_type(char *str)
 {
-	struct stat	st;
-	char		*file;
+	struct stat			st;
+	int					ret;
+	char				*file;
 
 	file = ft_strdup(str);
 	if (file[ft_strlen(file) - 1] == '/' && ft_strlen(file) - 1 > 0)
 		file[ft_strlen(file) - 1] = '\0';
+	ret = -1;
 	if (lstat(file, &st) == 0)
 	{
-		if (verify_type_1(&file, st) == 1)
-			return (1);
-		else if (verify_type_1(&file, st) == 2)
-			return (2);
-		else if (verify_type_1(&file, st) == 3)
-			return (3);
+		if (S_ISDIR(st.st_mode))
+			ret = 1;
+		else if (S_ISLNK(st.st_mode))
+		{
+			ret = verify_type_link(file);
+		}
+		else
+			ret = 2;
 	}
 	ft_strdel(&file);
-	return (-1);
+	return (ret);
 }
