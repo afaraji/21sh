@@ -78,68 +78,6 @@ t_terminal	*initiate_unprint_var(void)
 	return (term);
 }
 
-char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
-{
-	t_terminal	*term;
-	static char	*to_past;
-	char		*tmp;
-	int			unprint_ret;
-
-	to_past = NULL;
-	term = initiate_unprint_var();
-	term->line = init_line(prompt);
-	if (read(0, &term->buff, 0) < 0)
-		return (NULL);
-	ft_prompt(prompt);
-	while (1)
-	{
-		term->buff = 0;
-		read(0, &term->buff, 4);
-		//******** neeed to be in a func *********
-		if (term->buff == CTRL_C)
-		{
-			free_term(&term);
-			ft_putstr_fd("^C\n", 1);
-			if (mult_line != 0)
-				return (ft_strdup("\033"));
-			return (ft_strdup(""));
-		}
-		if (term->buff == CTRL_D && !ft_strcmp(term->line->str, ""))
-		{
-			free_term(&term);
-			ft_putchar('\n');
-			if (mult_line == 0)
-				return (ft_strdup("exit"));
-			return (ft_strdup("\030"));
-		}
-		if (term->buff == CTRL_L && mult_line == 0)
-		{
-			ft_putstr_fd("\033[H\033[2J", 1);
-			ft_prompt("$> ");
-			ft_putstr(term->line->str);
-		}
-		//**********************************************
-		if (printable(term, his_head, mult_line))
-		{
-			break ;
-		}
-		else if (!(ft_isprint(term->buff)))
-		{
-			unprint_ret = unprintable(term, his_head, &to_past);
-			if (unprint_ret == 1)
-				continue;
-			else if (unprint_ret == 2)
-			{
-				ft_prompt("\n$> ");
-				ft_putstr(term->line->str);
-			}
-		}
-	}
-	tmp = ft_strdup(term->line->str);
-	free_term(&term);
-	return (tmp);
-}
-
 char		*readline(int prompt)
 {
 	char *prmt;

@@ -45,6 +45,7 @@ char				*manage_line(char *prompt, t_hist **his_head, int m_line);
 t_terminal			*initiate_unprint_var(void);
 t_line				*init_line(char *prompt);
 void				ft_prompt(char *prompt);
+int					get_current_row(void);
 int					printable(t_terminal *term, t_hist **his_head, int m_line);
 void				printable_1(t_terminal *term);
 int					get_cmd(t_terminal *term, t_hist **his_head, int mult_line);

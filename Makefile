@@ -36,7 +36,7 @@ SRC_SHL = ./src/ast.c ./src/main.c ./src/manage_terminal.c ./src/readline.c	\
 	./src/cmd_completion_1.c ./src/f_d_completion_1.c ./src/f_d_completion.c\
 	./src/f_d_completion_2.c ./src/f_d_completion_3.c ./src/print_completion.c\
 	./src/variables_completion.c ./src/alias_ast.c ./src/unalias.c			\
-	./src/init_shell.c ./src/signal.c
+	./src/init_shell.c ./src/signal.c ./src/line_util.c
 
 LIBFTA = ./libft/libft.a
 

@@ -513,13 +513,11 @@ dtruss? strace ??
 
 //extern int		g_var;
 
-add_redirect.c
+add_redirect.c         !!!!
 add_tokens.c
 ft_free_gvar.c
-get_splited_and_or.c
-io_redirect_aggr.c
+io_redirect_aggr.c     !!!!
 lexer.c
-readline.c
 token_translate.c
 
 

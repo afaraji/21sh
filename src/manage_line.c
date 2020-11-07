@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sazouaka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/12 22:32:28 by sazouaka          #+#    #+#             */
-/*   Updated: 2020/02/12 22:32:31 by sazouaka         ###   ########.fr       */
+/*   Created: 2020/01/18 19:33:46 by sazouaka          #+#    #+#             */
+/*   Updated: 2020/01/18 19:33:48 by sazouaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,67 +18,82 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
-int		ft_intputchar(int c)
+t_terminal	*init_term(char *prmt)
 {
-	char ch;
+	int			tmp;
+	t_terminal	*term;
 
-	ch = c;
-	return (write(1, &ch, 1));
+	if (read(0, &tmp, 0) < 0)
+		return (NULL);
+	term = initiate_unprint_var();
+	term->line = init_line(prmt);
+	ft_prompt(prmt);
+	return (term);
 }
 
-void	display_line(t_line *line)
+char		*ctrl_c_d(t_terminal *term, int mult_line)
 {
-	int	i;
-
-	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
-	tputs(tgetstr("sc", NULL), 1, ft_intputchar);
-	i = line->curs;
-	while (i < (int)ft_strlen(line->str))
+	if (term->buff == CTRL_C)
 	{
-		ft_putchar(line->str[i]);
-		i++;
+		free_term(&term);
+		ft_putstr_fd("^C\n", 1);
+		if (mult_line != 0)
+			return (ft_strdup("\033"));
+		return (ft_strdup(""));
 	}
-	tputs(tgetstr("rc", NULL), 1, ft_intputchar);
-}
-
-void	display_line_from_begin(t_line *line)
-{
-	int	i;
-	int curs;
-
-	curs = line->curs;
-	go_home(line);
-	tputs(tgetstr("cd", NULL), 1, ft_intputchar);
-	i = line->curs;
-	while (i < (int)ft_strlen(line->str))
+	else
 	{
-		ft_putchar(line->str[i]);
-		i++;
-	}
-	while (curs)
-	{
-		line->curs++;
-		curs--;
+		free_term(&term);
+		ft_putchar('\n');
+		if (mult_line == 0)
+			return (ft_strdup("exit"));
+		return (ft_strdup("\030"));
 	}
 }
 
-void	del_char(t_line *line)
+void		ctrl_l(char *str)
 {
-	char	*tmp;
+	ft_putstr_fd("\033[H\033[2J", 1);
+	ft_prompt("$> ");
+	ft_putstr(str);
+}
 
-	if (line->curs > 0)
+void		unprint_manage(t_terminal *term, t_hist **his_head, char **to_past)
+{
+	int		unprint_ret;
+
+	unprint_ret = unprintable(term, his_head, to_past);
+	if (unprint_ret == 2)
 	{
-		go_left(line);
-		tmp = line->str;
-		line->str = trim_pos(line->str, line->curs);
-		ft_strdel(&tmp);
-		display_line(line);
+		ft_prompt("\n$> ");
+		ft_putstr(term->line->str);
 	}
 }
 
-void	del_line(t_line *line)
+char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 {
-	go_end(line);
-	while (line->curs)
-		del_char(line);
+	t_terminal	*term;
+	static char	*to_past;
+	char		*tmp;
+
+	to_past = NULL;
+	if (!(term = init_term(prompt)))
+		return (NULL);
+	while (1)
+	{
+		term->buff = 0;
+		read(0, &term->buff, 4);
+		if (term->buff == CTRL_C || (term->buff == CTRL_D &&
+											!ft_strcmp(term->line->str, "")))
+			return (ctrl_c_d(term, mult_line));
+		if (term->buff == CTRL_L && mult_line == 0)
+			ctrl_l(term->line->str);
+		if (printable(term, his_head, mult_line))
+			break ;
+		else if (!(ft_isprint(term->buff)))
+			unprint_manage(term, his_head, &to_past);
+	}
+	tmp = ft_strdup(term->line->str);
+	free_term(&term);
+	return (tmp);
 }
