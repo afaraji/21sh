@@ -102,7 +102,7 @@ t_pipe_seq		*ast(t_list_token *tokens)
 	{
 		if (!g_var.errno)
 		{
-			ft_putstr_fd("syntax error, unexpected <newline>\n", 2);
+			ft_putstr_fd("syntax error, unexpected token\n", 2);
 			g_var.errno = 122;
 		}
 		return (NULL);

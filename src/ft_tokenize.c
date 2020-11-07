@@ -18,6 +18,29 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
+t_and_or		*get_andor_list(t_list_token *strt, int dep, t_list_token *end)
+{
+	t_and_or		*node;
+	t_list_token	*tmp;
+
+	if (!strt)
+		return (NULL);
+	if (!(node = (t_and_or *)malloc(sizeof(t_and_or))))
+		return (NULL);
+	node->next = NULL;
+	tmp = list_sub(strt, end);
+	node->ast = ast(tmp);
+	free_tokens(tmp);
+	if (!(node->ast))
+		return (NULL);
+	node->dependent = 0;
+	if (dep == ANDLG)
+		node->dependent = 1;
+	if (dep == ORLG)
+		node->dependent = 2;
+	return (node);
+}
+
 t_list_token	*add_word_int(int *index, char *str)
 {
 	int				i;
