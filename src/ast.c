@@ -81,7 +81,6 @@ int	main_parse(char *line)
 	t_cmdlist		*cmdlist;
 
 	tokens = ft_tokenize(line);
-	g_var.errno = 0;
 	if (lexer(&tokens) || verify_tokens(tokens))
 	{
 		free_tokens(tokens);

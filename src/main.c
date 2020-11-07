@@ -71,6 +71,7 @@ int			main(int ac, char **av, char **env)
 		if (ft_set_attr(0))
 			return (1);
 		line = readline(0);
+		g_var.errno = 0;
 		if (ft_strcmp(line, "") && (ret = main_parse(line)))
 			exit_status(ret << 8);
 		if (line)

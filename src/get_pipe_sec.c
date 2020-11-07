@@ -74,7 +74,7 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end)
 		return (ret);
 	}
 	else if (!g_var.errno)
-		ft_putstr_fd("parse error.\n", 2);
+		g_var.errno = 122;
 	return (NULL);
 }
 
@@ -82,6 +82,8 @@ t_pipe_seq		*ast_fill(t_list_token *tokens, t_list_token *node, int right)
 {
 	t_pipe_seq		*tmp;
 
+	if (g_var.errno)
+		return (NULL);
 	tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
 	if (!tmp)
 		return (NULL);
@@ -101,10 +103,8 @@ t_pipe_seq		*ast(t_list_token *tokens)
 	if (!tokens || g_var.errno)
 	{
 		if (!g_var.errno)
-		{
-			ft_putstr_fd("syntax error, unexpected token\n", 2);
 			g_var.errno = 122;
-		}
+		ft_print(STDERR, "syntax error, unexpected token.\n");
 		return (NULL);
 	}
 	node = tokens;
