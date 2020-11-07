@@ -54,7 +54,7 @@ int		is_op(char *str, int i)
 		return (GRTAND);
 	if (str[i] == '>' && str[i + 1] == '>')
 		return (GRTGRT);
-	if ((str[i] == '<' && str[i + 1] == '&'))// || (str[i] == '&' && str[i + 1] == '<'))
+	if ((str[i] == '<' && str[i + 1] == '&'))
 		return (SMLAND);
 	return (is_op_2(str[i], str[i + 1]));
 }

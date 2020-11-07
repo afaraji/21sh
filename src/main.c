@@ -72,11 +72,11 @@ int			main(int ac, char **av, char **env)
 			return (1);
 		line = readline(0);
 		g_var.errno = 0;
+		bg_jobs();
 		if (ft_strcmp(line, "") && (ret = main_parse(line)))
 			exit_status(ret << 8);
 		if (line)
 			ft_strdel(&line);
-		bg_jobs();
 	}
 	(void)ac;
 	(void)av;

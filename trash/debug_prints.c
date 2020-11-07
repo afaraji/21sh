@@ -263,3 +263,83 @@ void	print_andor(t_cmdlist *list)
 	}
 
 }
+
+//********** get cmd back from ast ****************
+/*
+void	print_io_redirect(t_io_redirect *head)
+{
+	t_io_redirect *node;
+
+	ft_print(STDOUT, "IO_redirect: ");
+	if (!head)
+		return;
+	node = head;
+	if (node->io_num > 1)
+		ft_print(STDOUT, "%d", node->io_num);
+	ft_print(STDOUT, "%s %s ", tokentoa(node->redirect_type), node->filename);
+}
+
+void	print_cmdprefix(t_cmd_prefix *head)
+{
+	t_cmd_prefix *node;
+
+	if (!head)
+		return;
+	node = head;
+	if (node->io_redirect)
+		print_io_redirect(head->io_redirect);
+	else if (node->ass_word)
+	{
+		ft_print(STDOUT,  "%s=%s ", node->ass_word->key, node->ass_word->value);
+	}
+	if (node->prefix)
+		print_cmdprefix(node->prefix);
+}
+
+void	print_cmdsuffix(t_cmd_suffix *head)
+{
+	if (!head)
+		return;
+	if (head->io_redirect)
+	{
+		print_io_redirect(head->io_redirect);
+	}
+	else if (head->word)
+	{
+		ft_print(STDOUT,  "%s ", head->word);
+	}
+	if (head->suffix)
+		print_cmdsuffix(head->suffix);
+
+}
+
+void	print_simple_cmd(t_simple_cmd *cmd)
+{
+	if (!cmd)
+		return;
+	if (cmd->prefix)
+	{
+		print_cmdprefix(cmd->prefix);
+		if (cmd->word)
+			ft_print(STDOUT, "%s ", cmd->word);
+		print_cmdsuffix(cmd->suffix);
+	}
+	else if (cmd->name)
+	{
+		ft_print(STDOUT, "%s ", cmd->name);
+		print_cmdsuffix(cmd->suffix);
+	}
+}
+
+void	print_tokenlist(t_pipe_seq *ast)
+{
+	t_simple_cmd	*node;
+
+	if (!ast)
+		return;
+	node = ast->left;
+	print_simple_cmd(node);
+	print_tokenlist(ast->right);
+}
+*/
+//****************************

@@ -516,3 +516,6 @@ dtruss? strace ??
 add_redirect.c         !!!!
 io_redirect_aggr.c     !!!!
 token_translate.c
+
+last_in_hist need testing
+ls && echo lol & cat -e < /tmp/testout lunches ls alone and echo alone as separated proces
