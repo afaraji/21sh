@@ -91,8 +91,11 @@ int		save_list(void)
 	int		fd;
 
 	node = g_var.history;
-	if (!(fd = open("./.myshell_history", O_WRONLY)))
+	if ((fd = open(HIST_FILE, O_WRONLY)) == -1)
+	{
+		ft_print(STDERR, "couldn't save history list.\n");
 		return (-1);
+	}
 	while (node)
 	{
 		ft_putstr_fd(node->hist_str, fd);

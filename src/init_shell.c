@@ -26,8 +26,11 @@ t_hist		*create_history(void)
 	int		i;
 
 	his_list = NULL;
-	if (!(fd = open("./.myshell_history", O_RDONLY | O_CREAT, 0600)))
+	if ((fd = open(HIST_FILE, O_RDONLY | O_CREAT, 0600)) == -1)
+	{
+		ft_print(STDERR, "couldn't create nor find history list.\n");
 		return (NULL);
+	}
 	i = 1;
 	while (get_next_line(fd, &file_str) == 1)
 	{

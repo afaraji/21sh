@@ -36,6 +36,7 @@
 # define CTRL_QUIT		0x1C
 # define CTRL_D			0x4
 # define CTRL_L			0xC
+# define HIST_FILE		"/tmp/.myshell_history"
 
 int					termtype(void);
 int					check_termcap(void);

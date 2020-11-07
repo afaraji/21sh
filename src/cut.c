@@ -54,7 +54,7 @@ void	ft_cut(t_terminal *term, char **to_past)
 		go_home(term->line);
 		tputs(tgetstr("cd", NULL), 1, ft_intputchar);
 		ft_cut_1(term, curs, tmp_s);
-		free(tmp_s);
+		ft_strdel(&tmp_s);
 		while (term->line->str[term->line->curs] != '\0'
 		&& term->line->str[term->line->curs])
 		{

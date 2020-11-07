@@ -21,7 +21,9 @@
 char			**auto_completion_3(char **splited_line, int i)
 {
 	if (splited_line[i][1] == '{')
+	{
 		return (var_search(splited_line[i] + 2));
+	}
 	else
 		return (var_search(splited_line[i] + 1));
 }
