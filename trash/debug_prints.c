@@ -341,5 +341,34 @@ void	print_tokenlist(t_pipe_seq *ast)
 	print_simple_cmd(node);
 	print_tokenlist(ast->right);
 }
+
+//************last in hist **************
+
+char	*last_in_hist(void)//need testing!!
+{
+	t_hist	*node;
+	char	*tmp;
+	int		i;
+	int		j;
+
+	node = g_var.history;
+	while (node->next)
+		node = node->next;
+	tmp = ft_strdup(node->hist_str);
+	i = ft_strlen(tmp) - 1;
+	while (i >= 1 && (tmp[i] != '&' || tmp[i - 1] == '&' || tmp[i + 1] == '&')
+															&& tmp[i] != ';')
+		i--;
+	j = i - 1;
+	if (j < 2)
+		return (ft_strdup(""));
+	while (j >= 1 && (tmp[j] != '&' || tmp[j - 1] == '&' || tmp[j + 1] == '&')
+															&& tmp[j] != ';')
+		j--;
+	ft_strdel(&tmp);
+	if (j == 0)
+		return (ft_strsub(node->hist_str, 0, i - j));
+	return (ft_strsub(node->hist_str, j, i - j));
+}
+
 */
-//****************************
