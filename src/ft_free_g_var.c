@@ -69,8 +69,8 @@ void	free_history_list(t_hist *list)
 
 void	free_g_var(void)
 {
-	free_t_var(g_var.var);				//should be &g_var.var
+	free_t_var(g_var.var);
 	free_aliases(&g_var.aliases);
-	free_history_list(g_var.history);	//should be &g_var.history
-	free_proc(g_var.proc);				//should be &g_var.proc
+	free_history_list(g_var.history);
+	free_proc(g_var.proc);
 }

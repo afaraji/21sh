@@ -25,7 +25,7 @@ void	go_right_1(t_line *line)
 	if (line->str[line->curs] == '\n')
 	{
 		if (line->init_pos != line->row)
-					line->init_pos++;
+			line->init_pos++;
 		tputs(tgetstr("do", NULL), 1, ft_intputchar);
 	}
 	else
@@ -36,7 +36,7 @@ void	go_right_1(t_line *line)
 			if (line->str[line->curs + 1] == '\n')
 				line->curs++;
 			if (line->init_pos != line->row)
-					line->init_pos++;
+				line->init_pos++;
 			tputs(tgetstr("do", NULL), 1, ft_intputchar);
 		}
 		else

@@ -42,7 +42,7 @@ void	move_curs_right(t_line *line)
 {
 	while (line->str[line->curs])
 	{
-		if (line->init_pos < line->row )
+		if (line->init_pos < line->row)
 		{
 			line->init_pos--;
 			go_right(line);
