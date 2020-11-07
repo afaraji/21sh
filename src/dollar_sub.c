@@ -25,7 +25,7 @@ int		is_dollar(char *s)
 	if (!s)
 		return (-42);
 	i = 0;
-	while (s[i] && s[i] != '$')
+	while (s[i] && (s[i] != '$' || (i > 0 && s[i - 1] == '\\')))
 		i++;
 	if (s[i] == '$')
 		return (i);

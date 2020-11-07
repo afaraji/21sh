@@ -56,14 +56,12 @@ t_list_token	*add_dquote(int *index, char *str)
 	i++;
 	while (str[i] && (str[i] != '"' || str[i - 1] == '\\'))
 		i++;
-	if (str[i] == '"')
-		node->is_ok = 1;
-	else
-		node->is_ok = 0;
+	node->is_ok = (str[i] == '"') ? 1 : 0;
 	node->type = DQUOTE;
 	node->data = (ft_strsub(str, *index + 1, i - *index - 1));
 	if (is_dollar(node->data) >= 0)
 		node->data = str_dollar_sub(node->data);
+	node->data = delete_escape(node->data);
 	node->next = NULL;
 	node->prec = NULL;
 	if (i + 1 < (int)ft_strlen(str))
@@ -98,9 +96,15 @@ t_list_token	*add_escape(int *index, char *str)
 
 	node = (t_list_token *)malloc(sizeof(t_list_token));
 	if (!node)
-		return (NULL);//what hapens when escaped <newline>
+		return (NULL);
 	node->type = WORD;
-	node->data = ft_strsub(str, *index + 1, 1);
+	if (!ft_strcmp(&str[*index], "\\"))
+	{
+		node->data = ft_strdup("\n");
+		node->type = ESCAPE;
+	}
+	else
+		node->data = ft_strsub(str, *index + 1, 1);
 	node->next = NULL;
 	node->prec = NULL;
 	*index += 2;

@@ -18,6 +18,26 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
+char	*delete_escape(char *str)
+{
+	int		i;
+	char	*tmp;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\\' && (str[i + 1] == '$' || str[i + 1] == '"'))
+		{
+			str[i] = '\0';
+			tmp = ft_strjoin(str, &str[i + 1]);
+			ft_strdel(&str);
+			str = tmp;
+		}
+		i++;
+	}
+	return (str);
+}
+
 char	*fetch_variables(char *key, int typ)
 {
 	t_variable	*node;
@@ -58,6 +78,6 @@ int		lexer(t_list_token **cmd_token)
 		return (42);
 	}
 	tilde_sub(cmd_token);
-	dollar_sub(cmd_token);// remove dollar sub from other places
+	dollar_sub(cmd_token);
 	return (0);
 }

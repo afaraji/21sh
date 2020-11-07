@@ -514,10 +514,8 @@ dtruss? strace ??
 //extern int		g_var;
 
 add_redirect.c         !!!!
-add_tokens.c
 ft_free_gvar.c
 io_redirect_aggr.c     !!!!
-lexer.c
 token_translate.c
 
 
