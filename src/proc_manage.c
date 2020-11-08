@@ -21,9 +21,6 @@
 char	*last_in_hist(void)
 {
 	t_hist	*node;
-	char	*tmp;
-	int		i;
-	int		j;
 
 	node = g_var.history;
 	while (node->next)

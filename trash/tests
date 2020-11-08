@@ -1,0 +1,163 @@
+"ls" # test execution simple
+"cat auteur" # execution simple
+"ls -l" # avec option
+"ls ~" # avec tilde
+"unsetenv PATH; ls;/bin/ls" # execution ls et /bin/ls sans PATH
+"/bin/ls" # execution avec le chemin entier
+"naritse" # cmd, élément qui n’existe pas
+"./21sh -c ls" # execution avec './'
+"./anrsiute" # execution élément qui n’existe pas
+
+### permissions
+"/sbin/yubikey_shell" # execution sans les droits d’execution
+"yubikey_shell" #
+"touch $tmpf ; chmod 000 $tmpf ; ./$tmpf" # execution toto sans les droits avec './'
+"$tmpf" # execution toto sans les droits avec le path entier
+"rm -f $tmpf"
+
+## Builtin ##
+## CD ##
+"cd ; pwd"
+"cd ~ ; pwd"
+"cd / ; pwd"
+"cd - ; pwd"
+"cd . ; pwd"
+"cd .. ; pwd"
+"cd ~/. ; pwd"
+"cd nasrt" # élément qui n’éxiste pas
+"cd auteur" # cd fichier
+
+## ENV ##
+"env"
+"export TOTO=toto" # test setenv
+#"unsetenv TOTO"
+
+## Other ##
+"pwd"
+"exit ; ls" # test exit: exit and don't display ls result
+
+## Point-virgule
+"cat auteur ; cat auteur" # test un point-virgule
+"cat auteur ; cat auteur ; cat auteur" # test deux points-virgule
+
+## Parsing ##
+";;;;,;;;; ;;;;"
+"; ;"
+";"
+"ls;"
+";ls"
+#"    \t  " # espaces, tabulations
+
+## Pipe
+" " # empty
+"ls | cat" # pipe simple
+"ls | cat | cat" # pipe double
+"ls | cat | cat | cat" # pipe triple
+"ls -A -l | cat -e | cat -e" # pipe double with options
+"ls | cat | wc -l" # different commands
+"ls | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat \
+	| cat | cat | cat | cat | cat | cat | cat | cat | cat | cat" # twenty pipes
+"ls || cat" # Segfault
+"ls ||||||||| cat"
+"ls | | ls" # Segfault
+
+## Redirections droite
+"ls > $tmpf ; cat $tmpf ; rm $tmpf" # simple
+"ls >> $tmpf ; cat $tmpf ; rm $tmpf" # double
+"mkdir 2> $tmpf; cat $tmpf ; rm $tmpf" # simple avec fd2 spécifié et erreur
+"mkdir 2>> $tmpf; cat $tmpf ; rm $tmpf" # double avec fd2 spécifié et erreur
+#"ls 2> $tmpf; cat $tmpf ; rm $tmpf" # simple avec fd2 spécifié sans erreur # marked as failed
+#"ls 2>> $tmpf; cat $tmpf ; rm $tmpf" # double avec fd2 spécifié sans erreur # marked as failed
+"ls>$tmpf ; cat $tmpf ; rm $tmpf" # collé
+"ls 1> $tmpf ; cat $tmpf" # fd 1 spécifié
+
+## Redirections gauche
+"cat < $tmpf"
+#"cat << fin\nnrstai\nfin\n" # double gauche
+#"cat << toto\nnrstai\nrsnati\nairnst\ntoto" # double gauche avec autre string de fin
+
+## Double redirection
+"cat < $tmpf > /tmp/txt; cat /tmp/txt; rm /tmp/txt"
+"cat < $tmpf >> /tmp/txt; cat /tmp/txt; rm /tmp/txt"
+### Same file name
+"cat < $tmpf > $tmpf"
+#"cat < $tmpf >> $tmpf" # This one is non stop adding many time which stopped the script
+
+## Redirections avec fd de sortie spécifié
+### Redirection closed
+"ls 1>&-"
+"ls 2>&-"
+"mkdir -p 2>&-"
+"mkdir -p 1>&-"
+
+### Redirection opened
+"echo test 1>&2"
+"echo test >&2"
+"echo test 2>&1"
+#"echo test 2>>&1" # create file named "1"
+#"echo test 2<&1" # marked as failed
+
+"mkdir -p 2>&1 | cat -e" # La sortie doit être : "rm: nosuchfile: No such file or directory$"
+"echo No dollar character 1>&2 | cat -e" # La sortie doit être "No dollar character".
+
+### Ridirections with pipes
+"ls | cat -e > $tmpf; cat $tmpf"
+
+## Segfault and parsing tests on redirections
+">"
+"ls>"
+"ls >"
+#"> toto", ">toto", ">> toto", ">>toto" # are not working
+">>"
+"ls>>"
+"ls >>"
+"<"
+"cat<"
+"cat <"
+#"< toto" # marked as failed
+#"<toto" # marked as failed
+"<<"
+"cat<<"
+"cat <<"
+"<<end"
+"<< end"
+"echo test 2>&1toto; rm 1toto" # zsh create file named "1toto"
+"echo test2>&1 toto"
+"echo test2>&1toto; rm 1toto" # zsh create file named "1toto"
+
+## cotes parsing
+"echo 'test'" # simple cotes
+"echo \"test\"" # double cotes
+"echo 'simple' \"double\"" # Mix simple and double cotes
+"echo \"6789\" \"2345\"" # two coted blocks
+"echo \"6789\"         \"2345\"" # two coted blocks seperated with many spaces
+"echo \"6789\"  test   \"2345\"" # two coted blocks seperated with non coted block
+"echo nasruitersaui \"6789\" ransuite  \"2345\"   anruistenrasuit" # big one
+
+# test all ASCII char: check they are used to split str like ';', '>', '<' or '|'
+"echo \"nrsatu;nrtsa\"" # ;
+"echo \"rasnt>inausrt\" > toto; cat toto" # >
+"echo \"nrastiu<rasntiu\" > toto; cat toto" # <
+"echo \"nrau|sntiu\" | cat" # |
+"ls ; echo \"nasruit><rnasuti\" > toto ; cat < toto" # mix
+"echo \"!#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_abcdefghijklmnopqrstuvwxyz{|}~\""
+# all ASCII char without ` and "
+
+### Spaces tests
+"echo \"6789      \"         \"    2345\""
+"echo \"6789      \"    arsnatuir     \"    2345\""
+"echo \"    67   89      \"         \"    23  45   \""
+
+### Back cotes: pipe
+#"echo \`ls\`" # back cotes # not yet implemented
+
+### Potential segfault
+"\'"
+"\""
+"\`"
+"\"anrusit\" \"bnrst" # one coted block, one opening coted block
+
+## Mix
+"rm $tmpf ; ls ; pwd; ls -a | cat -e | wc > $tmpf ; cat $tmpf ; rm $tmpf" # point-virgules, pipes et redirection
+"ls -a | cat -e | wc >> $tmpf ; cat $tmpf ; rm $tmpf" # pipes et double redirection
+"mkdir test ; cd test ; ls -a ; ls | cat | wc -c > fifi ; cat fifi ; rm fifi ; cd .. ; rm -rf test"
