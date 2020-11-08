@@ -73,4 +73,6 @@ void	free_g_var(void)
 	free_aliases(&g_var.aliases);
 	free_history_list(g_var.history);
 	free_proc(g_var.proc);
+	if (g_var.cpy_past)
+		ft_strdel(&(g_var.cpy_past));
 }

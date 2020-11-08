@@ -35,7 +35,7 @@ char			*cmd_name(t_list_token **cmd, t_list_token **end)
 	}
 	return (NULL);
 }
-
+// what malloced here is leaked incase of parse error
 t_simple_cmd	*malloc_simple_cmd(void)
 {
 	t_simple_cmd	*ret;

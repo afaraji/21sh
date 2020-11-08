@@ -74,10 +74,8 @@ void		unprint_manage(t_terminal *term, t_hist **his_head, char **to_past)
 char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 {
 	t_terminal	*term;
-	static char	*to_past;
 	char		*tmp;
 
-	to_past = NULL;
 	if (!(term = init_term(prompt)))
 		return (NULL);
 	while (1)
@@ -92,7 +90,7 @@ char		*manage_line(char *prompt, t_hist **his_head, int mult_line)
 		if (printable(term, his_head, mult_line))
 			break ;
 		else if (!(ft_isprint(term->buff)))
-			unprint_manage(term, his_head, &to_past);
+			unprint_manage(term, his_head, &(g_var.cpy_past));
 	}
 	tmp = ft_strdup(term->line->str);
 	free_term(&term);

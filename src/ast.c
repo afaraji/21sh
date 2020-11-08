@@ -74,7 +74,7 @@ int	join_escape(t_list_token *token)
 		if (node->type == ESCAPE)
 		{
 			node->type = WORD;
-			node->data[0] = ' ';
+			node->data[0] = '\0';
 		}
 		node = node->next;
 	}

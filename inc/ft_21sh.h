@@ -121,6 +121,7 @@ typedef struct			s_shell_var
 	int					errno;
 	int					exit_status;
 	int					sig;
+	char				*cpy_past;
 	t_alias				*aliases;
 	t_variable			*var;
 	t_hist				*history;

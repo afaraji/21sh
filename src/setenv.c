@@ -81,7 +81,7 @@ void	ft_set_lastnode(char **flag)
 	node->next = NULL;
 }
 
-int		ft_setenv(char **flag)
+int		ft_setenv(char **flag, char **env)
 {
 	if (flag[1] != NULL && flag[2] != NULL && flag[3] != NULL)
 	{
@@ -91,7 +91,7 @@ int		ft_setenv(char **flag)
 	else
 	{
 		if (flag[1] == NULL)
-			print_env(env_to_tab(g_var.var, 1));
+			print_env(env);
 		else
 		{
 			if (!(ft_isalpha(flag[1][0])) && flag[1][0] != '_')

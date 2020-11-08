@@ -84,10 +84,6 @@ int		cd_builtin(char **av, char **env)
 	return (1);
 }
 
-/*
-**need verification !! n oublie pas return value
-*/
-
 int		builtins(char *cmd, char **av, char **env)
 {
 	if (ft_strcmp(cmd, "exit") == 0)
@@ -102,7 +98,7 @@ int		builtins(char *cmd, char **av, char **env)
 		return (0);
 	}
 	else if (ft_strcmp(cmd, "setenv") == 0)
-		return (ft_setenv(av));
+		return (ft_setenv(av, env));
 	else if (ft_strcmp(cmd, "unsetenv") == 0)
 		return (ft_unsetenv(av));
 	else if (ft_strcmp(cmd, "export") == 0)

@@ -93,6 +93,7 @@ char	*here_doc_string(char *word)
 		{
 			return (here_doc_signal(buff, str));
 		}
+		ft_print(1, "----[%s]----[%s]----\n", buff, word);
 		if (!ft_strcmp(buff, word))
 		{
 			ft_strdel(&buff);

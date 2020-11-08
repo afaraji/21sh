@@ -19,7 +19,7 @@ int		ft_cd(char *flag, char **env);
 int		ft_cd_1(char *flag, char **env);
 int		ft_cd_old(char **env);
 int		ft_cd_home(char **env);
-int		ft_setenv(char **flag);
+int		ft_setenv(char **flag, char **env);
 int		ft_unsetenv(char **flag);
 int		ft_echo(char **flag);
 int		change_pwd(char *str1, char *str2);

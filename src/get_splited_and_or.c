@@ -63,7 +63,7 @@ t_and_or	*token_split_andor(t_list_token *start, t_list_token *end)
 	}
 	return (list);
 }
-
+//here what malloced is leaked !! why ?
 t_cmdlist	*sep_op_mllc(t_list_token *tokens, t_list_token *tmp, int bg)
 {
 	t_cmdlist	*node;
