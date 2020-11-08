@@ -37,6 +37,7 @@ char		*ctrl_c_d(t_terminal *term, int mult_line)
 	{
 		free_term(&term);
 		ft_putstr_fd("^C\n", 1);
+		tputs(tgetstr("cd", NULL), 1, ft_intputchar);
 		if (mult_line != 0)
 			return (ft_strdup("\033"));
 		return (ft_strdup(""));

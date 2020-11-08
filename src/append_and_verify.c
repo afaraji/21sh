@@ -18,6 +18,17 @@
 #include "../inc/ft_free.h"
 #include "../inc/readline.h"
 
+int		is_all_digits(char *s)
+{
+	while (*s)
+	{
+		if (!ft_isdigit(*s))
+			return (0);
+		s++;
+	}
+	return (1);
+}
+
 int		is_need_append(t_list_token *node)
 {
 	int typ;

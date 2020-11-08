@@ -31,7 +31,6 @@ void			print_cmdprefix(t_cmd_prefix *head);
 void			print_cmdsuffix(t_cmd_suffix *head);
 void			print_simple_cmd(t_simple_cmd *cmd);
 int				is_valid_word(char *s);
-int				is_all_digits(char *s);
 int				is_valid_file(char *file, t_list_token *node);
 char			*io_file(t_list_token **cmd, t_list_token **end, int *r_type);
 char			*io_here(t_list_token **cmd, t_list_token **end, int *r_type);
@@ -57,7 +56,6 @@ int				need_append(t_list_token *tokens);
 char			*here_doc_string(char *word);
 void			here_doc(t_list_token *head);
 int				main_parse(char *line);
-int				is_all_digits(char *s);
 t_list_token	*get_last_node_toappend(t_list_token *tokens);
 char			*ft_4strjoin(char *s1, char *s2, char *s3, char *s4);
 

@@ -34,17 +34,6 @@ int	is_valid_word(char *s)
 	return (1);
 }
 
-int	is_all_digits(char *s)
-{
-	while (*s)
-	{
-		if (!ft_isdigit(*s))
-			return (0);
-		s++;
-	}
-	return (1);
-}
-
 int	is_valid_file(char *file, t_list_token *node)
 {
 	if (!node || !file)
@@ -75,6 +64,23 @@ int	manage_cmd_list(t_cmdlist *cmdlist)
 	return (ret);
 }
 
+int	join_escape(t_list_token *token)
+{
+	t_list_token	*node;
+
+	node = token;
+	while (node)
+	{
+		if (node->type == ESCAPE)
+		{
+			node->type = WORD;
+			node->data[0] = ' ';
+		}
+		node = node->next;
+	}
+	return (0);
+}
+
 int	main_parse(char *line)
 {
 	t_list_token	*tokens;
@@ -91,6 +97,7 @@ int	main_parse(char *line)
 		free_tokens(tokens);
 		return (100);
 	}
+	join_escape(tokens);
 	join_words(tokens);
 	here_doc(tokens);
 	cmdlist = token_split_sep_op(tokens);
