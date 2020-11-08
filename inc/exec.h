@@ -14,7 +14,6 @@
 # define EXEC_H
 # include "ft_21sh.h"
 
-void		exit_status(int status);
 int			is_alldigit(char *str);
 int			check_fd(int fd, int io);
 int			do_heredoc(t_io_redirect *io);

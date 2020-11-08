@@ -253,15 +253,17 @@ void	print_tokenlist(t_pipe_seq *ast)
 void	print_andor(t_cmdlist *list)
 {
 	t_and_or	*node;
+	int i = 0;
 
 	node = list->and_or;
+	fprintf(ttt,"+-+-+-+-+-+-+start and_or -+-+-+-+---+\n");
 	while (node)
 	{
-		fprintf(ttt,"+-+-+-+-+-+-+-+-+-+-+---+-+\ndependent ===>[%d]\n", node->dependent);
+		fprintf(ttt,"=== pip_seq N[%d]-dep[%d] ===\n", i++, node->dependent);
 		print_tokenlist(node->ast);
 		node = node->next;
 	}
-
+	fprintf(ttt,"+-+-+-+-+-+-+end and_or-+-+-+-+---+-+\n");
 }
 
 //********** get cmd back from ast ****************
@@ -342,7 +344,7 @@ void	print_tokenlist(t_pipe_seq *ast)
 	print_tokenlist(ast->right);
 }
 
-//************last in hist **************
+************last in hist **************
 
 char	*last_in_hist(void)//need testing!!
 {
