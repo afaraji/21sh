@@ -48,18 +48,18 @@ void		child_handler(int signum)
 	t_proc	*proc;
 
 	proc = g_var.proc;
-	pid = wait(&status);
+	pid = waitpid(0, &status, WNOWAIT);
 	while (proc)
 	{
 		if (proc->ppid == pid)
 		{
 			proc->status = status;
+			waitpid(pid, &status, 0);
 			proc->done = 1;
 			return ;
 		}
 		proc = proc->next;
 	}
-	exit_status(status);
 	(void)signum;
 }
 
