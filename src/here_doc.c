@@ -113,7 +113,7 @@ void	here_doc(t_list_token *head)
 	char			*str;
 
 	node = head;
-	while (node)
+	while (!g_var.errno && node)
 	{
 		if (node->type == SMLSML)
 		{
@@ -126,7 +126,7 @@ void	here_doc(t_list_token *head)
 			else if (node->next->type == QUOTE || node->next->type == DQUOTE)
 				str = here_doc_string(node->next->data);
 			else
-				g_var.errno = 100;
+				return;
 			ft_strdel(&(node->next->data));
 			node->next->data = str;
 			node->next->type = QUOTE;
