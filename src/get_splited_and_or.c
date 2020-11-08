@@ -63,7 +63,7 @@ t_and_or	*token_split_andor(t_list_token *start, t_list_token *end)
 	}
 	return (list);
 }
-//here what malloced is leaked !! why ?
+
 t_cmdlist	*sep_op_mllc(t_list_token *tokens, t_list_token *tmp, int bg)
 {
 	t_cmdlist	*node;
@@ -72,6 +72,11 @@ t_cmdlist	*sep_op_mllc(t_list_token *tokens, t_list_token *tmp, int bg)
 	if (!node)
 		return (NULL);
 	node->and_or = token_split_andor(tokens, tmp);
+	if (node->and_or == NULL || g_var.errno)
+	{
+		free(node);
+		return (NULL);
+	}
 	node->bg = (bg == BGJOB) ? 1 : 0;
 	node->next = NULL;
 	return (node);

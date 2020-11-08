@@ -58,7 +58,7 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end)
 		return (NULL);
 	ret = malloc_simple_cmd();
 	ret->prefix = cmd_prefix(&start, &end);
-	if (ret->prefix)
+	if (!g_var.errno && ret->prefix)
 	{
 		ret->word = cmd_word(&start, &end);
 		if (ret->word)
@@ -68,13 +68,14 @@ t_simple_cmd	*get_simple_cmd(t_list_token *start, t_list_token *end)
 		}
 		return (ret);
 	}
-	else if ((ret->name = cmd_name(&start, &end)))
+	else if (!g_var.errno && (ret->name = cmd_name(&start, &end)))
 	{
 		ret->suffix = cmd_suffix(&start, &end);
 		return (ret);
 	}
 	else if (!g_var.errno)
 		g_var.errno = 122;
+	free(ret);
 	return (NULL);
 }
 

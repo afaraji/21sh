@@ -519,4 +519,4 @@ io_redirect_aggr.c
 last_in_hist need testing
 ls && echo lol & cat -e < /tmp/testout lunches ls alone and echo alone as separated proces
 
-was testing io_redirect_aggr after changes and norm
+trim(line);

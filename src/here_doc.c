@@ -93,7 +93,6 @@ char	*here_doc_string(char *word)
 		{
 			return (here_doc_signal(buff, str));
 		}
-		ft_print(1, "----[%s]----[%s]----\n", buff, word);
 		if (!ft_strcmp(buff, word))
 		{
 			ft_strdel(&buff);
@@ -126,6 +125,8 @@ void	here_doc(t_list_token *head)
 				str = str_dollar_sub(here_doc_string(node->next->data));
 			else if (node->next->type == QUOTE || node->next->type == DQUOTE)
 				str = here_doc_string(node->next->data);
+			else
+				g_var.errno = 100;
 			ft_strdel(&(node->next->data));
 			node->next->data = str;
 			node->next->type = QUOTE;

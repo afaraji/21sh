@@ -84,7 +84,8 @@ void	free_ast(t_pipe_seq *ast)
 {
 	if (!ast)
 		return ;
-	free_ast(ast->right);
+	if (ast->right)
+		free_ast(ast->right);
 	free_simple_cmd(ast->left);
 	free(ast);
 	ast = NULL;
@@ -94,7 +95,8 @@ void	free_and_or_list(t_and_or *list)
 {
 	if (!list)
 		return ;
-	free_and_or_list(list->next);
+	if (list->next)
+		free_and_or_list(list->next);
 	free_ast(list->ast);
 	free(list);
 	list = NULL;
