@@ -74,12 +74,15 @@ int	do_heredoc(t_io_redirect *io)
 	int		filefd;
 	char	*file;
 	int		fd_out;
+	char	*tmp;
 
 	if (io->io_num == -1)
 		fd_out = STDIN;
 	else
 		fd_out = io->io_num;
-	file = ft_strjoin("/tmp/.21sh_tmp_", ft_itoa((int)getpid()));
+	tmp = ft_itoa((int)getpid());
+	file = ft_strjoin("/tmp/.21sh_tmp_", tmp);
+	ft_strdel(&tmp);
 	filefd = open(file, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (filefd < 0)
 		return (-1);

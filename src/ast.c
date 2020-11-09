@@ -87,12 +87,7 @@ int	main_parse(char *line)
 	t_cmdlist		*cmdlist;
 
 	tokens = ft_tokenize(line);
-	if (lexer(&tokens) || verify_tokens(tokens))
-	{
-		free_tokens(tokens);
-		return (100);
-	}
-	if (need_append(tokens))
+	if (lexer(&tokens) || verify_tokens(tokens) || need_append(tokens))
 	{
 		free_tokens(tokens);
 		return (100);
@@ -103,6 +98,10 @@ int	main_parse(char *line)
 	cmdlist = token_split_sep_op(tokens);
 	free_tokens(tokens);
 	if (!cmdlist || g_var.errno)
+	{
+		if (cmdlist)
+			free_cmd_list(cmdlist);
 		return (42);
+	}
 	return (manage_cmd_list(cmdlist));
 }
