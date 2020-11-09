@@ -29,10 +29,13 @@ t_and_or		*get_andor_list(t_list_token *strt, int dep, t_list_token *end)
 		return (NULL);
 	node->next = NULL;
 	tmp = list_sub(strt, end);
-	node->ast = ast(tmp);
+	node->ast = ast(tmp);\
 	free_tokens(tmp);
-	if (!(node->ast))
+	if (!(node->ast) || g_var.errno)
+	{
+		free(node);
 		return (NULL);
+	}
 	node->dependent = 0;
 	if (dep == ANDLG)
 		node->dependent = 1;

@@ -35,7 +35,7 @@ char			*cmd_name(t_list_token **cmd, t_list_token **end)
 	}
 	return (NULL);
 }
-// what malloced here is leaked incase of parse error
+
 t_simple_cmd	*malloc_simple_cmd(void)
 {
 	t_simple_cmd	*ret;
@@ -86,13 +86,18 @@ t_pipe_seq		*ast_fill(t_list_token *tokens, t_list_token *node, int right)
 	if (g_var.errno)
 		return (NULL);
 	tmp = (t_pipe_seq *)malloc(sizeof(t_pipe_seq));
-	if (!tmp)
+	if (!tmp || g_var.errno)
 		return (NULL);
 	tmp->left = get_simple_cmd(tokens, node);
-	if (right)
+	if (right && !g_var.errno)
 		tmp->right = ast(node->next);
 	else
 		tmp->right = NULL;
+	if (g_var.errno)
+	{
+		free(tmp);
+		return (NULL);
+	}
 	return (tmp);
 }
 
