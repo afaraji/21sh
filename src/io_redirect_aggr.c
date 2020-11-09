@@ -25,7 +25,7 @@ int		redirect_dup_close(char *io_file, int fd_io, int in_out)
 	if (is_alldigit(io_file))
 	{
 		tmpfd = ft_atoi(io_file);
-		tmpfd = (tmpfd < 0) ? -1 : 0;
+		tmpfd = (tmpfd < 0) ? -1 : tmpfd;
 		if (!check_fd(tmpfd, in_out))
 		{
 			ft_print(STDERR, "shell: %d: Bad file descriptor.\n", tmpfd);
