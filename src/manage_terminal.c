@@ -75,16 +75,16 @@ int		ft_set_attr(int index)
 	if (index == 0)
 	{
 		if (!old_termios.c_cflag && !old_termios.c_ospeed)
-		{
 			if (tcgetattr(0, &old_termios) == -1)
 				return (1);
-		}
 		if (termtype() && check_termcap())
 		{
 			cpy_set_atr_ican(&old_termios, &s_termios);
 			if (tcsetattr(0, 0, &s_termios) == -1)
 				return (1);
+			return (0);
 		}
+		return (1);
 	}
 	else
 	{
